@@ -11,17 +11,11 @@ export default {
     const userDoc = await db.collection("users").doc(interaction.user.id).get();
 
     if (userDoc.exists) {
-      const wallets = (userDoc.data() as User).wallets;
+      const wallet = (userDoc.data() as User).wallet;
       const finderBaseAddress = "https://finder.terra.money/columbus-5/address";
-      const walletMessage = wallets
-        .map(
-          (walletAddress) =>
-            `[${walletAddress}](${finderBaseAddress + walletAddress})`
-        )
-        .join("\n");
 
       await interaction.reply({
-        content: "Your registered wallets: \n" + walletMessage,
+        content: "Your registered wallet: " + wallet,
         ephemeral: true,
       });
     } else {

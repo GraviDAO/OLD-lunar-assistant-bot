@@ -1,5 +1,10 @@
 # Lunar Assistant Bot
 
+This repo contains the lunar assistant discord bot. It provides the following slash commands: 
+- lunar-configure
+- lunar-link
+- lunar-verify
+- lunar-display-wallet
 ## Setup
 
 Copy the `config.json.example` to `config.json` and populate the variables.
@@ -28,5 +33,5 @@ node dist/src/index.js
 // };
 // terra1xa267j4vqxqxe7xmwnwsusfnpmhhwu5asqvge6
 
-
-
+// "terra13ed80hm5ay0c2fjcwstg6ca7973w2wz85fffqp"
+// "terra1qtqynxctnef434pnaggqkl9yh3lyzqyz53xlqu",

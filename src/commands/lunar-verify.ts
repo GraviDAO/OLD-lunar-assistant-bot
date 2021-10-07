@@ -37,12 +37,10 @@ const lunarVerify = {
     if (!role) return;
 
     if (userDoc.exists) {
-      const wallets = (userDoc.data() as User).wallets;
+      const wallet = (userDoc.data() as User).wallet;
 
-      // "terra13ed80hm5ay0c2fjcwstg6ca7973w2wz85fffqp"
       const res = await getTokensOfOwner(
-        wallets[0],
-        // "terra1qtqynxctnef434pnaggqkl9yh3lyzqyz53xlqu",
+        wallet,
         guildConfig.nftContractAddress
       );
       console.log(res);

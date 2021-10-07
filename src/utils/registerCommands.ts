@@ -28,7 +28,7 @@ export const registerCommands = async (guild: Guild) => {
   // register the commands
   const rest = new REST({ version: "9" }).setToken(token);
 
-  await rest.put(Routes.applicationGuildCommands(clientId, guild.id), {
+  await rest.put(Routes.applicationGuildCommands(clientId, guild.id) as any, {
     body: newCommands,
   });
 
