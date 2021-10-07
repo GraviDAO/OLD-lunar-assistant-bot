@@ -1,4 +1,5 @@
 import { Client, Collection, Intents } from "discord.js";
+import path from "path";
 import { token } from "../config.json";
 import { SlashCommandData } from "./types";
 import { commandFiles } from "./utils/commandFiles";
@@ -20,7 +21,9 @@ const commandHandlers = new Collection<string, SlashCommandData>();
 
 // Populate the command handlers collection
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
+  const commandFilePath = path.resolve(__dirname, `./commands/${file}`);
+  const command = require(commandFilePath).default;
+
   // Set a new item in the Collection
   // With the key as the command name and the value as the exported module
   commandHandlers.set(command.data.name, command);

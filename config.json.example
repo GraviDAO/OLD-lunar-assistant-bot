@@ -4,5 +4,5 @@
 "guildId": "",
 "environment": "",
 "DISCORD_VERIFICATION_SECRET": "",
-"FIRBASE_ADMIN_SERVICE_ACCOUNT": ""
+"FIREBASE_ADMIN_SERVICE_ACCOUNT": ""
 }
