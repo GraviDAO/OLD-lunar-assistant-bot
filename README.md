@@ -5,6 +5,8 @@ This repo contains the lunar assistant discord bot. It provides the following sl
 - lunar-link
 - lunar-verify
 - lunar-display-wallet
+
+You can follow this link to add the Lunar Assistant bot to your discord server: https://discord.com/api/oauth2/authorize?client_id=893178480303407135&permissions=268435456&scope=applications.commands%20bot
 ## Setup
 
 Copy the `config.json.example` to `config.json` and populate the values.
