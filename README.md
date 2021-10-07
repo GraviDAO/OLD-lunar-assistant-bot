@@ -7,9 +7,7 @@ This repo contains the lunar assistant discord bot. It provides the following sl
 - lunar-display-wallet
 ## Setup
 
-Copy the `config.json.example` to `config.json` and populate the variables.
-
-Download the firebase admin service key and save it to lunar-assistant-firebase-adminsdk.json
+Copy the `config.json.example` to `config.json` and populate the values.
 
 ## Usage
 
@@ -19,7 +17,7 @@ tsc
 node dist/src/index.js
 ```
 
-## Example Addresses
+## Example Addresses For Testing
 
 // punk contract
 // terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k
