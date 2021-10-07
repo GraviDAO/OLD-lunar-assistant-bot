@@ -1,0 +1,3 @@
+interface GetTokensResponse {
+  tokens: string[];
+}

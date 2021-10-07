@@ -1,0 +1,32 @@
+# Lunar Assistant Bot
+
+## Setup
+
+Copy the `config.json.example` to `config.json` and populate the variables.
+
+Download the firebase admin service key and save it to lunar-assistant-firebase-adminsdk.json
+
+## Usage
+
+```
+npm install
+tsc
+node dist/src/index.js
+```
+
+## Example Addresses
+
+// punk contract
+// terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k
+
+// lapin contract
+// terra1kekvz7nm8ed2nd8mdny8ukuap00mg52txrnwhs
+
+// const addressMapping: { [key: string]: GuildConfig } = {
+//   // dev server -> lapin address
+//   // "893186947932094524": "terra1kekvz7nm8ed2nd8mdny8ukuap00mg52txrnwhs",
+// };
+// terra1xa267j4vqxqxe7xmwnwsusfnpmhhwu5asqvge6
+
+
+

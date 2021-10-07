@@ -1,0 +1,5 @@
+.env
+node_modules/
+config.json
+lunar-assistant-firebase-adminsdk.json
+dist/
