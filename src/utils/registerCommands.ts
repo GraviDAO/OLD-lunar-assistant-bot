@@ -1,6 +1,7 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { Guild } from "discord.js";
+import path from "path";
 import { clientId, token } from "../../config.json";
 import { commandFiles } from "./commandFiles";
 
@@ -21,7 +22,8 @@ export const registerCommands = async (guild: Guild) => {
 
   // get the list of new commands
   const newCommands = commandFiles.map((file) => {
-    const command = require(`./commands/${file}`);
+    const commandFilePath = path.resolve(__dirname, `../commands/${file}`);
+    const command = require(commandFilePath).default;
     return command.data.toJSON();
   });
 
@@ -47,7 +49,6 @@ export const registerCommands = async (guild: Guild) => {
 
   // get the configured command
   const configureCommand = registeredCommands.find((command) => {
-    console.log(command.name);
     return command.name == "lunar-configure";
   });
 

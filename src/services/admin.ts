@@ -5,7 +5,7 @@ if (!admin.apps.length) {
   try {
     admin.initializeApp({
       credential: admin.credential.cert(
-        JSON.parse(FIREBASE_ADMIN_SERVICE_ACCOUNT) as ServiceAccount
+        FIREBASE_ADMIN_SERVICE_ACCOUNT as ServiceAccount
       ),
     });
   } catch (error) {
