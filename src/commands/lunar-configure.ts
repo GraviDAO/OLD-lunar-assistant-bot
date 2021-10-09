@@ -135,7 +135,82 @@ export default {
         ephemeral: true,
       });
     } else if (interaction.options.getSubcommand() === "list-rules") {
+      const guildConfigDoc = await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .get();
+
+      if (!guildConfigDoc.exists) {
+        await interaction.reply({
+          content:
+            "You haven't created any rules yet. Please run `/rule-add` and try again",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const guildConfigRules = (guildConfigDoc.data() as GuildConfig).rules;
+
+      const rulesMessage = guildConfigRules
+        .map((rule, index) => `Rule ${index}: ${JSON.stringify(rule)}`)
+        .join("\n");
+
+      // reply with list of configured rules
+      await interaction.reply({
+        content: "Your configured rules:\n" + rulesMessage,
+        ephemeral: true,
+      });
     } else if (interaction.options.getSubcommand() === "remove-rule") {
+      const ruleNumber = interaction.options.getInteger("rule-number");
+
+      if (!ruleNumber) {
+        await interaction.reply({
+          content: "Please specify a rule number and try again",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const guildConfigDoc = await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .get();
+
+      if (!guildConfigDoc.exists) {
+        await interaction.reply({
+          content:
+            "You haven't created any rules yet. Please run `/rule-add` and try again",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      // configure guild config
+      const guildConfig = guildConfigDoc.data() as GuildConfig;
+
+      if (guildConfig.rules.length <= ruleNumber) {
+        await interaction.reply({
+          content: `Rule number is out of bounds. Please enter a rule number in the range 0-${
+            guildConfig.rules.length - 1
+          }`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      guildConfig.rules.splice(ruleNumber, 1);
+
+      // update the db
+      await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .set(guildConfig);
+
+      // reply
+      await interaction.reply({
+        content: "Rule removed successfully!",
+        ephemeral: true,
+      });
     }
   },
 };
