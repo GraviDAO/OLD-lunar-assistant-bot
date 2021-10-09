@@ -53,11 +53,11 @@ export const updateDiscordRolesForUser = async (
           };
 
           // get the discord role from the discord client
-          const role = guild.roles.cache.find(
+          const newRole = guild.roles.cache.find(
             (role) => role.name == rule.roleName
           );
 
-          if (!role) return;
+          if (!newRole) return;
 
           // check if this user satisfies the rule
           const tokens = (
@@ -74,28 +74,41 @@ export const updateDiscordRolesForUser = async (
           ).length;
 
           if (numMatchingTokens > rule.quantity) {
+            // the user matches the role rules, update accordingly
+
             // update activeRoles
             if (activeRoles[guild.name]) {
-              activeRoles[guild.name].push(role.name);
+              activeRoles[guild.name].push(newRole.name);
             } else {
-              activeRoles[guild.name] = [role.name];
+              activeRoles[guild.name] = [newRole.name];
             }
             // add the role to the member
-            member.roles.add(role);
-          } else {
+            member.roles.add(newRole);
+          } else if (
+            member.roles.cache.some((role) => role.name === newRole.name)
+          ) {
+            // the user doesn't match the role rules but has the role anyways
+            // update accordingly
+
             // update removedRoles
             if (removedRoles[guild.name]) {
-              removedRoles[guild.name].push(role.name);
+              removedRoles[guild.name].push(newRole.name);
             } else {
-              removedRoles[guild.name] = [role.name];
+              removedRoles[guild.name] = [newRole.name];
             }
             // remove the role from the member
-            member.roles.remove(role);
+            member.roles.remove(newRole);
           }
         })
       );
     })
   );
-  // return the list of roles the user is eligible for
+
+  // update the user's active roles
+  db.collection("users").doc(userID).update({
+    activeRoles,
+  });
+
+  // return the list of the users active roles and removed roles
   return { activeRoles, removedRoles };
 };
