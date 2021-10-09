@@ -7,67 +7,135 @@ export default {
     .setName("lunar-configure")
     .setDescription("Configures the lunar assistant")
     .setDefaultPermission(false)
-    .addStringOption((option) =>
-      option
-        .setName("smart-contract-address")
-        .setDescription(
-          "The smart contract address of the nft collection you want to verify ownership of."
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("add-rule")
+        .setDescription("Adds a rule for granting a role to users.")
+        .addStringOption((option) =>
+          option
+            .setName("nft-address")
+            .setDescription(
+              "The contract address against which to check for nft ownership for this rule."
+            )
+            .setRequired(true)
         )
-        .setRequired(true)
+        .addRoleOption((option) =>
+          option
+            .setName("role")
+            .setDescription("The role to give to users which meet this rule.")
+            .setRequired(true)
+        )
+        .addNumberOption((option) =>
+          option
+            .setName("quantity")
+            .setDescription(
+              "The quantity of matching nfts that a user must hold in order to meet the rule.  "
+            )
+        )
+        .addStringOption((option) =>
+          option
+            .setName("token-ids")
+            .setDescription(
+              "A list of token ids that the rule is restricted to."
+            )
+        )
     )
-    .addRoleOption((option) =>
-      option
-        .setName("verified-role")
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("list-rules")
+        .setDescription("List the rules currently configured for the server.")
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("remove-rule")
         .setDescription(
-          "The role you want to give members who are verified to hold an nft from the specified nft collection."
+          "Remove a rule based on its index in the output of `/list-rules`"
         )
-        .setRequired(true)
+        .addIntegerOption((option) =>
+          option
+            .setName("rule-number")
+            .setDescription("The index of the rule to remove.")
+        )
     ),
   execute: async (interaction: CommandInteraction) => {
     // verify the interaction is valid
     if (!interaction.guildId || !interaction.guild || !interaction.member)
       return;
 
-    // configure the server settings
-    const contractAddress = interaction.options.getString(
-      "smart-contract-address"
-    );
-    const verifiedRole = interaction.options.getRole("verified-role");
+    if (interaction.options.getSubcommand() === "add-rule") {
+      // configure the server settings
+      const nftAddress = interaction.options.getString("nft-address");
+      const role = interaction.options.getRole("role");
+      const rawQuantity = interaction.options.getInteger("quantity");
+      const rawTokenIds = interaction.options.getString("token-ids");
 
-    if (!contractAddress || !verifiedRole) return;
+      // verify that nftAddress and role are defined
+      if (!nftAddress || !role) {
+        await interaction.reply("Could not get nftAddress or role");
+        return;
+      }
 
-    // check if the bot role is above the verified role
+      // verify that we can parse tokenIds
+      let tokenIds;
+      try {
+        tokenIds = rawTokenIds ? JSON.parse(rawTokenIds) : undefined;
+      } catch {
+        await interaction.reply("Could not parse token ids");
+        return;
+      }
 
-    const lunarAssistantRole = interaction.guild.roles.cache.find(
-      (role) => role.name == "Lunar Assistant"
-    )!;
+      const quantity = rawQuantity ? rawQuantity : 1;
 
-    interaction.guild.roles.cache.forEach((role) => {
-      console.log(role.name, role.position);
-    });
-    if (verifiedRole.position > lunarAssistantRole.position) {
+      // check if the bot role is above the verified role
+      const lunarAssistantRole = interaction.guild.roles.cache.find(
+        (role) => role.name == "Lunar Assistant"
+      )!;
+
+      if (role.position > lunarAssistantRole.position) {
+        await interaction.reply({
+          content: `Please update the role hierarchy with 'Lunar Assistant' above of ${role.name} and try again.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const newRule: GuildRule = {
+        version: "1.0",
+        nft: {
+          [nftAddress]: {
+            tokenIds,
+            quantity,
+          },
+        },
+        token: {},
+        nativeToken: {},
+        roleName: role.name,
+      };
+
+      const guildConfigDoc = await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .get();
+
+      const guildConfig: GuildConfig = guildConfigDoc.exists
+        ? (guildConfigDoc.data() as GuildConfig)
+        : { rules: [] };
+
+      guildConfig.rules.push(newRule);
+
+      // update the db
+      await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .set(guildConfig);
+
+      // reply
       await interaction.reply({
-        content: `Please update the role hierarchy with 'Lunar Assistant' above of ${verifiedRole.name} and try again.`,
+        content: "Rule added successfully!",
         ephemeral: true,
       });
-      return;
+    } else if (interaction.options.getSubcommand() === "list-rules") {
+    } else if (interaction.options.getSubcommand() === "remove-rule") {
     }
-
-    const guildConfig: GuildConfig = {
-      nftContractAddress: contractAddress,
-      verifiedRoleName: verifiedRole.name,
-    };
-
-    // update the db
-    await db
-      .collection("guildConfigs")
-      .doc(interaction.guildId)
-      .set(guildConfig);
-
-    // reply
-    await interaction.reply({
-      content: "Lunar Assistant configured successfully!",
-      ephemeral: true,
-    });
   },
 };

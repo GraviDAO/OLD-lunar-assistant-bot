@@ -1,68 +1,37 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, GuildMemberRoleManager } from "discord.js";
-import db from "../services/admin";
-import { getTokensOfOwner } from "../utils/getTokensOfOwner";
+import { CommandInteraction } from "discord.js";
+import { updateDiscordRolesForUser } from "../utils/updateDiscordRolesForUser";
 
 const lunarVerify = {
   data: new SlashCommandBuilder()
     .setName("lunar-verify")
-    .setDescription("Verifies your Galactic Punk Ownership."),
+    .setDescription(
+      "Updates your discord roles based on the contents of your wallet."
+    ),
   execute: async (interaction: CommandInteraction) => {
     // verify the interaction is valid
     if (!interaction.guildId || !interaction.guild || !interaction.member)
       return;
 
-    // get the user document
-    const userDoc = await db.collection("users").doc(interaction.user.id).get();
-    const guildDoc = await db
-      .collection("guildConfigs")
-      .doc(interaction.guildId)
-      .get();
+    try {
+      const usersActiveRoles = (
+        await updateDiscordRolesForUser(interaction.client, interaction.user.id)
+      ).activeRoles;
 
-    // check if the guild doc exists
-    if (!guildDoc.exists) {
+      const activeRolesMessage = Object.keys(usersActiveRoles)
+        .map(
+          (guildName) =>
+            `${guildName}: ${usersActiveRoles[guildName].join(", ")}`
+        )
+        .join("\n");
+
       await interaction.reply({
-        content: "Lunar assistant has not been configured yet",
-        ephemeral: true,
+        content: `Your roles have been updated! You have been granted the following roles on the following servers:\n${activeRolesMessage}`,
       });
-      return;
-    }
-
-    const guildConfig = guildDoc.data() as GuildConfig;
-
-    const role = interaction.guild.roles.cache.find(
-      (role) => role.name == guildConfig.verifiedRoleName
-    );
-
-    if (!role) return;
-
-    if (userDoc.exists) {
-      const wallet = (userDoc.data() as User).wallet;
-
-      const res = await getTokensOfOwner(
-        wallet,
-        guildConfig.nftContractAddress
+    } catch {
+      await interaction.reply(
+        "Cannot check for roles because you haven't linked a wallet yet. Please link a wallet with /lunar-link and try again."
       );
-      console.log(res);
-
-      if (res.tokens.length > 0) {
-        try {
-          await (interaction.member.roles as GuildMemberRoleManager).add(role);
-
-          await interaction.reply(
-            `You are now verified! Welcome to the Galactic Punks :)`
-          );
-        } catch (e) {
-          await interaction.reply(
-            "Permissions error, please make sure that the lunar assistant role is at the top of the role hierarchy."
-          );
-        }
-      } else {
-        await (interaction.member.roles as GuildMemberRoleManager).remove(role);
-        await interaction.reply(`You don't have any galactic punks...`);
-      }
-    } else {
-      await interaction.reply("Please verify your wallet address first");
     }
   },
 };
