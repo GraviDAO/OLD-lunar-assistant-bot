@@ -1,9 +1,11 @@
 import { Client, Collection, Intents } from "discord.js";
 import path from "path";
 import { token } from "../config.json";
+import db from "./services/admin";
 import { SlashCommandData } from "./types";
 import { commandFiles } from "./utils/commandFiles";
 import { registerCommands } from "./utils/registerCommands";
+import { updateDiscordRolesForUser } from "./utils/updateDiscordRolesForUser";
 
 // Create a new client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -48,6 +50,12 @@ client.on("interactionCreate", async (interaction) => {
       ephemeral: true,
     });
   }
+});
+
+db.collection("users").onSnapshot((querySnapshot) => {
+  querySnapshot.docChanges().forEach((change) => {
+    updateDiscordRolesForUser(client, change.doc.id);
+  });
 });
 
 // Login to Discord with your client's token
