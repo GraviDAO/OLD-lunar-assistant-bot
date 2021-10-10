@@ -79,23 +79,30 @@ cron.schedule("0 8 * * *", async () => {
   const usersSnapshot = await db.collection("users").get();
   const guildConfigsSnapshot = await db.collection("guildConfigs").get();
 
-  usersSnapshot.docs.reduce(
+  await usersSnapshot.docs.reduce(
     (p, userDoc) =>
-      p.then(() =>
-        coldUpdateDiscordRolesForUser(
-          client,
-          userDoc.id,
-          userDoc,
-          guildConfigsSnapshot
+      p
+        .then(() =>
+          // update the user's discord roles
+          coldUpdateDiscordRolesForUser(
+            client,
+            userDoc.id,
+            userDoc,
+            guildConfigsSnapshot
+          )
         )
-      ),
+        .then(
+          // delay for one second between processing each user
+          () => new Promise((resolve) => setTimeout(() => resolve(null), 1000))
+        ),
     new Promise((resolve, reject) => resolve(null))
   );
 });
 
+// start the discord bot
 client.login(token);
 
-// thinkings about cronjobs and things:
+// thinking about cronjobs and things:
 // there is also the approach of a user coming online
 // upside is seemingly realtime
 // and distributed load based on people going online / offline
