@@ -1,6 +1,5 @@
 interface User {
   wallet: string;
-  activeRoles: { [guildName: string]: string[] };
 }
 
 type NFTRule = {

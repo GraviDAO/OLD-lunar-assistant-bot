@@ -2,31 +2,28 @@ import { Client } from "discord.js";
 import db from "../services/admin";
 import { getTokensOfOwner } from "./getTokensOfOwner";
 
-export const updateDiscordRolesForUser = async (
+// const userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
+
+export const coldUpdateDiscordRolesForUser = async (
   client: Client,
-  userID: string
+  userID: string,
+  userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ) => {
+  // get the users wallet address
+  const walletAddress = (userDoc.data() as User).wallet;
+
   // mapping from discord server name to a list of active roles
   const activeRoles: { [guildName: string]: string[] } = {};
   // mapping from discord server name to a list of roles being removed
   const removedRoles: { [guildName: string]: string[] } = {};
 
-  // get the user document
-  const userDoc = await db.collection("users").doc(userID).get();
-
-  // check that the user document exists
-  if (!userDoc.exists) throw new Error("Couldn't find user document");
-
-  // get the users wallet address
-  const walletAddress = (userDoc.data() as User).wallet;
-
-  // get guilds from db
-  // later store this in memory for performance reasons
-  const guildSnapshot = await db.collection("guildConfigs").get();
+  // userTokens cache
+  const userTokens: { [nftAddress: string]: string[] } = {};
 
   // loop through guilds registered with lunar assistant
   await Promise.all(
-    guildSnapshot.docs.map(async (doc) => {
+    guildConfigsSnapshot.docs.map(async (doc) => {
       // get the guild from the discord client
       const guild = client.guilds.cache.get(doc.id);
 
@@ -60,9 +57,12 @@ export const updateDiscordRolesForUser = async (
           if (!newRole) return;
 
           // check if this user satisfies the rule
-          const tokens = (
-            await getTokensOfOwner(walletAddress, rule.nftAddress)
-          ).tokens;
+          const tokens = userTokens[guild.name]
+            ? userTokens[guild.name]
+            : ((userTokens[guild.name] = (
+                await getTokensOfOwner(walletAddress, rule.nftAddress)
+              ).tokens),
+              userTokens[guild.name]);
 
           // get the number of matching tokens
           const numMatchingTokens = (
@@ -105,10 +105,30 @@ export const updateDiscordRolesForUser = async (
   );
 
   // update the user's active roles
-  db.collection("users").doc(userID).update({
-    activeRoles,
-  });
+  // db.collection("users").doc(userID).update({
+  //   activeRoles,
+  // });
 
   // return the list of the users active roles and removed roles
   return { activeRoles, removedRoles };
+};
+
+export const updateDiscordRolesForUser = async (
+  client: Client,
+  userID: string
+) => {
+  // get the user document
+  const userDoc = await db.collection("users").doc(userID).get();
+
+  // check that the user document exists
+  if (!userDoc.exists) throw new Error("Couldn't find user document");
+
+  // get guilds from db
+  // later store this in memory for performance reasons
+  const guildConfigsSnapshot = await db.collection("guildConfigs").get();
+
+  if (guildConfigsSnapshot.empty)
+    throw new Error("Couldn't find any guild configs");
+
+  coldUpdateDiscordRolesForUser(client, userID, userDoc, guildConfigsSnapshot);
 };
