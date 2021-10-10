@@ -42,8 +42,8 @@ export default {
     )
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("list-rules")
-        .setDescription("List the rules currently configured for the server.")
+        .setName("view-rules")
+        .setDescription("View the rules currently configured for the server.")
     )
     .addSubcommand((subcommand) =>
       subcommand

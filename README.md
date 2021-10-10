@@ -14,9 +14,9 @@ Adds a rule for granting a role to users. Takes the following arguments:
 - quantity (optional, 1 by default) : The quantity of matching nfts that a user must hold in order to meet the rule.
 - token-ids (optional, all by default) : A list of token ids that the rule is restricted to.
 
-#### list-rules
+#### view-rules
 
-List the rules currently configured for the server.
+View the rules currently configured for the server.
 
 #### remove-rule
 
@@ -31,10 +31,11 @@ For now a user can only have a single wallet registered at a time. Running lunar
 
 Upon linking a new wallet, the user's roles are updated to reflect the contents of the new wallet.
 
-### lunar-verify
+### lunar-view-roles
 
-Forces a role update based on the contents of a user's linked wallet.
-### lunar-display-wallet
+Forces a role update based on the contents of a user's linked wallet, then displays the roles that a user is granted. Takes the following arguments:
+- private-response (optional, false by default): Indicate whether or not you want to make the response viewable to everyone or just yourself.
+### lunar-view-wallet
 
 Displays the wallet a user has linked to their account (only visible to the user who sent the command).
 

@@ -4,8 +4,8 @@ import db from "../services/admin";
 
 export default {
   data: new SlashCommandBuilder()
-    .setName("lunar-display-wallet")
-    .setDescription("Diplays the wallet linked to your discord account."),
+    .setName("lunar-view-wallet")
+    .setDescription("View the wallet linked to your discord account."),
   execute: async (interaction: CommandInteraction) => {
     // get the user document
     const userDoc = await db.collection("users").doc(interaction.user.id).get();
