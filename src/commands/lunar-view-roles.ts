@@ -25,21 +25,28 @@ const lunarVerify = {
     const privateResponse = rawPrivateResponse ? rawPrivateResponse : false;
 
     try {
-      const usersActiveRoles = (
+      const userActiveRoles = (
         await updateDiscordRolesForUser(interaction.client, interaction.user.id)
       ).activeRoles;
 
-      const activeRolesMessage = Object.keys(usersActiveRoles)
-        .map(
-          (guildName) =>
-            `${guildName}: ${usersActiveRoles[guildName].join(", ")}`
-        )
-        .join("\n");
+      if (Object.keys(userActiveRoles).length === 0) {
+        const activeRolesMessage = Object.keys(userActiveRoles)
+          .map(
+            (guildName) =>
+              `${guildName}: ${userActiveRoles[guildName].join(", ")}`
+          )
+          .join("\n");
 
-      await interaction.reply({
-        content: `You have been granted the following roles on the following servers:\n${activeRolesMessage}`,
-        ephemeral: privateResponse,
-      });
+        await interaction.reply({
+          content: `You have been granted the following roles on the following servers:\n${activeRolesMessage}`,
+          ephemeral: privateResponse,
+        });
+      } else {
+        await interaction.reply({
+          content: `You have not been granted any roles.`,
+          ephemeral: privateResponse,
+        });
+      }
     } catch {
       await interaction.reply({
         content:

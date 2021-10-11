@@ -118,7 +118,7 @@ client.login(token);
 // main downsides:
 // we want realtime updates, so eventually we are gonna have
 // unless we don't want realtime updates
-// for now no realtime updates, so you can use /lunar-verify to get updated
+// for now no realtime updates, so you can use /lunar-view-roles to get updated
 
 // possible approaches
 
