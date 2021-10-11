@@ -5,8 +5,12 @@ This repo contains the lunar assistant discord bot. It provides the following sl
 
 ### lunar-configure
 
-Configures the GuildConfig for the discord server. Has the following subcommands:
-#### add-rule
+Configures the GuildConfig for the discord server. Has the following command groups:
+
+#### rules command group
+
+Command group for configuring the rules which grant roles based on wallet holdings. Useful for creating private channels that only those with certain wallet holdings have access to, and for letting users show off their wallets via roles.
+##### add-rule
 
 Adds a rule for granting a role to users. When a user's wallet meets the conditions of the rule, they will be granted the relevant role. Takes the following arguments:
 - nft-address (required) : The contract address against which to check for nft ownership
@@ -14,27 +18,49 @@ Adds a rule for granting a role to users. When a user's wallet meets the conditi
 - quantity (optional, 1 by default) : The quantity of matching nfts that a user must hold in order to meet the rule.
 - token-ids (optional, all by default) : A list of token ids that the rule is restricted to.
 
-#### view-rules
+##### view-rules
 
 View the rules currently configured for the server.
 
-#### remove-rule
+##### remove-rule
 
 Remove a rule based on its index in the output of `/view-rules`. Takes the following arguments:
 - rule-number (required) : The index of the rule to remove.
 
-#### add-role-link
+#### dependencies command group
 
-Link two roles together. Whenever the required role is removed from a user with the dependent role, an alert will be sent in lunar-alerts channel. Takes the following arguments:
+Command group for configuring role dependencies. Useful for making manually granted roles depend on wallet based roles (i.e., you can only be a galactic chairman if you hold at least 2 punks).
+
+##### add-role-dependency
+
+Add a relationship by which one role depends on another. Whenever the required role is removed from a user with the dependent role, the dependent role will be removed as well. Takes the following arguments:
 - required-role (required) : The role that is required in order to have the dependent role.
 - dependent-role (required) : The role that depends on the required role.
-#### view-role-links
+##### view-role-dependencies
 
-View the rule links currently configured for the server.
-#### remove-role-link
+View the rule dependencies currently configured for the server.
 
-Remove a role link based on its index in the output of `/view-role-links`. Takes the following arguments:
+##### remove-role-dependencies
+
+Remove a role dependency based on its index in the output of `/view-role-links`. Takes the following arguments:
 - rule-number (required) : The index of the role link to remove.
+
+#### alerts command group
+
+##### add-role-alert
+
+Add an alert that triggers whenever a given role is added or removed from a user. Takes the following arguments:
+- role (required) : The role to send an alert about whenever it is added or removed.
+
+##### view-role-alerts
+
+View the role alerts currently configured for the server.
+
+##### remove-role-alert
+
+Remove a role alert. Takes the following arguments:
+- role (required) : The role for which to remove an alert.
+
 
 ### lunar-link
 
