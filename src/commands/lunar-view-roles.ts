@@ -29,7 +29,7 @@ const lunarVerify = {
         await updateDiscordRolesForUser(interaction.client, interaction.user.id)
       ).activeRoles;
 
-      if (Object.keys(userActiveRoles).length === 0) {
+      if (Object.keys(userActiveRoles).length > 0) {
         const activeRolesMessage = Object.keys(userActiveRoles)
           .map(
             (guildName) =>
