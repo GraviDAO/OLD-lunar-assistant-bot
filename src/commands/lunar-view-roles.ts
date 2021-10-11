@@ -12,7 +12,7 @@ const lunarVerify = {
       option
         .setName("private-response")
         .setDescription(
-          "Indicate whether or not you want to make the response viewable to everyone or just yourself. False by default."
+          "Indicate whether or not the response should be public or private. Public by default."
         )
     ),
   execute: async (interaction: CommandInteraction) => {

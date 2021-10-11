@@ -5,3 +5,8 @@ export interface SlashCommandData {
   data: SlashCommandBuilder;
   execute: (interaction: CommandInteraction) => Promise<void>;
 }
+
+export interface UpdateUserDiscordRolesResponse {
+  activeRoles: { [guildName: string]: string[] };
+  removedRoles: { [guildName: string]: string[] };
+}

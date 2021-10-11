@@ -51,10 +51,11 @@ export default {
         .setDescription(
           "Remove a rule based on its index in the output of `/list-rules`"
         )
-        .addIntegerOption((option) =>
+        .addNumberOption((option) =>
           option
             .setName("rule-number")
             .setDescription("The index of the rule to remove.")
+            .setRequired(true)
         )
     ),
   execute: async (interaction: CommandInteraction) => {
@@ -66,7 +67,7 @@ export default {
       // configure the server settings
       const nftAddress = interaction.options.getString("nft-address");
       const role = interaction.options.getRole("role");
-      const rawQuantity = interaction.options.getInteger("quantity");
+      const rawQuantity = interaction.options.getNumber("quantity");
       const rawTokenIds = interaction.options.getString("token-ids");
 
       // verify that nftAddress and role are defined
@@ -103,7 +104,8 @@ export default {
         version: "1.0",
         nft: {
           [nftAddress]: {
-            tokenIds,
+            // only include tokenIds if defined
+            ...(tokenIds && { tokenIds }),
             quantity,
           },
         },
@@ -134,7 +136,7 @@ export default {
         content: "Rule added successfully!",
         ephemeral: true,
       });
-    } else if (interaction.options.getSubcommand() === "list-rules") {
+    } else if (interaction.options.getSubcommand() === "view-rules") {
       const guildConfigDoc = await db
         .collection("guildConfigs")
         .doc(interaction.guildId)
@@ -161,9 +163,9 @@ export default {
         ephemeral: true,
       });
     } else if (interaction.options.getSubcommand() === "remove-rule") {
-      const ruleNumber = interaction.options.getInteger("rule-number");
+      const ruleNumber = interaction.options.getNumber("rule-number");
 
-      if (!ruleNumber) {
+      if (ruleNumber == undefined) {
         await interaction.reply({
           content: "Please specify a rule number and try again",
           ephemeral: true,

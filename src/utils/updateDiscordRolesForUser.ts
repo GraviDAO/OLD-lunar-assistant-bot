@@ -1,5 +1,6 @@
 import { Client, Guild, GuildMember } from "discord.js";
 import db from "../services/admin";
+import { UpdateUserDiscordRolesResponse } from "../types";
 import { getTokensOfOwner } from "./getTokensOfOwner";
 
 export const coldUpdateDiscordRolesForUser = async (
@@ -7,7 +8,7 @@ export const coldUpdateDiscordRolesForUser = async (
   userID: string,
   userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
-) => {
+): Promise<UpdateUserDiscordRolesResponse> => {
   // get the users wallet address
   const walletAddress = (userDoc.data() as User).wallet;
 
@@ -129,7 +130,7 @@ export const coldUpdateDiscordRolesForUser = async (
 export const updateDiscordRolesForUser = async (
   client: Client,
   userID: string
-) => {
+): Promise<UpdateUserDiscordRolesResponse> => {
   // get the user document
   const userDoc = await db.collection("users").doc(userID).get();
 
@@ -140,8 +141,7 @@ export const updateDiscordRolesForUser = async (
   // later store this in memory for performance reasons
   const guildConfigsSnapshot = await db.collection("guildConfigs").get();
 
-  if (guildConfigsSnapshot.empty)
-    throw new Error("Couldn't find any guild configs");
+  if (guildConfigsSnapshot.empty) return { activeRoles: {}, removedRoles: {} };
 
   return coldUpdateDiscordRolesForUser(
     client,
