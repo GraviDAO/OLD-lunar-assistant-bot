@@ -154,7 +154,20 @@ export default {
       const guildConfigRules = (guildConfigDoc.data() as GuildConfig).rules;
 
       const rulesMessage = guildConfigRules
-        .map((rule, index) => `Rule ${index}: ${JSON.stringify(rule)}`)
+        .map((guildRule, index) => {
+          const nftAddresses = Object.keys(guildRule.nft);
+          if (nftAddresses.length !== 1) return;
+          const nftAddress = nftAddresses[0];
+          const tokenIds = guildRule.nft[nftAddress].tokenIds;
+          const nftRule: NFTRule = {
+            nftAddress,
+            ...(tokenIds && { tokenIds }),
+            quantity: guildRule.nft[nftAddress].quantity,
+            roleName: guildRule.roleName,
+          };
+
+          return `Rule ${index}: ${JSON.stringify(nftRule)}`;
+        })
         .join("\n");
 
       // reply with list of configured rules
