@@ -59,7 +59,11 @@ client.on("interactionCreate", async (interaction) => {
 // update discord roles whenever a user document changes
 db.collection("users").onSnapshot((querySnapshot) => {
   querySnapshot.docChanges().forEach((change) => {
-    updateDiscordRolesForUser(client, change.doc.id);
+    try {
+      updateDiscordRolesForUser(client, change.doc.id);
+    } catch (e) {
+      console.error(e);
+    }
   });
 });
 
@@ -84,12 +88,18 @@ cron.schedule("0 8 * * *", async () => {
       p
         .then(() =>
           // update the user's discord roles
-          coldUpdateDiscordRolesForUser(
-            client,
-            userDoc.id,
-            userDoc,
-            guildConfigsSnapshot
-          )
+          {
+            try {
+              coldUpdateDiscordRolesForUser(
+                client,
+                userDoc.id,
+                userDoc,
+                guildConfigsSnapshot
+              );
+            } catch (e) {
+              console.error(e);
+            }
+          }
         )
         .then(
           // delay for one second between processing each user
