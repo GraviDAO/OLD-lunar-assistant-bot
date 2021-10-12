@@ -17,7 +17,7 @@ export default {
     );
     const url =
       (environment === "production"
-        ? "https://lunar-assistant.vercel.app/"
+        ? "https://lunarassistant.com/"
         : "http://localhost:3000/") + token;
 
     await interaction.reply({

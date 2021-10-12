@@ -1,16 +1,16 @@
 # Lunar Assistant Bot
 
-This repo contains the lunar assistant discord bot. It provides the following slash commands: 
+This repo contains the lunar assistant discord bot. See the guide here: https://guide.lunarassistant.com. It provides the following slash commands: 
 ## Commands
 
 ### lunar-configure
 
 Configures the GuildConfig for the discord server. Has the following command groups:
 
-#### rules command group
+<!-- #### rules command group
 
-Command group for configuring the rules which grant roles based on wallet holdings. Useful for creating private channels that only those with certain wallet holdings have access to, and for letting users show off their wallets via roles.
-##### add-rule
+Command group for configuring the rules which grant roles based on wallet holdings. Useful for creating private channels that only those with certain wallet holdings have access to, and for letting users show off their wallets via roles. -->
+#### add-rule
 
 Adds a rule for granting a role to users. When a user's wallet meets the conditions of the rule, they will be granted the relevant role. Takes the following arguments:
 - nft-address (required) : The contract address against which to check for nft ownership
@@ -18,16 +18,16 @@ Adds a rule for granting a role to users. When a user's wallet meets the conditi
 - quantity (optional, 1 by default) : The quantity of matching nfts that a user must hold in order to meet the rule.
 - token-ids (optional, all by default) : A list of token ids that the rule is restricted to.
 
-##### view-rules
+#### view-rules
 
 View the rules currently configured for the server.
 
-##### remove-rule
+#### remove-rule
 
 Remove a rule based on its index in the output of `/view-rules`. Takes the following arguments:
 - rule-number (required) : The index of the rule to remove.
 
-#### dependencies command group
+<!-- #### dependencies command group
 
 Command group for configuring role dependencies. Useful for making manually granted roles depend on wallet based roles (i.e., you can only be a galactic chairman if you hold at least 2 punks).
 
@@ -59,7 +59,7 @@ View the role alerts currently configured for the server.
 ##### remove-role-alert
 
 Remove a role alert. Takes the following arguments:
-- role (required) : The role for which to remove an alert.
+- role (required) : The role for which to remove an alert. -->
 
 
 ### lunar-link
@@ -77,6 +77,10 @@ Forces a role update based on the contents of a user's linked wallet, then displ
 ### lunar-view-wallet
 
 Displays the wallet a user has linked to their account (only visible to the user who sent the command).
+
+### lunar-disconnect-wallet
+
+Disconnects the user's discord account from their wallet address.
 
 
 ## Adding Lunar Assistant To Your Discord Server
