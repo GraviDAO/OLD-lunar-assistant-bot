@@ -7,8 +7,10 @@ import { commandFiles } from "./commandFiles";
 
 export const registerCommands = async (guild: Guild) => {
   // delete already existing slash commands so that we can update them
+  const commands = await guild.commands.fetch();
+  console.log(commands);
   await Promise.all(
-    guild.commands.cache.map(async (command) => {
+    commands.map(async (command) => {
       console.log("Deleting preexisting command:");
       console.log(command);
       await guild.commands.delete(command.id);
@@ -44,6 +46,7 @@ export const registerCommands = async (guild: Guild) => {
   });
 
   console.log("Successfully registered application commands.");
+  console.log(newCommands);
 
   // now update the permissions to allow for lunar commanders to configure the lunar assistant
   const permissions = [
