@@ -6,17 +6,6 @@ import { clientId, token } from "../../config.json";
 import { commandFiles } from "./commandFiles";
 
 export const registerCommands = async (guild: Guild) => {
-  // delete already existing slash commands so that we can update them
-  const commands = await guild.commands.fetch();
-  console.log(commands);
-  await Promise.all(
-    commands.map(async (command) => {
-      console.log("Deleting preexisting command:");
-      console.log(command);
-      await guild.commands.delete(command.id);
-    })
-  );
-
   // Check if an existing lunar commander role exists in the server
   const existingLunarCommanderRole = guild.roles.cache.find(
     (role) => role.name === "Lunar Commander"
@@ -45,8 +34,7 @@ export const registerCommands = async (guild: Guild) => {
     body: newCommands,
   });
 
-  console.log("Successfully registered application commands.");
-  console.log(newCommands);
+  console.log(`Successfully registered application commands for ${guild.name}`);
 
   // now update the permissions to allow for lunar commanders to configure the lunar assistant
   const permissions = [

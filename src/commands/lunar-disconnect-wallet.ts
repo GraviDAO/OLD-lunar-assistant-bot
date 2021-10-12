@@ -4,24 +4,24 @@ import db from "../services/admin";
 
 export default {
   data: new SlashCommandBuilder()
-    .setName("lunar-view-wallet")
-    .setDescription("View the wallet linked to your discord account."),
+    .setName("lunar-disconnect-wallet")
+    .setDescription("Disconnect the wallet linked to your discord account."),
   execute: async (interaction: CommandInteraction) => {
     // get the user document
     const userDoc = await db.collection("users").doc(interaction.user.id).get();
 
     if (userDoc.exists) {
-      const wallet = (userDoc.data() as User).wallet;
-      const finderBaseAddress = "https://finder.terra.money/columbus-5/address";
+      // delete the users document
+      await db.collection("users").doc(interaction.user.id).delete();
 
       await interaction.reply({
-        content: "Your registered wallet: " + wallet,
+        content: "Your wallet has been disconnected successfully",
         ephemeral: true,
       });
     } else {
       await interaction.reply({
         content:
-          "You haven't linked any wallets yet. Link a wallet with /lunar-link",
+          "You haven't linked a wallet yet, so there is no wallet to disconnect.",
         ephemeral: true,
       });
     }
