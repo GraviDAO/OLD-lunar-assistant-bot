@@ -70,28 +70,41 @@ export const coldUpdateDiscordRolesForUser = async (
       if (numMatchingTokens > rule.quantity) {
         // the user matches the role rules, update accordingly
 
-        // update activeRoles
-        if (activeRoles[guild.name]) {
-          activeRoles[guild.name].push(newRole.name);
-        } else {
-          activeRoles[guild.name] = [newRole.name];
+        try {
+          // add the role to the member
+          member.roles.add(newRole);
+
+          // update activeRoles
+          if (activeRoles[guild.name]) {
+            activeRoles[guild.name].push(newRole.name);
+          } else {
+            activeRoles[guild.name] = [newRole.name];
+          }
+        } catch (e) {
+          console.error(
+            "Couldn't add role, probably because of role hierarchy."
+          );
         }
-        // add the role to the member
-        member.roles.add(newRole);
       } else if (
         member.roles.cache.some((role) => role.name === newRole.name)
       ) {
         // the user doesn't match the role rules but has the role anyways
         // update accordingly
 
-        // update removedRoles
-        if (removedRoles[guild.name]) {
-          removedRoles[guild.name].push(newRole.name);
-        } else {
-          removedRoles[guild.name] = [newRole.name];
+        try {
+          // remove the role from the member
+          member.roles.remove(newRole);
+          // update removedRoles
+          if (removedRoles[guild.name]) {
+            removedRoles[guild.name].push(newRole.name);
+          } else {
+            removedRoles[guild.name] = [newRole.name];
+          }
+        } catch (e) {
+          console.error(
+            "Couldn't remove role, probably because of role hierarchy."
+          );
         }
-        // remove the role from the member
-        member.roles.remove(newRole);
       }
     };
 
