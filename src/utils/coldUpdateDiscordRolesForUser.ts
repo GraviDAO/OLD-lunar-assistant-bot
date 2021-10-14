@@ -1,7 +1,7 @@
+import axios from "axios";
 import { Guild, GuildMember } from "discord.js";
 import { LunarAssistant } from "../index";
 import { UpdateUserDiscordRolesResponse } from "../types";
-import { getTokensOfOwner } from "./getTokensOfOwner";
 
 export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
@@ -18,8 +18,29 @@ export async function coldUpdateDiscordRolesForUser(
   // mapping from discord server name to a list of roles being removed
   const removedRoles: { [guildName: string]: string[] } = {};
 
-  // userTokens cache
-  const userTokens: { [nftAddress: string]: string[] } = {};
+  interface UserItems {
+    items: {
+      collection_addr: string;
+      token_id: string;
+    }[];
+  }
+
+  // query user wallet holdings from random earth
+  const userTokensRes = (
+    await axios.get(
+      `https://randomearth.io/api/users/addr/${walletAddress}/items`
+    )
+  ).data as UserItems;
+
+  // convert random earth response to usable form
+  const userTokens = userTokensRes.items.reduce((acc, item) => {
+    if (acc[item.collection_addr]) {
+      acc[item.collection_addr] = [item.token_id];
+    } else {
+      acc[item.collection_addr].push(item.token_id);
+    }
+    return acc;
+  }, {} as { [nftAddress: string]: string[] });
 
   // update roles for user in guild
   const coldUpdateDiscordRolesForUserInGuild = async (
@@ -51,12 +72,9 @@ export async function coldUpdateDiscordRolesForUser(
       if (!newRole) return;
 
       // check if this user satisfies the rule
-      const tokens = userTokens[guild.name]
-        ? userTokens[guild.name]
-        : ((userTokens[guild.name] = (
-            await getTokensOfOwner(walletAddress, rule.nftAddress)
-          ).tokens),
-          userTokens[guild.name]);
+      const tokens = userTokens[rule.nftAddress]
+        ? userTokens[rule.nftAddress]
+        : [];
 
       // get the number of matching tokens
       const numMatchingTokens = (

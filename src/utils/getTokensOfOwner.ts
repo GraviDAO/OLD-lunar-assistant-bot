@@ -1,5 +1,6 @@
 import { terra } from "../services/terra";
 
+// currently unused in favor of the randomearth api
 export const getTokensOfOwner = async (
   owner: string,
   contractAddress: string
