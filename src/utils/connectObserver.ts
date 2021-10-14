@@ -4,7 +4,7 @@ import { LunarAssistant } from "..";
 export function connectObserver(this: LunarAssistant) {
   const ws = new WebSocket(`wss://observer.terra.dev`);
   ws.onopen = function () {
-    console.info(`Connected to websocket. Listening for new block events...`);
+    console.log(`Connected to websocket. Listening for new block events...`);
     // subscribe to new_block events
     ws.send(
       JSON.stringify({
@@ -19,7 +19,7 @@ export function connectObserver(this: LunarAssistant) {
     await this.handleNewBlock(data);
   };
   ws.onclose = (e) => {
-    console.info("websocket closed. reopening...");
+    console.log("Websocket closed. Reopening...");
     setTimeout(() => {
       this.connectObserver();
     }, 1000);

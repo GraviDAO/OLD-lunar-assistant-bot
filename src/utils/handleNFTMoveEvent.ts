@@ -5,7 +5,7 @@ export async function handleNFTMoveEvent(
   res: any,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ) {
-  console.info(`Handling nft move event`);
+  console.log(`Handling nft move event`);
 
   // get the wallets involved in the event
   const updatedWallets =

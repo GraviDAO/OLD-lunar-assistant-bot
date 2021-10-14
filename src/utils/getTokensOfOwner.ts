@@ -12,7 +12,7 @@ export const getTokensOfOwner = async (
   let res: GetTokensResponse;
   try {
     res = await terra.wasm.contractQuery(contractAddress, query_msg);
-    console.info(contractAddress, query_msg, res);
+    console.log(contractAddress, query_msg, res);
   } catch (e) {
     res = { tokens: [] };
   }
