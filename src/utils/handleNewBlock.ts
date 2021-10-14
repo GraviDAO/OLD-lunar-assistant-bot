@@ -48,8 +48,12 @@ export const handleNewBlock = async (client: Client, data: any) => {
       const guildConfig = guildConfigDoc.data() as GuildConfig;
       const guildConfigContractAddresses = guildConfig.rules.reduce(
         (acc, rule) => {
-          const nftRule = guildRuleToNFTRule(rule);
-          acc.add(nftRule.nftAddress);
+          try {
+            const nftRule = guildRuleToNFTRule(rule);
+            acc.add(nftRule.nftAddress);
+          } catch (e) {
+            console.error("Couldn't transform guild rule to nft rule");
+          }
           return acc;
         },
         new Set<string>()
