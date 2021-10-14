@@ -30,7 +30,6 @@ export async function interactionHandler(
 
   // try to run the command handler
   try {
-    console.log(this.db);
     await command.execute(this, interaction);
   } catch (error) {
     console.error(error);

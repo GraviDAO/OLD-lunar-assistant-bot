@@ -9,7 +9,7 @@ if (!admin.apps.length) {
       ),
     });
   } catch (error) {
-    console.log("Firebase admin initialization error", error);
+    console.error("Firebase admin initialization error", error);
   }
 }
 export default admin.firestore();

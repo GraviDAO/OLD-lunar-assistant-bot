@@ -28,7 +28,6 @@ const lunarVerify = {
     const privateResponse = rawPrivateResponse ? rawPrivateResponse : true;
 
     try {
-      console.log(lunarAssistant.updateDiscordRolesForUser);
       const userActiveRoles = (
         await lunarAssistant.updateDiscordRolesForUser(interaction.user.id)
       ).activeRoles;
@@ -52,7 +51,6 @@ const lunarVerify = {
         });
       }
     } catch (e) {
-      console.log(e);
       await interaction.reply({
         content:
           "Cannot check for roles because you haven't linked a wallet yet. Please link a wallet with /lunar-link and try again.",

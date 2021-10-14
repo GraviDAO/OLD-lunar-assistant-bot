@@ -34,7 +34,9 @@ export const registerCommands = async (guild: Guild) => {
     body: newCommands,
   });
 
-  console.log(`Successfully registered application commands for ${guild.name}`);
+  console.info(
+    `Successfully registered application commands for ${guild.name}`
+  );
 
   // now update the permissions to allow for lunar commanders to configure the lunar assistant
   const permissions = [

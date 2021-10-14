@@ -73,5 +73,5 @@ const lunarAssistantBot = new LunarAssistant();
 
 // start the lunar assistant bot
 lunarAssistantBot.start(() => {
-  console.log("Ready!");
+  console.info("Ready!");
 });
