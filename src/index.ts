@@ -2,15 +2,14 @@ import { Client, Intents } from "discord.js";
 import cron from "node-cron";
 import { token } from "../config.json";
 import db from "./services/admin";
+import { coldUpdateDiscordRolesForUser } from "./utils/coldUpdateDiscordRolesForUser";
 import { connectObserver } from "./utils/connectObserver";
-import { handleNewBlock, handleNFTMoveEvent } from "./utils/handleNewBlock";
+import { handleNewBlock } from "./utils/handleNewBlock";
+import { handleNFTMoveEvent } from "./utils/handleNFTMoveEvent";
 import { interactionHandler } from "./utils/interactionHandler";
 import { registerCommands } from "./utils/registerCommands";
 import { updateAllDiscordUserRoles } from "./utils/updateAllDiscordUserRoles";
-import {
-  coldUpdateDiscordRolesForUser,
-  updateDiscordRolesForUser,
-} from "./utils/updateDiscordRolesForUser";
+import { updateDiscordRolesForUser } from "./utils/updateDiscordRolesForUser";
 
 export class LunarAssistant {
   client: Client;
