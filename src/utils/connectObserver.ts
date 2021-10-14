@@ -1,3 +1,4 @@
+import WebSocket from "ws";
 import { LunarAssistant } from "..";
 
 // connect observer for listening to new transactions

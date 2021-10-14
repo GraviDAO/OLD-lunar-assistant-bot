@@ -60,8 +60,8 @@ export class LunarAssistant {
         );
     });
 
-    // // listen to nft transfer events
-    // this.connectObserver();
+    // listen to nft transfer events
+    this.connectObserver();
 
     // start the discord bot
     this.client.login(token);

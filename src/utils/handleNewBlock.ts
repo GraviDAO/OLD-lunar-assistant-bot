@@ -68,6 +68,11 @@ export async function handleNewBlock(this: LunarAssistant, data: any) {
     },
     []
   );
+
+  console.log(
+    `Processing block with ${nftTransferTransactions.length} relevant events.`
+  );
+
   // process each relevant nft move event
   for (let i = 0; i < nftTransferTransactions.length; i += 1) {
     await this.handleNFTMoveEvent(
