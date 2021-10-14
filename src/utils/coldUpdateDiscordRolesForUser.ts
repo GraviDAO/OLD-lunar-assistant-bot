@@ -1,7 +1,9 @@
-import axios from "axios";
 import { Guild, GuildMember } from "discord.js";
+import { environment } from "../../config.json";
 import { LunarAssistant } from "../index";
-import { UpdateUserDiscordRolesResponse } from "../types";
+import { UpdateUserDiscordRolesResponse, UserTokens } from "../types";
+import { getRandomEarthTokens } from "./getRandomEarthTokens";
+import { getTokensOfOwner } from "./getTokensOfOwner";
 
 export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
@@ -18,43 +20,12 @@ export async function coldUpdateDiscordRolesForUser(
   // mapping from discord server name to a list of roles being removed
   const removedRoles: { [guildName: string]: string[] } = {};
 
-  interface UserItems {
-    items: {
-      collection_addr: string;
-      token_id: string;
-    }[];
-  }
+  const randomEarthUserTokens =
+    environment === "production"
+      ? await getRandomEarthTokens(walletAddress)
+      : null;
 
-  let userTokensRes;
-
-  try {
-    // query user wallet holdings from random earth
-    userTokensRes = (
-      await axios.get(
-        `https://randomearth.io/api/users/addr/${walletAddress}/items`
-      )
-    ).data as UserItems;
-  } catch (e) {
-    console.log(e);
-
-    console.log(
-      "error",
-      walletAddress,
-      `https://randomearth.io/api/users/addr/${walletAddress}/items`
-    );
-
-    return { activeRoles: {}, removedRoles: {} };
-  }
-
-  // convert random earth response to usable form
-  const userTokens = userTokensRes.items.reduce((acc, item) => {
-    if (acc[item.collection_addr]) {
-      acc[item.collection_addr].push(item.token_id);
-    } else {
-      acc[item.collection_addr] = [item.token_id];
-    }
-    return acc;
-  }, {} as { [nftAddress: string]: string[] });
+  const userTokensCache: UserTokens = {};
 
   // update roles for user in guild
   const coldUpdateDiscordRolesForUserInGuild = async (
@@ -86,9 +57,17 @@ export async function coldUpdateDiscordRolesForUser(
       if (!newRole) return;
 
       // check if this user satisfies the rule
-      const tokens = userTokens[rule.nftAddress]
-        ? userTokens[rule.nftAddress]
-        : [];
+      const tokens =
+        environment === "production"
+          ? randomEarthUserTokens![rule.nftAddress]
+            ? randomEarthUserTokens![rule.nftAddress]
+            : []
+          : userTokensCache[rule.nftAddress]
+          ? userTokensCache[rule.nftAddress]
+          : ((userTokensCache[rule.nftAddress] = (
+              await getTokensOfOwner(walletAddress, rule.nftAddress)
+            ).tokens),
+            userTokensCache[rule.nftAddress]);
 
       // get the number of matching tokens
       const numMatchingTokens = (

@@ -14,3 +14,14 @@ export interface UpdateUserDiscordRolesResponse {
   activeRoles: { [guildName: string]: string[] };
   removedRoles: { [guildName: string]: string[] };
 }
+
+export interface UserItems {
+  items: {
+    collection_addr: string;
+    token_id: string;
+  }[];
+}
+
+export interface UserTokens {
+  [nftAddress: string]: string[];
+}
