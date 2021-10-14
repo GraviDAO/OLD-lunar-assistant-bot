@@ -25,12 +25,26 @@ export async function coldUpdateDiscordRolesForUser(
     }[];
   }
 
-  // query user wallet holdings from random earth
-  const userTokensRes = (
-    await axios.get(
+  let userTokensRes;
+
+  try {
+    // query user wallet holdings from random earth
+    userTokensRes = (
+      await axios.get(
+        `https://randomearth.io/api/users/addr/${walletAddress}/items`
+      )
+    ).data as UserItems;
+  } catch (e) {
+    console.log(e);
+
+    console.log(
+      "error",
+      walletAddress,
       `https://randomearth.io/api/users/addr/${walletAddress}/items`
-    )
-  ).data as UserItems;
+    );
+
+    return { activeRoles: {}, removedRoles: {} };
+  }
 
   // convert random earth response to usable form
   const userTokens = userTokensRes.items.reduce((acc, item) => {
