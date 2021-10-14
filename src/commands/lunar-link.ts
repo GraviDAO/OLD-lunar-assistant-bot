@@ -25,7 +25,7 @@ export default {
         : "http://localhost:3000/") + token;
 
     await interaction.reply({
-      content: `Greetings from the Lunar Assistant! Please click the [here](${url}) to link your terra wallet with your discord account.`,
+      content: `Greetings from the Lunar Assistant! Please click [here](${url}) to link your terra wallet with your discord account.`,
       ephemeral: true,
     });
   },
