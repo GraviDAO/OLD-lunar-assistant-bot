@@ -5,6 +5,7 @@ import { token } from "../config.json";
 import db from "./services/admin";
 import { SlashCommandData } from "./types";
 import { commandFiles } from "./utils/commandFiles";
+import { handleNewBlock } from "./utils/handleNewBlock";
 import { registerCommands } from "./utils/registerCommands";
 import {
   coldUpdateDiscordRolesForUser,
@@ -103,6 +104,34 @@ cron.schedule("0 0 * * *", async () => {
   );
 });
 
+// connect observer for listening to new transactions
+const connectObserver = () => {
+  const ws = new WebSocket(`wss://observer.terra.dev`);
+  ws.onopen = function () {
+    console.info(`Connected to websocket. Listening for new block events...`);
+    // subscribe to new_block events
+    ws.send(
+      JSON.stringify({
+        subscribe: `new_block`,
+        chain_id: "columbus-5",
+      })
+    );
+  };
+  ws.onmessage = async (message) => {
+    /* process messages here */
+    const data = JSON.parse(message.data.toString());
+    await handleNewBlock(client, data);
+  };
+  ws.onclose = (e) => {
+    console.info("websocket closed. reopening...");
+    setTimeout(function () {
+      connectObserver();
+    }, 1000);
+  };
+  return ws;
+};
+
+connectObserver();
 // start the discord bot
 client.login(token);
 
