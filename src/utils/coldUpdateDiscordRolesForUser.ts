@@ -49,9 +49,9 @@ export async function coldUpdateDiscordRolesForUser(
   // convert random earth response to usable form
   const userTokens = userTokensRes.items.reduce((acc, item) => {
     if (acc[item.collection_addr]) {
-      acc[item.collection_addr] = [item.token_id];
-    } else {
       acc[item.collection_addr].push(item.token_id);
+    } else {
+      acc[item.collection_addr] = [item.token_id];
     }
     return acc;
   }, {} as { [nftAddress: string]: string[] });
