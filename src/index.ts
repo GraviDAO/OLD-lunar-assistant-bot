@@ -18,6 +18,8 @@ export class LunarAssistant {
   constructor() {
     // Create a new client instance
     this.client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+
+    // save the db instance
     this.db = db;
   }
 

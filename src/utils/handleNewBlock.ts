@@ -4,6 +4,7 @@ import { guildRuleToNFTRule } from "./guildRuleToNFTRule";
 export async function handleNewBlock(this: LunarAssistant, data: any) {
   const guildConfigsSnapshot = await this.db.collection("guildConfigs").get();
 
+  // get the list of contract addresses we are interested in
   const interestedContractAddresses = guildConfigsSnapshot.docs.reduce(
     (acc, guildConfigDoc) => {
       const guildConfig = guildConfigDoc.data() as GuildConfig;
@@ -26,19 +27,13 @@ export async function handleNewBlock(this: LunarAssistant, data: any) {
     new Set<string>()
   );
 
+  // get the list of transactions we are interested in
   const nftTransferTransactions = data.data.txs.reduce(
     (acc: any[], txn: any) => {
       if (!txn.logs) return acc;
       if (txn.logs.length === 0) return acc;
 
-      // want to filter for transactions that have an nft transfer event
-
-      // we are interested in the "mint" action
-      // transfer_nft
-      // send_nft
-
-      // what about cases where the nft is sent to randomearth?
-
+      // find transactions executed against interesting contract addresses
       const nftExecuteEvent = txn.logs[0].events.find(
         (tmpEvent: any) =>
           tmpEvent.type === `execute_contract` &&
@@ -50,6 +45,7 @@ export async function handleNewBlock(this: LunarAssistant, data: any) {
       );
 
       if (nftExecuteEvent) {
+        // find nft move events in the interested transactions
         const nftMoveEvent = txn.logs[0].events.find(
           (tmpEvent: any) =>
             tmpEvent.type === `wasm` &&
@@ -72,6 +68,7 @@ export async function handleNewBlock(this: LunarAssistant, data: any) {
     },
     []
   );
+  // process each relevant nft move event
   for (let i = 0; i < nftTransferTransactions.length; i += 1) {
     await this.handleNFTMoveEvent(
       nftTransferTransactions[i],

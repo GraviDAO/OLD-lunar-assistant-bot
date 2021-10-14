@@ -6,6 +6,8 @@ export async function handleNFTMoveEvent(
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ) {
   console.info(`Handling nft move event`);
+
+  // get the wallets involved in the event
   const updatedWallets =
     res.action === `mint`
       ? [res.minter]
@@ -13,7 +15,8 @@ export async function handleNFTMoveEvent(
       ? [res.sender, res.recipient]
       : [];
 
-  // for each updated wallet, check if it has a corresponding Discord ID and if so, call it
+  // for each updated wallet, check if it has a corresponding Discord ID
+  // if so, update its discord roles
   await Promise.all(
     updatedWallets.map(async (wallet) => {
       const usersRegisteredWithWallet = await this.db
