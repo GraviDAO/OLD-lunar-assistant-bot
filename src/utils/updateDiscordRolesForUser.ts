@@ -1,14 +1,14 @@
-import { Client, Guild, GuildMember } from "discord.js";
-import db from "../services/admin";
+import { Guild, GuildMember } from "discord.js";
+import { LunarAssistant } from "../index";
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { getTokensOfOwner } from "./getTokensOfOwner";
 
-export const coldUpdateDiscordRolesForUser = async (
-  client: Client,
+export async function coldUpdateDiscordRolesForUser(
+  this: LunarAssistant,
   userID: string,
   userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
-): Promise<UpdateUserDiscordRolesResponse> => {
+): Promise<UpdateUserDiscordRolesResponse> {
   // get the users wallet address
   const walletAddress = (userDoc.data() as User).wallet;
 
@@ -123,7 +123,7 @@ export const coldUpdateDiscordRolesForUser = async (
   // loop through guilds registered with lunar assistant in sequence
   await guildConfigsSnapshot.docs.reduce((p, guildConfigDoc) => {
     // get the guild from the discord client
-    const guild = client.guilds.cache.get(guildConfigDoc.id);
+    const guild = this.client.guilds.cache.get(guildConfigDoc.id);
 
     if (!guild) return new Promise((resolve) => resolve(null));
 
@@ -139,28 +139,27 @@ export const coldUpdateDiscordRolesForUser = async (
 
   // return the list of the users active roles and removed roles
   return { activeRoles, removedRoles };
-};
+}
 
-export const updateDiscordRolesForUser = async (
-  client: Client,
+export async function updateDiscordRolesForUser(
+  this: LunarAssistant,
   userID: string
-): Promise<UpdateUserDiscordRolesResponse> => {
+): Promise<UpdateUserDiscordRolesResponse> {
   // get the user document
-  const userDoc = await db.collection("users").doc(userID).get();
+  const userDoc = await this.db.collection("users").doc(userID).get();
 
   // check that the user document exists
   if (!userDoc.exists) throw new Error("Couldn't find user document");
 
   // get guilds from db
   // later store this in memory for performance reasons
-  const guildConfigsSnapshot = await db.collection("guildConfigs").get();
+  const guildConfigsSnapshot = await this.db.collection("guildConfigs").get();
 
   if (guildConfigsSnapshot.empty) return { activeRoles: {}, removedRoles: {} };
 
-  return coldUpdateDiscordRolesForUser(
-    client,
+  return this.coldUpdateDiscordRolesForUser(
     userID,
     userDoc,
     guildConfigsSnapshot
   );
-};
+}

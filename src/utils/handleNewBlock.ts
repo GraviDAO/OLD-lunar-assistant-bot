@@ -1,13 +1,11 @@
-import { Client } from "discord.js";
-import db from "../services/admin";
+import { LunarAssistant } from "..";
 import { guildRuleToNFTRule } from "./guildRuleToNFTRule";
-import { coldUpdateDiscordRolesForUser } from "./updateDiscordRolesForUser";
 
-const handleResponse = async (
-  client: Client,
+export async function handleNFTMoveEvent(
+  this: LunarAssistant,
   res: any,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
-) => {
+) {
   console.info(`Handling nft move event`);
   const updatedWallets =
     res.action === `mint`
@@ -19,7 +17,7 @@ const handleResponse = async (
   // for each updated wallet, check if it has a corresponding Discord ID and if so, call it
   await Promise.all(
     updatedWallets.map(async (wallet) => {
-      const usersRegisteredWithWallet = await db
+      const usersRegisteredWithWallet = await this.db
         .collection("users")
         .where("wallet", "==", wallet)
         .get();
@@ -29,8 +27,7 @@ const handleResponse = async (
         usersRegisteredWithWallet.docs.length === 1
       ) {
         const userDoc = usersRegisteredWithWallet.docs[0];
-        await coldUpdateDiscordRolesForUser(
-          client,
+        await this.coldUpdateDiscordRolesForUser(
           userDoc.id,
           userDoc,
           guildConfigsSnapshot
@@ -38,10 +35,10 @@ const handleResponse = async (
       }
     })
   );
-};
+}
 
-export const handleNewBlock = async (client: Client, data: any) => {
-  const guildConfigsSnapshot = await db.collection("guildConfigs").get();
+export async function handleNewBlock(this: LunarAssistant, data: any) {
+  const guildConfigsSnapshot = await this.db.collection("guildConfigs").get();
 
   const interestedContractAddresses = guildConfigsSnapshot.docs.reduce(
     (acc, guildConfigDoc) => {
@@ -112,10 +109,9 @@ export const handleNewBlock = async (client: Client, data: any) => {
     []
   );
   for (let i = 0; i < nftTransferTransactions.length; i += 1) {
-    await handleResponse(
-      client,
+    await this.handleNFTMoveEvent(
       nftTransferTransactions[i],
       guildConfigsSnapshot
     );
   }
-};
+}
