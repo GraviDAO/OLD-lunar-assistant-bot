@@ -1,13 +1,17 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import jwt from "jsonwebtoken";
+import { LunarAssistant } from "..";
 import { DISCORD_VERIFICATION_SECRET, environment } from "../../config.json";
 
 export default {
   data: new SlashCommandBuilder()
     .setName("lunar-link")
     .setDescription("Links a wallet to your discord account."),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (
+    lunarAssistant: LunarAssistant,
+    interaction: CommandInteraction
+  ) => {
     // verify the interaction is valid
 
     const token = jwt.sign(

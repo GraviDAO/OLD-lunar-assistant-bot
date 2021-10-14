@@ -15,6 +15,15 @@ export class LunarAssistant {
   client: Client;
   db: FirebaseFirestore.Firestore;
 
+  // define functions
+  public updateDiscordRolesForUser = updateDiscordRolesForUser;
+  public coldUpdateDiscordRolesForUser = coldUpdateDiscordRolesForUser;
+  public updateAllDiscordUserRoles = updateAllDiscordUserRoles;
+  public handleNFTMoveEvent = handleNFTMoveEvent;
+  public handleNewBlock = handleNewBlock;
+  public connectObserver = connectObserver;
+  public interactionHandler = interactionHandler;
+
   constructor() {
     // Create a new client instance
     this.client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -22,14 +31,6 @@ export class LunarAssistant {
     // save the db instance
     this.db = db;
   }
-
-  // define functions
-  updateDiscordRolesForUser = updateDiscordRolesForUser;
-  coldUpdateDiscordRolesForUser = coldUpdateDiscordRolesForUser;
-  updateAllDiscordUserRoles = updateAllDiscordUserRoles;
-  handleNFTMoveEvent = handleNFTMoveEvent;
-  handleNewBlock = handleNewBlock;
-  connectObserver = connectObserver;
 
   start(onReady: () => void) {
     // Setup listeners
@@ -41,7 +42,12 @@ export class LunarAssistant {
     this.client.on("guildCreate", registerCommands);
 
     // handle slash command interactions
-    this.client.on("interactionCreate", interactionHandler);
+    this.client.on("interactionCreate", (interaction) =>
+      this.interactionHandler(interaction)
+    );
+
+    // cronjob to update discord roles once a day
+    cron.schedule("0 0 * * *", () => this.updateAllDiscordUserRoles);
 
     // update discord roles whenever a user document changes
     this.db.collection("users").onSnapshot((querySnapshot) => {
@@ -53,9 +59,6 @@ export class LunarAssistant {
           new Promise((resolve) => resolve(null))
         );
     });
-
-    // cronjob to update discord roles once a day
-    cron.schedule("0 0 * * *", this.updateAllDiscordUserRoles);
 
     // // listen to nft transfer events
     // this.connectObserver();

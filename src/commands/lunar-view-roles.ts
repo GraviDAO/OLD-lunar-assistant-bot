@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { updateDiscordRolesForUser } from "../utils/updateDiscordRolesForUser";
+import { LunarAssistant } from "..";
 
 const lunarVerify = {
   data: new SlashCommandBuilder()
@@ -15,18 +15,22 @@ const lunarVerify = {
           "Indicate whether or not the response should be public or private. Public by default."
         )
     ),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (
+    lunarAssistant: LunarAssistant,
+    interaction: CommandInteraction
+  ) => {
     // verify the interaction is valid
     if (!interaction.guildId || !interaction.guild || !interaction.member)
       return;
 
     const rawPrivateResponse =
       interaction.options.getBoolean("private-response");
-    const privateResponse = rawPrivateResponse ? rawPrivateResponse : false;
+    const privateResponse = rawPrivateResponse ? rawPrivateResponse : true;
 
     try {
+      console.log(lunarAssistant.updateDiscordRolesForUser);
       const userActiveRoles = (
-        await updateDiscordRolesForUser(interaction.client, interaction.user.id)
+        await lunarAssistant.updateDiscordRolesForUser(interaction.user.id)
       ).activeRoles;
 
       if (Object.keys(userActiveRoles).length > 0) {
@@ -47,7 +51,8 @@ const lunarVerify = {
           ephemeral: privateResponse,
         });
       }
-    } catch {
+    } catch (e) {
+      console.log(e);
       await interaction.reply({
         content:
           "Cannot check for roles because you haven't linked a wallet yet. Please link a wallet with /lunar-link and try again.",

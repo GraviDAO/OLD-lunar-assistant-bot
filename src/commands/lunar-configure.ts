@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { LunarAssistant } from "..";
 import db from "../services/admin";
 
 export default {
@@ -58,7 +59,10 @@ export default {
             .setRequired(true)
         )
     ),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (
+    lunarAssistant: LunarAssistant,
+    interaction: CommandInteraction
+  ) => {
     // verify the interaction is valid
     if (!interaction.guildId || !interaction.guild || !interaction.member)
       return;

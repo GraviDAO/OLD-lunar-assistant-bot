@@ -1,12 +1,16 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { LunarAssistant } from "..";
 import db from "../services/admin";
 
 export default {
   data: new SlashCommandBuilder()
     .setName("lunar-disconnect-wallet")
     .setDescription("Disconnect the wallet linked to your discord account."),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (
+    lunarAssistant: LunarAssistant,
+    interaction: CommandInteraction
+  ) => {
     // get the user document
     const userDoc = await db.collection("users").doc(interaction.user.id).get();
 

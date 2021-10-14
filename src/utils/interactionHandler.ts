@@ -1,5 +1,6 @@
 import { Collection, Interaction } from "discord.js";
 import path from "path";
+import { LunarAssistant } from "..";
 import { SlashCommandData } from "../types";
 import { commandFiles } from "./commandFiles";
 
@@ -16,7 +17,10 @@ for (const file of commandFiles) {
   commandHandlers.set(command.data.name, command);
 }
 
-export const interactionHandler = async (interaction: Interaction) => {
+export async function interactionHandler(
+  this: LunarAssistant,
+  interaction: Interaction
+) {
   if (!interaction.isCommand()) return;
 
   // get the command handler
@@ -26,7 +30,8 @@ export const interactionHandler = async (interaction: Interaction) => {
 
   // try to run the command handler
   try {
-    await command.execute(interaction);
+    console.log(this.db);
+    await command.execute(this, interaction);
   } catch (error) {
     console.error(error);
     await interaction.reply({
@@ -34,4 +39,4 @@ export const interactionHandler = async (interaction: Interaction) => {
       ephemeral: true,
     });
   }
-};
+}
