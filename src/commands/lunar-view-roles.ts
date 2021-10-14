@@ -25,7 +25,7 @@ const lunarVerify = {
 
     const rawPrivateResponse =
       interaction.options.getBoolean("private-response");
-    const privateResponse = rawPrivateResponse ? rawPrivateResponse : true;
+    const privateResponse = rawPrivateResponse ? rawPrivateResponse : false;
 
     try {
       const userActiveRoles = (
