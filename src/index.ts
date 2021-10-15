@@ -51,7 +51,9 @@ export class LunarAssistant {
 
     // update discord roles whenever a user document changes
     this.db.collection("users").onSnapshot((querySnapshot) => {
-      querySnapshot.docChanges().reduce(
+      const changedDocs = querySnapshot.docChanges();
+      console.log("Docs changed: " + changedDocs.map((doc) => doc.doc.id));
+      changedDocs.reduce(
         (p, changedDoc) =>
           p.then(() =>
             this.updateDiscordRolesForUser(changedDoc.doc.id).catch(
