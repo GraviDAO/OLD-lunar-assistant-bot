@@ -78,7 +78,7 @@ export async function coldUpdateDiscordRolesForUser(
           : tokens
       ).length;
 
-      if (numMatchingTokens > rule.quantity) {
+      if (numMatchingTokens >= rule.quantity) {
         // the user matches the role rules, update accordingly
 
         try {
