@@ -51,13 +51,16 @@ export class LunarAssistant {
 
     // update discord roles whenever a user document changes
     this.db.collection("users").onSnapshot((querySnapshot) => {
-      querySnapshot
-        .docChanges()
-        .reduce(
-          (p, changedDoc) =>
-            p.then(() => this.updateDiscordRolesForUser(changedDoc.doc.id)),
-          new Promise((resolve) => resolve(null))
-        );
+      querySnapshot.docChanges().reduce(
+        (p, changedDoc) =>
+          p.then(() =>
+            this.updateDiscordRolesForUser(changedDoc.doc.id).catch(
+              // ignore errors
+              (error) => {}
+            )
+          ),
+        new Promise((resolve) => resolve(null))
+      );
     });
 
     // listen to nft transfer events
