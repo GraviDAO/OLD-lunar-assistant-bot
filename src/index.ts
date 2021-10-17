@@ -55,12 +55,18 @@ export class LunarAssistant {
       console.log("Docs changed: " + changedDocs.map((doc) => doc.doc.id));
       changedDocs.reduce(
         (p, changedDoc) =>
-          p.then(() =>
-            this.updateDiscordRolesForUser(changedDoc.doc.id).catch(
-              // ignore errors
-              (error) => {}
+          p
+            .then(() =>
+              this.updateDiscordRolesForUser(changedDoc.doc.id).catch(
+                // ignore errors
+                (error) => {}
+              )
             )
-          ),
+            .then(
+              // delay for one second between processing each user
+              () =>
+                new Promise((resolve) => setTimeout(() => resolve(null), 2000))
+            ),
         new Promise((resolve) => resolve(null))
       );
     });
