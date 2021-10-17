@@ -136,12 +136,12 @@ export async function coldUpdateDiscordRolesForUser(
     // get the guild from the discord client
     const guild = this.client.guilds.cache.get(guildConfigDoc.id);
 
-    if (!guild) return new Promise((resolve) => resolve(null));
+    if (!guild) return p.then(() => new Promise((resolve) => resolve(null)));
 
     // get the member from the discord client
     const member = guild.members.cache.get(userID);
 
-    if (!member) return new Promise((resolve) => resolve(null));
+    if (!member) return p.then(() => new Promise((resolve) => resolve(null)));
 
     return p.then(() =>
       coldUpdateDiscordRolesForUserInGuild(guild, member, guildConfigDoc)
