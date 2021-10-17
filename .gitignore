@@ -1,4 +1,5 @@
 .env
 node_modules/
 config.json
+config.json.prod
 dist/

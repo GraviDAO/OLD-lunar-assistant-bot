@@ -1,7 +1,6 @@
 {
 "token": "",
 "clientId": "",
-"guildId": "",
 "environment": "",
 "DISCORD_VERIFICATION_SECRET": "",
 "FIREBASE_ADMIN_SERVICE_ACCOUNT": {}
