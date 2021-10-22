@@ -2,6 +2,7 @@
 "token": "",
 "clientId": "",
 "environment": "",
+"maintenance_mode": false,
 "DISCORD_VERIFICATION_SECRET": "",
 "FIREBASE_ADMIN_SERVICE_ACCOUNT": {}
 }

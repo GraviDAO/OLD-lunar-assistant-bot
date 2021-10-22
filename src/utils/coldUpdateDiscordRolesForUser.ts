@@ -20,10 +20,15 @@ export async function coldUpdateDiscordRolesForUser(
   // mapping from discord server name to a list of roles being removed
   const removedRoles: { [guildName: string]: string[] } = {};
 
-  const randomEarthUserTokens =
-    environment === "production"
-      ? await getRandomEarthTokens(walletAddress)
-      : null;
+  let randomEarthUserTokens: UserTokens;
+
+  if (environment === "production") {
+    try {
+      randomEarthUserTokens = await getRandomEarthTokens(walletAddress);
+    } catch (e) {
+      throw new RandomEarthAPIError("Failed to request the randomearth api.");
+    }
+  }
 
   const userTokensCache: UserTokens = {};
 

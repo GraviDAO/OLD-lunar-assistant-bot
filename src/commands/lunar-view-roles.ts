@@ -51,11 +51,26 @@ const lunarVerify = {
         });
       }
     } catch (e) {
-      await interaction.reply({
-        content:
-          "Cannot check for roles because you haven't linked a wallet yet. Please link a wallet with /lunar-link and try again.",
-        ephemeral: privateResponse,
-      });
+      console.error(e);
+
+      if (e instanceof UserDocMissingError) {
+        await interaction.reply({
+          content:
+            "Cannot check for roles because you haven't linked a wallet yet. Please link a wallet with /lunar-link and try again.",
+          ephemeral: true,
+        });
+      } else if (e instanceof RandomEarthAPIError) {
+        await interaction.reply({
+          content:
+            "The bot is having trouble reading the RandomEarth listings, please try again later. Roles will be frozen until the bot can read RandomEarth listings again.",
+          ephemeral: true,
+        });
+      } else {
+        await interaction.reply({
+          content: "There was an unknown error while executing this command!",
+          ephemeral: true,
+        });
+      }
     }
   },
 };

@@ -9,7 +9,8 @@ export async function updateDiscordRolesForUser(
   const userDoc = await this.db.collection("users").doc(userID).get();
 
   // check that the user document exists
-  if (!userDoc.exists) throw new Error("Couldn't find user document");
+  if (!userDoc.exists)
+    throw new UserDocMissingError("Couldn't find user document");
 
   // get guilds from db
   // later store this in memory for performance reasons

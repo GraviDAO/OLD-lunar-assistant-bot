@@ -1,6 +1,6 @@
 import { Client, Intents } from "discord.js";
 import cron from "node-cron";
-import { token } from "../config.json";
+import { maintenance_mode, token } from "../config.json";
 import db from "./services/admin";
 import { coldUpdateDiscordRolesForUser } from "./utils/coldUpdateDiscordRolesForUser";
 import { connectObserver } from "./utils/connectObserver";
@@ -46,33 +46,38 @@ export class LunarAssistant {
       this.interactionHandler(interaction)
     );
 
-    // cronjob to update discord roles once a day
-    cron.schedule("0 0 * * *", () => this.updateAllDiscordUserRoles);
+    // only add listeners when not in maintenance mode
+    if (!maintenance_mode) {
+      // cronjob to update discord roles once a day
+      cron.schedule("0 0 * * *", () => this.updateAllDiscordUserRoles);
 
-    // update discord roles whenever a user document changes
-    this.db.collection("users").onSnapshot((querySnapshot) => {
-      const changedDocs = querySnapshot.docChanges();
-      console.log("Docs changed: " + changedDocs.map((doc) => doc.doc.id));
-      changedDocs.reduce(
-        (p, changedDoc) =>
-          p
-            .then(() =>
-              this.updateDiscordRolesForUser(changedDoc.doc.id).catch(
-                // ignore errors
-                (error) => {}
+      // update discord roles whenever a user document changes
+      this.db.collection("users").onSnapshot((querySnapshot) => {
+        const changedDocs = querySnapshot.docChanges();
+        console.log("Docs changed: " + changedDocs.map((doc) => doc.doc.id));
+        changedDocs.reduce(
+          (p, changedDoc) =>
+            p
+              .then(() =>
+                this.updateDiscordRolesForUser(changedDoc.doc.id).catch(
+                  // ignore errors
+                  (error) => {}
+                )
               )
-            )
-            .then(
-              // delay for one second between processing each user
-              () =>
-                new Promise((resolve) => setTimeout(() => resolve(null), 2000))
-            ),
-        new Promise((resolve) => resolve(null))
-      );
-    });
+              .then(
+                // delay for one second between processing each user
+                () =>
+                  new Promise((resolve) =>
+                    setTimeout(() => resolve(null), 2000)
+                  )
+              ),
+          new Promise((resolve) => resolve(null))
+        );
+      });
 
-    // listen to nft transfer events
-    this.connectObserver();
+      // listen to nft transfer events
+      this.connectObserver();
+    }
 
     // start the discord bot
     this.client.login(token);
