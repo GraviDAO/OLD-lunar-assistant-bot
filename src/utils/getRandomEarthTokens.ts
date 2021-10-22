@@ -8,7 +8,7 @@ export const getRandomEarthTokens = async (walletAddress: string) => {
     // query user wallet holdings from random earth
     userTokensRes = (
       await axios.get(
-        `https://randomearth.io/api/users/addr/${walletAddress}/items`
+        `https://randomearth.io/api/items?user_addr=${walletAddress}`
       )
     ).data as UserItems;
 
@@ -29,7 +29,7 @@ export const getRandomEarthTokens = async (walletAddress: string) => {
     console.log(
       "error",
       walletAddress,
-      `https://randomearth.io/api/users/addr/${walletAddress}/items`
+      `https://randomearth.io/api/items?user_addr=${walletAddress}`
     );
 
     throw new Error("Failed to request the randomearth api");
