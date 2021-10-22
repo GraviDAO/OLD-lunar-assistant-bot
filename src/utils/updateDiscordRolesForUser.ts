@@ -1,5 +1,6 @@
 import { LunarAssistant } from "../index";
 import { UpdateUserDiscordRolesResponse } from "../types";
+import { UserDocMissingError } from "../types/errors";
 
 export async function updateDiscordRolesForUser(
   this: LunarAssistant,

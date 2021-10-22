@@ -2,6 +2,7 @@ import { Guild, GuildMember } from "discord.js";
 import { environment } from "../../config.json";
 import { LunarAssistant } from "../index";
 import { UpdateUserDiscordRolesResponse, UserTokens } from "../types";
+import { RandomEarthAPIError } from "../types/errors";
 import { getRandomEarthTokens } from "./getRandomEarthTokens";
 import { getTokensOfOwner } from "./getTokensOfOwner";
 

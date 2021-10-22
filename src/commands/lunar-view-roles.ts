@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { LunarAssistant } from "..";
+import { RandomEarthAPIError, UserDocMissingError } from "../types/errors";
 
 const lunarVerify = {
   data: new SlashCommandBuilder()

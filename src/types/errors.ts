@@ -1,4 +1,4 @@
-class UserDocMissingError extends Error {
+export class UserDocMissingError extends Error {
   constructor(m: string) {
     super(m);
 
@@ -7,7 +7,7 @@ class UserDocMissingError extends Error {
   }
 }
 
-class RandomEarthAPIError extends Error {
+export class RandomEarthAPIError extends Error {
   constructor(m: string) {
     super(m);
 
