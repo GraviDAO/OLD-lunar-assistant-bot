@@ -9,6 +9,8 @@ export const getAllTokensOfOwner = async (
   walletAddress: string,
   contractAddresses: string[]
 ) => {
+  console.log(`Getting all tokens for ${walletAddress}`);
+
   const userTokensCache: UserTokens = {};
 
   const unionIntoUserTokensCache = (
