@@ -1,5 +1,5 @@
 import axios from "axios";
-import { UserItems, UserTokens } from "../types";
+import { RandomEarthUserItems, UserTokens } from "../types";
 
 export const getRandomEarthTokens = async (walletAddress: string) => {
   let userTokensRes;
@@ -10,7 +10,7 @@ export const getRandomEarthTokens = async (walletAddress: string) => {
       await axios.get(
         `https://randomearth.io/api/items?user_addr=${walletAddress}`
       )
-    ).data as UserItems;
+    ).data as RandomEarthUserItems;
 
     // convert random earth response to usable form
     const userTokens = userTokensRes.items.reduce((acc, item) => {

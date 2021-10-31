@@ -5,8 +5,6 @@ export async function handleNFTMoveEvent(
   res: any,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ) {
-  console.log(`Handling nft move event`);
-
   // get the wallets involved in the event
   const updatedWallets =
     res.action === `mint`
@@ -28,6 +26,10 @@ export async function handleNFTMoveEvent(
         !usersRegisteredWithWallet.empty &&
         usersRegisteredWithWallet.docs.length === 1
       ) {
+        console.log(
+          `Updating user roles for ${wallet} because of nft move event`
+        );
+
         const userDoc = usersRegisteredWithWallet.docs[0];
         await this.coldUpdateDiscordRolesForUser(
           userDoc.id,

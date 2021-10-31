@@ -1,3 +1,5 @@
+import { GuildRule, NFTRule } from "../shared/firestoreTypes";
+
 export const guildRuleToNFTRule = (guildRule: GuildRule): NFTRule => {
   // for now we are only handling a single nft rule
   // build the single NFT rule

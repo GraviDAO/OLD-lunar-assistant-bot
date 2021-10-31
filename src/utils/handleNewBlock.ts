@@ -1,4 +1,5 @@
 import { LunarAssistant } from "..";
+import { GuildConfig } from "../shared/firestoreTypes";
 import { guildRuleToNFTRule } from "./guildRuleToNFTRule";
 
 export async function handleNewBlock(this: LunarAssistant, data: any) {
