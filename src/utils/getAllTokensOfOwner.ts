@@ -17,7 +17,7 @@ export const getAllTokensOfOwner = async (
   ) => {
     if (userTokensCache[contractAddress]) {
       userTokensCache[contractAddress] = Array.from(
-        new Set(...tokenIds, ...userTokensCache[contractAddress])
+        new Set([...tokenIds, ...userTokensCache[contractAddress]])
       );
     } else {
       userTokensCache[contractAddress] = tokenIds;
