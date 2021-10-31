@@ -1,15 +1,15 @@
-interface User {
+export interface User {
   wallet: string;
 }
 
-type NFTRule = {
+export type NFTRule = {
   nftAddress: string;
   tokenIds?: string[];
   quantity: number;
   roleName: string;
 };
 
-type GuildRule = {
+export type GuildRule = {
   version: string;
   nft: {
     [nftAddress: string]: {
@@ -29,6 +29,6 @@ type GuildRule = {
   };
   roleName: string;
 };
-interface GuildConfig {
+export interface GuildConfig {
   rules: GuildRule[];
 }

@@ -15,11 +15,18 @@ export interface UpdateUserDiscordRolesResponse {
   removedRoles: { [guildName: string]: string[] };
 }
 
-export interface UserItems {
-  items: {
-    collection_addr: string;
-    token_id: string;
-  }[];
+export interface RandomEarthUserItem {
+  collection_addr: string;
+  token_id: string;
+}
+
+export interface RandomEarthUserItems {
+  items: RandomEarthUserItem[];
+}
+
+export interface KnowhereUserItem {
+  nftContract: string;
+  tokenId: string;
 }
 
 export interface UserTokens {
