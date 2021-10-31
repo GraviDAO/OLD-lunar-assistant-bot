@@ -1,10 +1,14 @@
 import { Guild, GuildMember } from "discord.js";
-import { environment } from "../../config.json";
 import { LunarAssistant } from "../index";
-import { UpdateUserDiscordRolesResponse, UserTokens } from "../types";
-import { RandomEarthAPIError } from "../types/errors";
-import { getRandomEarthTokens } from "./getRandomEarthTokens";
-import { getTokensOfOwner } from "./getTokensOfOwner";
+import {
+  GuildConfig,
+  GuildRule,
+  NFTRule,
+  User,
+} from "../shared/firestoreTypes";
+import { UpdateUserDiscordRolesResponse } from "../types";
+import { getAllTokensOfOwner } from "./getAllTokensOfOwner";
+import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 
 export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
@@ -21,17 +25,13 @@ export async function coldUpdateDiscordRolesForUser(
   // mapping from discord server name to a list of roles being removed
   const removedRoles: { [guildName: string]: string[] } = {};
 
-  let randomEarthUserTokens: UserTokens;
+  const relevantContractAddresses =
+    getRelevantContractAddresses(guildConfigsSnapshot);
 
-  if (environment === "production") {
-    try {
-      randomEarthUserTokens = await getRandomEarthTokens(walletAddress);
-    } catch (e) {
-      throw new RandomEarthAPIError("Failed to request the randomearth api.");
-    }
-  }
-
-  const userTokensCache: UserTokens = {};
+  const userTokensCache = await getAllTokensOfOwner(
+    walletAddress,
+    relevantContractAddresses
+  );
 
   // update roles for user in guild
   const coldUpdateDiscordRolesForUserInGuild = async (
@@ -63,17 +63,7 @@ export async function coldUpdateDiscordRolesForUser(
       if (!newRole) return;
 
       // check if this user satisfies the rule
-      const tokens =
-        environment === "production"
-          ? randomEarthUserTokens![rule.nftAddress]
-            ? randomEarthUserTokens![rule.nftAddress]
-            : []
-          : userTokensCache[rule.nftAddress]
-          ? userTokensCache[rule.nftAddress]
-          : ((userTokensCache[rule.nftAddress] = (
-              await getTokensOfOwner(walletAddress, rule.nftAddress)
-            ).tokens),
-            userTokensCache[rule.nftAddress]);
+      const tokens = userTokensCache[rule.nftAddress];
 
       // get the number of matching tokens
       const numMatchingTokens = (
@@ -99,7 +89,9 @@ export async function coldUpdateDiscordRolesForUser(
           await member.roles.add(newRole);
         } catch (e) {
           console.error(
-            "Couldn't add role, probably because of role hierarchy."
+            "Couldn't add role, probably because of role hierarchy.",
+            guild.name,
+            newRole.name
           );
         }
       } else if (
@@ -120,7 +112,9 @@ export async function coldUpdateDiscordRolesForUser(
           await member.roles.remove(newRole);
         } catch (e) {
           console.error(
-            "Couldn't remove role, probably because of role hierarchy."
+            "Couldn't remove role, probably because of role hierarchy.",
+            guild.name,
+            newRole.name
           );
         }
       }
