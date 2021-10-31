@@ -24,44 +24,52 @@ export const getAllTokensOfOwner = async (
     }
   };
 
-  // update user tokens cache with random earth in settlement tokens
+  const pendingRequests = [];
+
   if (environment === "production") {
-    try {
-      const randomEarthUserTokens = await getRandomEarthTokens(walletAddress);
+    // update user tokens cache with random earth in settlement tokens
+    pendingRequests.push(
+      getRandomEarthTokens(walletAddress)
+        .then((randomEarthUserTokens) =>
+          Object.entries(randomEarthUserTokens).forEach(
+            ([contractAddress, tokenIds]) =>
+              unionIntoUserTokensCache(contractAddress, tokenIds)
+          )
+        )
+        .catch((err) => {
+          throw new RandomEarthAPIError(
+            "Failed to request the randomearth api."
+          );
+        })
+    );
 
-      Object.entries(randomEarthUserTokens).forEach(
-        ([contractAddress, tokenIds]) =>
-          unionIntoUserTokensCache(contractAddress, tokenIds)
-      );
-    } catch (e) {
-      throw new RandomEarthAPIError("Failed to request the randomearth api.");
-    }
-  }
-
-  // update user tokens cache with knowhere art in settlement tokens
-  if (environment === "production") {
-    try {
-      const knowhereTokens = await getKnowhereTokens(walletAddress);
-
-      Object.entries(knowhereTokens).forEach(([contractAddress, tokenIds]) =>
-        unionIntoUserTokensCache(contractAddress, tokenIds)
-      );
-    } catch (e) {
-      throw new RandomEarthAPIError("Failed to request the knowhere api.");
-    }
+    // update user tokens cache with knowhere art in settlement tokens
+    pendingRequests.push(
+      getKnowhereTokens(walletAddress)
+        .then((knowhereTokens) =>
+          Object.entries(knowhereTokens).forEach(
+            ([contractAddress, tokenIds]) =>
+              unionIntoUserTokensCache(contractAddress, tokenIds)
+          )
+        )
+        .catch((err) => {
+          throw new RandomEarthAPIError("Failed to request the knowhere api.");
+        })
+    );
   }
 
   // update user tokens cache with all nft contracts
-  await Promise.all(
-    contractAddresses.map(async (contractAddress) => {
+  await Promise.all([
+    ...pendingRequests,
+    ...contractAddresses.map(async (contractAddress) => {
       const walletTokensOfOwner = await getWalletTokensOfOwner(
         walletAddress,
         contractAddress
       );
 
       unionIntoUserTokensCache(contractAddress, walletTokensOfOwner.tokens);
-    })
-  );
+    }),
+  ]);
 
   return userTokensCache;
 };
