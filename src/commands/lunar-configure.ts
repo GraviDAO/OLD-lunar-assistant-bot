@@ -2,6 +2,8 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { LunarAssistant } from "..";
 import db from "../services/admin";
+import { GuildConfig, GuildRule } from "../shared/firestoreTypes";
+import { guildRuleToNFTRule } from "../utils/guildRuleToNFTRule";
 
 export default {
   data: new SlashCommandBuilder()
@@ -159,18 +161,12 @@ export default {
 
       const rulesMessage = guildConfigRules
         .map((guildRule, index) => {
-          const nftAddresses = Object.keys(guildRule.nft);
-          if (nftAddresses.length !== 1) return;
-          const nftAddress = nftAddresses[0];
-          const tokenIds = guildRule.nft[nftAddress].tokenIds;
-          const nftRule: NFTRule = {
-            nftAddress,
-            ...(tokenIds && { tokenIds }),
-            quantity: guildRule.nft[nftAddress].quantity,
-            roleName: guildRule.roleName,
-          };
-
-          return `Rule ${index}: ${JSON.stringify(nftRule)}`;
+          try {
+            const nftRule = guildRuleToNFTRule(guildRule);
+            return `Rule ${index}: ${JSON.stringify(nftRule)}`;
+          } catch (err) {
+            return `Malformed rule: ${JSON.stringify(guildRule)}`;
+          }
         })
         .join("\n");
 

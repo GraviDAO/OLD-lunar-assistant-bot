@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { LunarAssistant } from "..";
 import db from "../services/admin";
+import { User } from "../shared/firestoreTypes";
 
 export default {
   data: new SlashCommandBuilder()

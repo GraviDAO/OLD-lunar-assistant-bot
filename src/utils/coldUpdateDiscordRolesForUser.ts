@@ -9,6 +9,7 @@ import {
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { getAllTokensOfOwner } from "./getAllTokensOfOwner";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
+import { guildRuleToNFTRule } from "./guildRuleToNFTRule";
 
 export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
@@ -45,15 +46,13 @@ export async function coldUpdateDiscordRolesForUser(
     ) => {
       // for now we are only handling a single nft rule
       // build the single NFT rule
-      const nftAddresses = Object.keys(guildRule.nft);
-      if (nftAddresses.length !== 1) return;
-      const nftAddress = nftAddresses[0];
-      const rule: NFTRule = {
-        nftAddress,
-        tokenIds: guildRule.nft[nftAddress].tokenIds,
-        quantity: guildRule.nft[nftAddress].quantity,
-        roleName: guildRule.roleName,
-      };
+
+      let rule: NFTRule;
+      try {
+        rule = guildRuleToNFTRule(guildRule);
+      } catch (err) {
+        return;
+      }
 
       // get the discord role from the discord client
       const newRole = guild.roles.cache.find(

@@ -9,10 +9,15 @@ export const getRelevantContractAddresses = (
     guildConfigsSnapshot.docs.reduce((acc, guildConfigDoc) => {
       const guildContractAddresses = (
         guildConfigDoc.data() as GuildConfig
-      ).rules.map((guildRule) => {
-        const nftRule = guildRuleToNFTRule(guildRule);
-        return nftRule.nftAddress;
-      });
+      ).rules.reduce((acc: string[], guildRule) => {
+        try {
+          const nftRule = guildRuleToNFTRule(guildRule);
+          acc.push(nftRule.nftAddress);
+          return acc;
+        } catch (err) {
+          return acc;
+        }
+      }, []);
 
       for (let contractAddress of guildContractAddresses) {
         acc.add(contractAddress);
