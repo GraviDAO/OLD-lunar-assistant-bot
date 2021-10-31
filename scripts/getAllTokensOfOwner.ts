@@ -20,10 +20,12 @@ const walletAddress = "terra1qxzjv7spze07t4vjwjp3q2cppm0qx5esqvngdx";
 
 db.collection("guildConfigs")
   .get()
-  .then((snapshot) => {
+  .then(async (snapshot) => {
     const relevantContractAddresses = getRelevantContractAddresses(snapshot);
 
-    const allTokensOfOwner = getAllTokensOfOwner(
+    console.log(relevantContractAddresses, relevantContractAddresses.length);
+
+    const allTokensOfOwner = await getAllTokensOfOwner(
       walletAddress,
       relevantContractAddresses
     );
