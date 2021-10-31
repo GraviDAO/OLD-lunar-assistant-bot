@@ -148,6 +148,11 @@ export async function coldUpdateDiscordRolesForUser(
     );
   }, new Promise((resolve, reject) => resolve(null)));
 
+  console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
+    activeRoles,
+    removedRoles,
+  });
+
   // return the list of the users active roles and removed roles
   return { activeRoles, removedRoles };
 }
