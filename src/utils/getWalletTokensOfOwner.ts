@@ -1,4 +1,5 @@
 import { terra } from "../services/terra";
+import { GetTokensResponse } from "../shared/contractTypes";
 
 export const getWalletTokensOfOwner = async (
   owner: string,
@@ -10,6 +11,7 @@ export const getWalletTokensOfOwner = async (
   };
 
   let res: GetTokensResponse;
+
   try {
     res = await terra.wasm.contractQuery(contractAddress, query_msg);
     console.log(contractAddress, query_msg, res);

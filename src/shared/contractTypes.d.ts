@@ -1,3 +1,3 @@
-interface GetTokensResponse {
+export interface GetTokensResponse {
   tokens: string[];
 }
