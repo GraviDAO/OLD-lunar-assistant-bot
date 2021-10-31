@@ -1,5 +1,5 @@
 .env
 node_modules/
 config.json
-config.json.prod
+config.prod.json
 dist/

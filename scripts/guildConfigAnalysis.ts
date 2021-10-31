@@ -1,5 +1,5 @@
 import admin, { ServiceAccount } from "firebase-admin";
-import { FIREBASE_ADMIN_SERVICE_ACCOUNT } from "../config.prod.json";
+import { FIREBASE_ADMIN_SERVICE_ACCOUNT } from "../config.json";
 import { getRelevantContractAddresses } from "../src/utils/getRelevantContractAddresses";
 
 if (!admin.apps.length) {
