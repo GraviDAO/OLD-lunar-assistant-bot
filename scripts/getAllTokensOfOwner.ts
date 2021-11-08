@@ -16,7 +16,8 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 
-const walletAddress = "terra1qxzjv7spze07t4vjwjp3q2cppm0qx5esqvngdx";
+const walletAddress = "terra1muwlzc9et0hwts5c4jhet87z7defwvts6g2n3a";
+// "terra1qxzjv7spze07t4vjwjp3q2cppm0qx5esqvngdx";
 
 db.collection("guildConfigs")
   .get()
