@@ -42,7 +42,7 @@ const lunarVerify = {
           .join("\n");
 
         await interaction.reply({
-          content: `You have been granted the following roles on the following servers:\n${activeRolesMessage}`,
+          content: `You are eligible for the following roles on the following servers:\n${activeRolesMessage}\n\nIn order to claim one of the listed roles, run /lunar-view-roles from within the server corresponding to the role you want to claim.`,
           ephemeral: privateResponse,
         });
       } else {
