@@ -159,11 +159,22 @@ export default {
 
       const guildConfigRules = (guildConfigDoc.data() as GuildConfig).rules;
 
+      const responseMaxLength = 1800;
+
+      const ruleDisplayMaxLength = Math.floor(
+        responseMaxLength / guildConfigRules.length
+      );
+
       const rulesMessage = guildConfigRules
         .map((guildRule, index) => {
           try {
-            const nftRule = guildRuleToNFTRule(guildRule);
-            return `Rule ${index}: ${JSON.stringify(nftRule)}`;
+            const nftRuleString = JSON.stringify(guildRuleToNFTRule(guildRule));
+            const nftRuleDisplay =
+              nftRuleString.length > ruleDisplayMaxLength
+                ? nftRuleString.substr(0, ruleDisplayMaxLength) + "..."
+                : nftRuleString;
+
+            return `Rule ${index}: ${JSON.stringify(nftRuleDisplay)}`;
           } catch (err) {
             return `Malformed rule: ${JSON.stringify(guildRule)}`;
           }
