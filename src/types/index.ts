@@ -22,6 +22,9 @@ export interface RandomEarthUserItem {
 
 export interface RandomEarthUserItems {
   items: RandomEarthUserItem[];
+  total: number;
+  page: number;
+  pages: number;
 }
 
 export interface KnowhereUserItem {

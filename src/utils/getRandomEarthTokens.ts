@@ -5,6 +5,8 @@ export const getRandomEarthTokens = async (walletAddress: string) => {
   let userTokensRes;
 
   try {
+    const userTokensItems = [];
+
     // query user wallet holdings from random earth
     userTokensRes = (
       await axios.get(
@@ -12,8 +14,21 @@ export const getRandomEarthTokens = async (walletAddress: string) => {
       )
     ).data as RandomEarthUserItems;
 
+    userTokensItems.push(...userTokensRes.items);
+
+    // iterate through all pages of random earth api
+    for (let page = 2; page < userTokensRes.pages + 1; page++) {
+      userTokensRes = (
+        await axios.get(
+          `https://randomearth.io/api/items?user_addr=${walletAddress}&page=${page}`
+        )
+      ).data as RandomEarthUserItems;
+
+      userTokensItems.push(...userTokensRes.items);
+    }
+
     // convert random earth response to usable form
-    const userTokens = userTokensRes.items.reduce((acc, item) => {
+    const userTokens = userTokensItems.reduce((acc, item) => {
       if (acc[item.collection_addr]) {
         acc[item.collection_addr].push(item.token_id);
       } else {
