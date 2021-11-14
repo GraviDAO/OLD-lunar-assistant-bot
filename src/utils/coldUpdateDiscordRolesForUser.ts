@@ -37,7 +37,7 @@ export async function coldUpdateDiscordRolesForUser(
   // update roles for user in guild
   const coldUpdateDiscordRolesForUserInGuild = async (
     guild: Guild,
-    member: GuildMember,
+    member: GuildMember | undefined,
     guildConfigDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
   ) => {
     // update roles for user in guild according to a specific rule
@@ -84,8 +84,10 @@ export async function coldUpdateDiscordRolesForUser(
             activeRoles[guild.name] = [newRole.name];
           }
 
-          // add the role to the member
-          await member.roles.add(newRole);
+          if (member) {
+            // add the role to the member
+            await member.roles.add(newRole);
+          }
         } catch (e) {
           console.error(
             "Couldn't add role, probably because of role hierarchy.",
@@ -94,6 +96,7 @@ export async function coldUpdateDiscordRolesForUser(
           );
         }
       } else if (
+        member &&
         member.roles.cache.some((role) => role.name === newRole.name)
       ) {
         // the user doesn't match the role rules but has the role anyways
@@ -140,7 +143,7 @@ export async function coldUpdateDiscordRolesForUser(
     // get the member from the discord client
     const member = guild.members.cache.get(userID);
 
-    if (!member) return p.then(() => new Promise((resolve) => resolve(null)));
+    // if (!member) return p.then(() => new Promise((resolve) => resolve(null)));
 
     return p.then(() =>
       coldUpdateDiscordRolesForUserInGuild(guild, member, guildConfigDoc)
