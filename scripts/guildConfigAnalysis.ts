@@ -15,11 +15,25 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 
-db.collection("guildConfigs")
-  .get()
-  .then((snapshot) => {
-    console.log(snapshot.docs.length);
+const analysis = async () => {
+  const guildConfigSnapshot = await db.collection("guildConfigs").get();
 
-    const relevantContractAddresses = getRelevantContractAddresses(snapshot);
-    console.log(relevantContractAddresses.length);
-  });
+  // Number of registered discord servers
+  console.log(
+    "Number of registered discord servers: " + guildConfigSnapshot.docs.length
+  );
+
+  // Number of unique nft addresses
+  const relevantContractAddresses =
+    getRelevantContractAddresses(guildConfigSnapshot);
+  console.log(
+    "Number of unique nft addresses across registered rules: " +
+      relevantContractAddresses.length
+  );
+
+  // Number of users
+  const usersSnapshot = await db.collection("users").get();
+  console.log("Number of registered users: " + usersSnapshot.docs.length);
+};
+
+analysis();
