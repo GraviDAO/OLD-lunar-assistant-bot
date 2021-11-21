@@ -15,3 +15,12 @@ export class RandomEarthAPIError extends Error {
     Object.setPrototypeOf(this, RandomEarthAPIError.prototype);
   }
 }
+
+export class TokenFetchingError extends Error {
+  constructor(m: string) {
+    super(m);
+
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, TokenFetchingError.prototype);
+  }
+}

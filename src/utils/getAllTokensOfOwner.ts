@@ -1,6 +1,6 @@
 import { environment } from "../../config.json";
 import { UserTokens } from "../types";
-import { RandomEarthAPIError } from "../types/errors";
+import { RandomEarthAPIError, TokenFetchingError } from "../types/errors";
 import { getKnowhereTokens } from "./getKnowhereTokens";
 import { getRandomEarthTokens } from "./getRandomEarthTokens";
 import { getWalletTokensOfOwner } from "./getWalletTokensOfOwner";
@@ -59,17 +59,24 @@ export const getAllTokensOfOwner = async (
   }
 
   // update user tokens cache with all nft contracts
-  await Promise.all([
-    ...pendingRequests,
-    ...contractAddresses.map(async (contractAddress) => {
-      const walletTokensOfOwner = await getWalletTokensOfOwner(
-        walletAddress,
-        contractAddress
-      );
 
-      unionIntoUserTokensCache(contractAddress, walletTokensOfOwner.tokens);
-    }),
-  ]);
+  try {
+    await Promise.all([
+      ...pendingRequests,
+      ...contractAddresses.map(async (contractAddress) => {
+        const walletTokensOfOwner = await getWalletTokensOfOwner(
+          walletAddress,
+          contractAddress
+        );
+
+        unionIntoUserTokensCache(contractAddress, walletTokensOfOwner.tokens);
+      }),
+    ]);
+  } catch (e) {
+    throw new TokenFetchingError(
+      "Failed to fetch user tokens for unknown reasons. Please report to GraviDAO."
+    );
+  }
 
   return userTokensCache;
 };
