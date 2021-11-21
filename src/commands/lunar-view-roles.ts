@@ -52,8 +52,6 @@ const lunarVerify = {
         });
       }
     } catch (e) {
-      console.error(e);
-
       if (e instanceof UserDocMissingError) {
         await interaction.reply({
           content:
@@ -67,6 +65,9 @@ const lunarVerify = {
           ephemeral: true,
         });
       } else {
+        console.error("Unknown error when running /lunar-view-roles:");
+        console.error(e);
+
         await interaction.reply({
           content: "There was an unknown error while executing this command!",
           ephemeral: true,
