@@ -11,6 +11,8 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
   //         update user's discord roles according to rule
   //         save the user's discord roles to firestore
 
+  console.log("Running updateAllDiscordUserRoles cronjob!");
+
   // loop over every user
   const usersSnapshot = await this.db.collection("users").get();
   const guildConfigsSnapshot = await this.db.collection("guildConfigs").get();

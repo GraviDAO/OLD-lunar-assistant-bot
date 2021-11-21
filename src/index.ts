@@ -49,7 +49,7 @@ export class LunarAssistant {
     // only add listeners when not in maintenance mode
     if (!maintenance_mode) {
       // cronjob to update discord roles once a day
-      cron.schedule("0 0 * * *", () => this.updateAllDiscordUserRoles);
+      cron.schedule("0 0 * * *", () => this.updateAllDiscordUserRoles());
 
       // only start triggering updates after the initial snapshot
       let initialSnapshot = true;
