@@ -19,7 +19,7 @@ export type GuildRule = {
   };
   token: {
     [tokenAddress: string]: {
-      quantity: string;
+      quantity: number;
     };
   };
   nativeToken: {
