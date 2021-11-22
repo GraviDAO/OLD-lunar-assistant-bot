@@ -1,28 +1,52 @@
-import { GuildConfig } from "../shared/firestoreTypes";
-import { guildRuleToNFTRule } from "./guildRuleToNFTRule";
+import { CW20Rule, GuildConfig, NFTRule } from "../shared/firestoreTypes";
+import { ContractAddresses } from "../types";
+import { guildRuleToSimpleRule, isNFTRule } from "./guildRuleHelpers";
+
+export const getContractAddressesRelevantToGuildConfig = (
+  guildConfig: GuildConfig
+): ContractAddresses =>
+  guildConfig.rules.reduce(
+    (acc: ContractAddresses, guildRule) => {
+      try {
+        const simpleRule = guildRuleToSimpleRule(guildRule);
+        if (isNFTRule(simpleRule)) {
+          let nftRule = simpleRule as NFTRule;
+          acc.nft.push(nftRule.nftAddress);
+        } else {
+          let cw20Rule = simpleRule as CW20Rule;
+          acc.cw20.push(cw20Rule.cw20Address);
+        }
+        return acc;
+      } catch (err) {
+        return acc;
+      }
+    },
+    { nft: [], cw20: [] }
+  );
 
 // compute the relevant contract addresses across all guilds
 export const getRelevantContractAddresses = (
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
-) =>
-  Array.from(
-    guildConfigsSnapshot.docs.reduce((acc, guildConfigDoc) => {
-      const guildContractAddresses = (
-        guildConfigDoc.data() as GuildConfig
-      ).rules.reduce((acc: string[], guildRule) => {
-        try {
-          const nftRule = guildRuleToNFTRule(guildRule);
-          acc.push(nftRule.nftAddress);
-          return acc;
-        } catch (err) {
-          return acc;
-        }
-      }, []);
+): ContractAddresses => {
+  const contractAddressesSets = guildConfigsSnapshot.docs.reduce(
+    (acc, guildConfigDoc) => {
+      const guildConfigContractAddresses =
+        getContractAddressesRelevantToGuildConfig(
+          guildConfigDoc.data() as GuildConfig
+        );
 
-      for (let contractAddress of guildContractAddresses) {
-        acc.add(contractAddress);
-      }
+      // add to the set of nft addresses
+      guildConfigContractAddresses.nft.forEach(acc.nft.add);
+      // add to the set of cw20 addresses
+      guildConfigContractAddresses.cw20.forEach(acc.cw20.add);
 
       return acc;
-    }, new Set<string>())
+    },
+    { nft: new Set<string>(), cw20: new Set<string>() }
   );
+  const contractAddresses: ContractAddresses = {
+    nft: Array.from(contractAddressesSets.nft),
+    cw20: Array.from(contractAddressesSets.cw20),
+  };
+  return contractAddresses;
+};

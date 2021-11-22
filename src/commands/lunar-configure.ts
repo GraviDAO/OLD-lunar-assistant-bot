@@ -3,7 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { LunarAssistant } from "..";
 import db from "../services/admin";
 import { GuildConfig, GuildRule } from "../shared/firestoreTypes";
-import { guildRuleToNFTRule } from "../utils/guildRuleToNFTRule";
+import { guildRuleToSimpleRule } from "../utils/guildRuleHelpers";
 
 export default {
   data: new SlashCommandBuilder()
@@ -12,8 +12,10 @@ export default {
     .setDefaultPermission(false)
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("add-rule")
-        .setDescription("Adds a rule for granting a role to users.")
+        .setName("add-nft-rule")
+        .setDescription(
+          "Adds a rule for granting a role to users based on nft ownership."
+        )
         .addStringOption((option) =>
           option
             .setName("nft-address")
@@ -32,7 +34,7 @@ export default {
           option
             .setName("quantity")
             .setDescription(
-              "The quantity of matching nfts that a user must hold in order to meet the rule.  "
+              "The quantity of matching nfts that a user must hold in order to meet the rule."
             )
         )
         .addStringOption((option) =>
@@ -40,6 +42,34 @@ export default {
             .setName("token-ids")
             .setDescription(
               "A list of token ids that the rule is restricted to."
+            )
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("add-cw20-rule")
+        .setDescription(
+          "Adds a rule for granting a role to users based on cw20 ownership."
+        )
+        .addStringOption((option) =>
+          option
+            .setName("cw20-address")
+            .setDescription(
+              "The contract address against which to check for cw20 ownership for this rule."
+            )
+            .setRequired(true)
+        )
+        .addRoleOption((option) =>
+          option
+            .setName("role")
+            .setDescription("The role to give to users which meet this rule.")
+            .setRequired(true)
+        )
+        .addNumberOption((option) =>
+          option
+            .setName("quantity")
+            .setDescription(
+              "The quantity of matching cw20 tokens that a user must hold in order to meet the rule."
             )
         )
     )
@@ -69,7 +99,7 @@ export default {
     if (!interaction.guildId || !interaction.guild || !interaction.member)
       return;
 
-    if (interaction.options.getSubcommand() === "add-rule") {
+    if (interaction.options.getSubcommand() === "add-nft-rule") {
       // configure the server settings
       const nftAddress = interaction.options.getString("nft-address");
       const role = interaction.options.getRole("role");
@@ -86,8 +116,19 @@ export default {
       let tokenIds;
       try {
         tokenIds = rawTokenIds ? JSON.parse(rawTokenIds) : undefined;
+        // check that the tokenIds is properly formatted
+        if (
+          !(
+            Array.isArray(tokenIds) &&
+            tokenIds.every((tokenId) => typeof tokenId == "string")
+          )
+        ) {
+          throw new Error("Token ids are not an array of strings");
+        }
       } catch {
-        await interaction.reply("Could not parse token ids");
+        await interaction.reply(
+          'Could not parse token ids, please pass token ids in the following format: ["1", "2", "4"]'
+        );
         return;
       }
 
@@ -115,7 +156,68 @@ export default {
             quantity,
           },
         },
-        token: {},
+        cw20: {},
+        nativeToken: {},
+        roleName: role.name,
+      };
+
+      const guildConfigDoc = await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .get();
+
+      const guildConfig: GuildConfig = guildConfigDoc.exists
+        ? (guildConfigDoc.data() as GuildConfig)
+        : { rules: [] };
+
+      guildConfig.rules.push(newRule);
+
+      // update the db
+      await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .set(guildConfig);
+
+      // reply
+      await interaction.reply({
+        content: "Rule added successfully!",
+        ephemeral: true,
+      });
+    } else if (interaction.options.getSubcommand() === "add-cw20-rule") {
+      // configure the server settings
+      const cw20Address = interaction.options.getString("cw20-address");
+      const role = interaction.options.getRole("role");
+      const rawQuantity = interaction.options.getNumber("quantity");
+
+      // verify that nftAddress and role are defined
+      if (!cw20Address || !role) {
+        await interaction.reply("Could not get nftAddress or role");
+        return;
+      }
+
+      const quantity = rawQuantity ? rawQuantity : 1;
+
+      // check if the bot role is above the verified role
+      const lunarAssistantRole = interaction.guild.roles.cache.find(
+        (role) => role.name == "Lunar Assistant"
+      )!;
+
+      if (role.position > lunarAssistantRole.position) {
+        await interaction.reply({
+          content: `Please update the role hierarchy with 'Lunar Assistant' above of ${role.name} and try again.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const newRule: GuildRule = {
+        version: "1.0",
+        nft: {},
+        cw20: {
+          [cw20Address]: {
+            quantity,
+          },
+        },
         nativeToken: {},
         roleName: role.name,
       };
@@ -168,13 +270,16 @@ export default {
       const rulesMessage = guildConfigRules
         .map((guildRule, index) => {
           try {
-            const nftRuleString = JSON.stringify(guildRuleToNFTRule(guildRule));
-            const nftRuleDisplay =
-              nftRuleString.length > ruleDisplayMaxLength
-                ? nftRuleString.substr(0, ruleDisplayMaxLength) + "..."
-                : nftRuleString;
+            const simpleRule = guildRuleToSimpleRule(guildRule);
 
-            return `Rule ${index}: ${JSON.stringify(nftRuleDisplay)}`;
+            const ruleString = JSON.stringify(simpleRule);
+
+            const ruleDisplay =
+              ruleString.length > ruleDisplayMaxLength
+                ? ruleString.substr(0, ruleDisplayMaxLength) + "..."
+                : ruleString;
+
+            return `Rule ${index}: ${JSON.stringify(ruleDisplay)}`;
           } catch (err) {
             return `Malformed rule: ${JSON.stringify(guildRule)}`;
           }

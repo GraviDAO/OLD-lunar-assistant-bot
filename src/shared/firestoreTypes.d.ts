@@ -9,6 +9,17 @@ export type NFTRule = {
   roleName: string;
 };
 
+export type CW20Rule = {
+  cw20Address: string;
+  quantity: number;
+  roleName: string;
+};
+
+export type SimpleRule = NFTRule | CW20Rule;
+
+// GuildRule is designed to accomodate future rule types.
+// For now "nativeToken" is never used.
+// And nft and token are never both populated in the same rule.
 export type GuildRule = {
   version: string;
   nft: {
@@ -17,16 +28,16 @@ export type GuildRule = {
       quantity: number;
     };
   };
-  token: {
-    [tokenAddress: string]: {
-      quantity: string;
-    };
-  };
-  nativeToken: {
-    [denom: string]: {
+  cw20: {
+    [cw20Address: string]: {
       quantity: number;
     };
   };
+  // nativeToken: {
+  //   [denom: string]: {
+  //     quantity: number;
+  //   };
+  // };
   roleName: string;
 };
 export interface GuildConfig {

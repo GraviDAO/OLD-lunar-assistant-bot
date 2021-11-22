@@ -1,5 +1,5 @@
 import axios from "axios";
-import { KnowhereUserItem, UserTokens } from "../types";
+import { KnowhereUserItem, WalletContents } from "../types";
 
 export const getKnowhereTokens = async (walletAddress: string) => {
   let userTokensRes;
@@ -20,7 +20,7 @@ export const getKnowhereTokens = async (walletAddress: string) => {
         acc[item.nftContract] = [item.tokenId];
       }
       return acc;
-    }, {} as UserTokens);
+    }, {} as WalletContents);
 
     return userTokens;
   } catch (e) {

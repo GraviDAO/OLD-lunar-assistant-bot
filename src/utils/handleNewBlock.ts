@@ -1,32 +1,12 @@
 import { LunarAssistant } from "..";
-import { GuildConfig } from "../shared/firestoreTypes";
-import { guildRuleToNFTRule } from "./guildRuleToNFTRule";
+import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 
 export async function handleNewBlock(this: LunarAssistant, data: any) {
   const guildConfigsSnapshot = await this.db.collection("guildConfigs").get();
 
   // get the list of contract addresses we are interested in
-  const interestedContractAddresses = guildConfigsSnapshot.docs.reduce(
-    (acc, guildConfigDoc) => {
-      const guildConfig = guildConfigDoc.data() as GuildConfig;
-      const guildConfigContractAddresses = guildConfig.rules.reduce(
-        (acc, rule) => {
-          try {
-            const nftRule = guildRuleToNFTRule(rule);
-            acc.add(nftRule.nftAddress);
-          } catch (e) {
-            console.error("Couldn't transform guild rule to nft rule");
-          }
-          return acc;
-        },
-        new Set<string>()
-      );
-
-      guildConfigContractAddresses.forEach(acc.add, acc);
-      return acc;
-    },
-    new Set<string>()
-  );
+  const interestedContractAddresses =
+    getRelevantContractAddresses(guildConfigsSnapshot);
 
   // get the list of transactions we are interested in
   const nftTransferTransactions = data.data.txs.reduce(
@@ -41,7 +21,7 @@ export async function handleNewBlock(this: LunarAssistant, data: any) {
           tmpEvent.attributes.some(
             (attr: any) =>
               attr.key === `contract_address` &&
-              interestedContractAddresses.has(attr.value)
+              interestedContractAddresses.nft.includes(attr.value)
           )
       );
 
