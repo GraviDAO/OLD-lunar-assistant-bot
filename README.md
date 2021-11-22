@@ -10,13 +10,21 @@ Configures the GuildConfig for the discord server. Has the following command gro
 <!-- #### rules command group
 
 Command group for configuring the rules which grant roles based on wallet holdings. Useful for creating private channels that only those with certain wallet holdings have access to, and for letting users show off their wallets via roles. -->
-#### add-rule
+#### add-nft-rule
 
-Adds a rule for granting a role to users. When a user's wallet meets the conditions of the rule, they will be granted the relevant role. Takes the following arguments:
+Adds a rule for granting a role to users based on nft ownership. When a user's wallet meets the conditions of the rule, they will be granted the relevant role. Takes the following arguments:
 - nft-address (required) : The contract address against which to check for nft ownership
 - role (required) : The role to give to users which meet this rule.
 - quantity (optional, 1 by default) : The quantity of matching nfts that a user must hold in order to meet the rule.
 - token-ids (optional, all by default) : A list of token ids that the rule is restricted to.
+
+#### add-cw20-rule
+
+Adds a rule for granting a role to users based on cw20 token ownership. When a user's wallet meets the conditions of the rule, they will be granted the relevant role. Takes the following arguments:
+- cw20-address (required) : The contract address against which to check for nft ownership
+- role (required) : The role to give to users which meet this rule.
+- quantity (optional, 1 by default) : The quantity of cw20 tokens that a user must hold in order to meet the rule.
+
 
 #### view-rules
 
