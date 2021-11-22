@@ -108,7 +108,10 @@ export default {
 
       // verify that nftAddress and role are defined
       if (!nftAddress || !role) {
-        await interaction.reply("Could not get nftAddress or role");
+        await interaction.reply({
+          content: "Could not get nftAddress or role",
+          ephemeral: true,
+        });
         return;
       }
 
@@ -127,9 +130,11 @@ export default {
           throw new Error("Token ids are not an array of strings");
         }
       } catch {
-        await interaction.reply(
-          'Could not parse token ids, please pass token ids in the following format: ["1", "2", "4"]'
-        );
+        await interaction.reply({
+          content:
+            'Could not parse token ids, please pass token ids in the following format: ["1", "2", "4"]',
+          ephemeral: true,
+        });
         return;
       }
 
@@ -192,7 +197,10 @@ export default {
 
       // verify that nftAddress and role are defined
       if (!cw20Address || !role) {
-        await interaction.reply("Could not get nftAddress or role");
+        await interaction.reply({
+          content: "Could not get cw20Address or role",
+          ephemeral: true,
+        });
         return;
       }
 
