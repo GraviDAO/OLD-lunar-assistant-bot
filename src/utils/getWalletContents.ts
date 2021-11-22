@@ -5,7 +5,7 @@ import { getKnowhereTokens } from "./getKnowhereTokens";
 import { getRandomEarthTokens } from "./getRandomEarthTokens";
 import { getCW20TokensOfWallet, getWalletTokensOfOwner } from "./terraHelpers";
 
-export const getWalletContentsOfWallet = async (
+export const getWalletContents = async (
   walletAddress: string,
   contractAddresses: ContractAddresses
 ): Promise<WalletContents> => {
@@ -33,9 +33,9 @@ export const getWalletContentsOfWallet = async (
     pendingRequests.push(
       getRandomEarthTokens(walletAddress)
         .then((randomEarthUserTokens) =>
-          Object.entries(randomEarthUserTokens).forEach(
-            ([contractAddress, tokenIds]) =>
-              unionIntoNftCache(contractAddress, tokenIds)
+          Object.entries(randomEarthUserTokens.nft).forEach(
+            ([contractAddress, nftHoldingInfo]) =>
+              unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
           )
         )
         .catch((err) => {
@@ -49,9 +49,9 @@ export const getWalletContentsOfWallet = async (
     pendingRequests.push(
       getKnowhereTokens(walletAddress)
         .then((knowhereTokens) =>
-          Object.entries(knowhereTokens).forEach(
-            ([contractAddress, tokenIds]) =>
-              unionIntoNftCache(contractAddress, tokenIds)
+          Object.entries(knowhereTokens.nft).forEach(
+            ([contractAddress, nftHoldingInfo]) =>
+              unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
           )
         )
         .catch((err) => {
@@ -70,7 +70,7 @@ export const getWalletContentsOfWallet = async (
           nftAddress
         );
 
-        // update userTokensCache
+        // Update userTokensCache
         unionIntoNftCache(nftAddress, walletTokensOfOwner.tokens);
       }),
       ...contractAddresses.cw20.map(async (cw20Address) => {
@@ -79,7 +79,7 @@ export const getWalletContentsOfWallet = async (
           cw20Address
         );
 
-        // update userTokensCache
+        // Update userTokensCache
         userTokensCache.cw20[walletAddress] = {
           quantity: balanceResponse.balance,
         };

@@ -1,7 +1,7 @@
 import admin, { ServiceAccount } from "firebase-admin";
 import { FIREBASE_ADMIN_SERVICE_ACCOUNT } from "../config.json";
-import { getWalletContentsOfWallet as getWalletContentsOfWallet } from "../src/utils/getAllTokensOfOwner";
 import { getRelevantContractAddresses } from "../src/utils/getRelevantContractAddresses";
+import { getWalletContents as getWalletContents } from "../src/utils/getWalletContents";
 
 if (!admin.apps.length) {
   try {
@@ -26,7 +26,7 @@ db.collection("guildConfigs")
 
     console.log(relevantContractAddresses);
 
-    const allTokensOfOwner = await getWalletContentsOfWallet(
+    const allTokensOfOwner = await getWalletContents(
       walletAddress,
       relevantContractAddresses
     );

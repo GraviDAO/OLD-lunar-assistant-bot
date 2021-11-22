@@ -1,7 +1,9 @@
 import axios from "axios";
 import { RandomEarthUserItems, WalletContents } from "../types";
 
-export const getRandomEarthTokens = async (walletAddress: string) => {
+export const getRandomEarthTokens = async (
+  walletAddress: string
+): Promise<WalletContents> => {
   let userTokensRes;
 
   try {
@@ -28,14 +30,17 @@ export const getRandomEarthTokens = async (walletAddress: string) => {
     }
 
     // convert random earth response to usable form
-    const userTokens = userTokensItems.reduce((acc, item) => {
-      if (acc[item.collection_addr]) {
-        acc[item.collection_addr].push(item.token_id);
-      } else {
-        acc[item.collection_addr] = [item.token_id];
-      }
-      return acc;
-    }, {} as WalletContents);
+    const userTokens = userTokensItems.reduce(
+      (acc: WalletContents, item) => {
+        if (acc.nft[item.collection_addr]) {
+          acc.nft[item.collection_addr].tokenIds.push(item.token_id);
+        } else {
+          acc.nft[item.collection_addr] = { tokenIds: [item.token_id] };
+        }
+        return acc;
+      },
+      { nft: {}, cw20: {} }
+    );
 
     return userTokens;
   } catch (e) {

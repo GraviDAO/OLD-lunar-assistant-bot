@@ -33,11 +33,11 @@ export type GuildRule = {
       quantity: number;
     };
   };
-  // nativeToken: {
-  //   [denom: string]: {
-  //     quantity: number;
-  //   };
-  // };
+  nativeToken: {
+    [denom: string]: {
+      quantity: number;
+    };
+  };
   roleName: string;
 };
 export interface GuildConfig {

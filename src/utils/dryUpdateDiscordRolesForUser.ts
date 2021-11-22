@@ -7,8 +7,8 @@ import {
   User,
 } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
-import { getWalletContentsOfWallet } from "./getAllTokensOfOwner";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
+import { getWalletContents } from "./getWalletContents";
 import { guildRuleToSimpleRule, isNFTRule } from "./guildRuleHelpers";
 
 export async function dryUpdateDiscordRolesForUser(
@@ -27,7 +27,7 @@ export async function dryUpdateDiscordRolesForUser(
   const relevantContractAddresses =
     getRelevantContractAddresses(guildConfigsSnapshot);
 
-  const userTokensCache = await getWalletContentsOfWallet(
+  const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses
   );
