@@ -36,9 +36,14 @@ export const getRelevantContractAddresses = (
         );
 
       // add to the set of nft addresses
-      guildConfigContractAddresses.nft.forEach(acc.nft.add);
+      guildConfigContractAddresses.nft.forEach((address) =>
+        acc.nft.add(address)
+      );
+
       // add to the set of cw20 addresses
-      guildConfigContractAddresses.cw20.forEach(acc.cw20.add);
+      guildConfigContractAddresses.cw20.forEach((address) =>
+        acc.cw20.add(address)
+      );
 
       return acc;
     },
