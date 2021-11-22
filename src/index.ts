@@ -32,11 +32,23 @@ export class LunarAssistant {
     this.db = db;
   }
 
+  registerGuildCommands() {
+    this.client.guilds.cache.forEach((guild) => {
+      console.log(`Registering commands for ${guild.name}`);
+      registerCommands(guild);
+    });
+  }
+
   start(onReady: () => void) {
     // Setup listeners
 
     // When the client is ready, run this code (only once)
-    this.client.once("ready", onReady);
+    this.client.once("ready", () => {
+      // Reregister guild commands for all servers
+      this.registerGuildCommands();
+      // Call the passed onReady function
+      onReady();
+    });
 
     // When the bot is added to a server, configure the slash commands
     this.client.on("guildCreate", registerCommands);
