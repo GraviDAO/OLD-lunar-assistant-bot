@@ -1,5 +1,5 @@
 import axios from "axios";
-import { RandomEarthUserItems, UserTokens } from "../types";
+import { RandomEarthUserItems, WalletContents } from "../types";
 
 export const getRandomEarthTokens = async (walletAddress: string) => {
   let userTokensRes;
@@ -35,7 +35,7 @@ export const getRandomEarthTokens = async (walletAddress: string) => {
         acc[item.collection_addr] = [item.token_id];
       }
       return acc;
-    }, {} as UserTokens);
+    }, {} as WalletContents);
 
     return userTokens;
   } catch (e) {

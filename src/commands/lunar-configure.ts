@@ -3,7 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { LunarAssistant } from "..";
 import db from "../services/admin";
 import { GuildConfig, GuildRule } from "../shared/firestoreTypes";
-import { guildRuleToNFTRule } from "../utils/guildRuleToNFTRule";
+import { guildRuleToSimpleRule } from "../utils/guildRuleHelpers";
 
 export default {
   data: new SlashCommandBuilder()
@@ -116,8 +116,19 @@ export default {
       let tokenIds;
       try {
         tokenIds = rawTokenIds ? JSON.parse(rawTokenIds) : undefined;
+        // check that the tokenIds is properly formatted
+        if (
+          !(
+            Array.isArray(tokenIds) &&
+            tokenIds.every((tokenId) => typeof tokenId == "string")
+          )
+        ) {
+          throw new Error("Token ids are not an array of strings");
+        }
       } catch {
-        await interaction.reply("Could not parse token ids");
+        await interaction.reply(
+          'Could not parse token ids, please pass token ids in the following format: ["1", "2", "4"]'
+        );
         return;
       }
 
@@ -145,7 +156,7 @@ export default {
             quantity,
           },
         },
-        token: {},
+        cw20: {},
         nativeToken: {},
         roleName: role.name,
       };
@@ -202,7 +213,7 @@ export default {
       const newRule: GuildRule = {
         version: "1.0",
         nft: {},
-        token: {
+        cw20: {
           [cw20Address]: {
             quantity,
           },
@@ -259,13 +270,16 @@ export default {
       const rulesMessage = guildConfigRules
         .map((guildRule, index) => {
           try {
-            const nftRuleString = JSON.stringify(guildRuleToNFTRule(guildRule));
-            const nftRuleDisplay =
-              nftRuleString.length > ruleDisplayMaxLength
-                ? nftRuleString.substr(0, ruleDisplayMaxLength) + "..."
-                : nftRuleString;
+            const simpleRule = guildRuleToSimpleRule(guildRule);
 
-            return `Rule ${index}: ${JSON.stringify(nftRuleDisplay)}`;
+            const ruleString = JSON.stringify(simpleRule);
+
+            const ruleDisplay =
+              ruleString.length > ruleDisplayMaxLength
+                ? ruleString.substr(0, ruleDisplayMaxLength) + "..."
+                : ruleString;
+
+            return `Rule ${index}: ${JSON.stringify(ruleDisplay)}`;
           } catch (err) {
             return `Malformed rule: ${JSON.stringify(guildRule)}`;
           }

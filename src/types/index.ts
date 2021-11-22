@@ -32,6 +32,20 @@ export interface KnowhereUserItem {
   tokenId: string;
 }
 
-export interface UserTokens {
-  [nftAddress: string]: string[];
+export interface ContractAddresses {
+  nft: string[];
+  cw20: string[];
+}
+
+export interface WalletContents {
+  nft: {
+    [nftAddress: string]: {
+      tokenIds: string[];
+    };
+  };
+  cw20: {
+    [cw20Address: string]: {
+      quantity: number;
+    };
+  };
 }

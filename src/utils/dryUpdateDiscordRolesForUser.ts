@@ -1,13 +1,15 @@
 import {
+  CW20Rule,
   GuildConfig,
   GuildRule,
   NFTRule,
+  SimpleRule,
   User,
 } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
-import { getAllTokensOfOwner } from "./getAllTokensOfOwner";
+import { getWalletContentsOfWallet } from "./getAllTokensOfOwner";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
-import { guildRuleToNFTRule } from "./guildRuleToNFTRule";
+import { guildRuleToSimpleRule, isNFTRule } from "./guildRuleHelpers";
 
 export async function dryUpdateDiscordRolesForUser(
   userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
@@ -25,7 +27,7 @@ export async function dryUpdateDiscordRolesForUser(
   const relevantContractAddresses =
     getRelevantContractAddresses(guildConfigsSnapshot);
 
-  const userTokensCache = await getAllTokensOfOwner(
+  const userTokensCache = await getWalletContentsOfWallet(
     walletAddress,
     relevantContractAddresses
   );
@@ -41,24 +43,35 @@ export async function dryUpdateDiscordRolesForUser(
       // for now we are only handling a single nft rule
       // build the single NFT rule
 
-      let rule: NFTRule;
+      let rule: SimpleRule;
       try {
-        rule = guildRuleToNFTRule(guildRule);
+        rule = guildRuleToSimpleRule(guildRule);
       } catch (err) {
         return;
       }
 
-      // check if this user satisfies the rule
-      const tokens = userTokensCache[rule.nftAddress];
+      // set numMatchingTokens
+      let numMatchingTokens: number;
+      if (isNFTRule(rule)) {
+        const nftRule = rule as NFTRule;
 
-      // get the number of matching tokens
-      const numMatchingTokens = (
-        rule.tokenIds != undefined
-          ? tokens.filter(
-              (token) => rule.tokenIds && rule.tokenIds.includes(token)
-            )
-          : tokens
-      ).length;
+        const tokens = userTokensCache.nft[nftRule.nftAddress].tokenIds;
+
+        // get the number of matching tokens
+        numMatchingTokens = (
+          nftRule.tokenIds != undefined
+            ? tokens.filter(
+                (token) => nftRule.tokenIds && nftRule.tokenIds.includes(token)
+              )
+            : tokens
+        ).length;
+      } else {
+        const nftRule = rule as CW20Rule;
+
+        const numTokens = userTokensCache.cw20[nftRule.cw20Address].quantity;
+
+        numMatchingTokens = numTokens;
+      }
 
       if (numMatchingTokens >= rule.quantity) {
         // the user matches the role rules, update accordingly
