@@ -29,15 +29,15 @@ export type GuildRule = {
     };
   };
   cw20: {
-    [tokenAddress: string]: {
+    [cw20Address: string]: {
       quantity: number;
     };
   };
-  nativeToken: {
-    [denom: string]: {
-      quantity: number;
-    };
-  };
+  // nativeToken: {
+  //   [denom: string]: {
+  //     quantity: number;
+  //   };
+  // };
   roleName: string;
 };
 export interface GuildConfig {
