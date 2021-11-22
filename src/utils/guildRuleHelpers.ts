@@ -38,7 +38,7 @@ export const guildRuleToSimpleRule = (guildRule: GuildRule): SimpleRule => {
     return rule;
   } else if (Object.keys(guildRule.cw20).length > 0) {
     // build the single cw20 rule
-    const cw20Addresses = Object.keys(guildRule.nft);
+    const cw20Addresses = Object.keys(guildRule.cw20);
     if (cw20Addresses.length !== 1) throw new Error("Malformed GuildRule");
     const cw20Address = cw20Addresses[0];
     const rule: CW20Rule = {
