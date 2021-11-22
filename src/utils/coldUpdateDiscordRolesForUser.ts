@@ -79,9 +79,9 @@ export async function coldUpdateDiscordRolesForUser(
             : tokens
         ).length;
       } else {
-        const nftRule = rule as CW20Rule;
+        const cw20Rule = rule as CW20Rule;
 
-        const numTokens = userTokensCache.cw20[nftRule.cw20Address].quantity;
+        const numTokens = userTokensCache.cw20[cw20Rule.cw20Address].quantity;
 
         numMatchingTokens = numTokens;
       }

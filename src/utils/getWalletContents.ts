@@ -80,7 +80,7 @@ export const getWalletContents = async (
         );
 
         // Update userTokensCache
-        userTokensCache.cw20[walletAddress] = {
+        userTokensCache.cw20[cw20Address] = {
           quantity: balanceResponse.balance,
         };
       }),
