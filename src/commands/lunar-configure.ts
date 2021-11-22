@@ -118,6 +118,7 @@ export default {
         tokenIds = rawTokenIds ? JSON.parse(rawTokenIds) : undefined;
         // check that the tokenIds is properly formatted
         if (
+          tokenIds &&
           !(
             Array.isArray(tokenIds) &&
             tokenIds.every((tokenId) => typeof tokenId == "string")
