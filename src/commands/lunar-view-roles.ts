@@ -44,7 +44,7 @@ const lunarVerify = {
           .join("\n");
 
         await interaction.editReply({
-          content: `You are eligible for the following roles on the following servers:\n${activeRolesMessage}\n\nIn order to claim one of the listed roles, run /lunar-view-roles from within the server corresponding to the role you want to claim.`,
+          content: `Hello ser! You have been granted the following roles on the following servers: \n${activeRolesMessage}`,
           // ephemeral: privateResponse,
         });
       } else {
