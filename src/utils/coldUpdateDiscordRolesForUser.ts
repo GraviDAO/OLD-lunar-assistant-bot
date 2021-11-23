@@ -153,19 +153,15 @@ export async function coldUpdateDiscordRolesForUser(
 
     if (!guild) return p.then(() => new Promise((resolve) => resolve(null)));
 
-    // get the member from the discord client
-    const member = guild.members.cache.get(userID);
+    return p.then(async () => {
+      try {
+        const member = await guild.members.fetch(userID);
 
-    // if (!member) return p.then(() => new Promise((resolve) => resolve(null)));
-    if (member) {
-      console.log("Member exists");
-    } else {
-      console.log("Member doesn't exist");
-    }
-
-    return p.then(() =>
-      coldUpdateDiscordRolesForUserInGuild(guild, member, guildConfigDoc)
-    );
+        coldUpdateDiscordRolesForUserInGuild(guild, member, guildConfigDoc);
+      } catch (e) {
+        // member doesn't exist in guild
+      }
+    });
   }, new Promise((resolve, reject) => resolve(null)));
 
   console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
