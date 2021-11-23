@@ -157,6 +157,11 @@ export async function coldUpdateDiscordRolesForUser(
     const member = guild.members.cache.get(userID);
 
     // if (!member) return p.then(() => new Promise((resolve) => resolve(null)));
+    if (member) {
+      console.log("Member exists");
+    } else {
+      console.log("Member doesn't exist");
+    }
 
     return p.then(() =>
       coldUpdateDiscordRolesForUserInGuild(guild, member, guildConfigDoc)
