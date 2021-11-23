@@ -28,6 +28,8 @@ const lunarVerify = {
       interaction.options.getBoolean("private-response");
     const privateResponse = rawPrivateResponse ? rawPrivateResponse : false;
 
+    await interaction.deferReply({ ephemeral: privateResponse });
+
     try {
       const userActiveRoles = (
         await lunarAssistant.updateDiscordRolesForUser(interaction.user.id)
@@ -41,36 +43,36 @@ const lunarVerify = {
           )
           .join("\n");
 
-        await interaction.reply({
+        await interaction.editReply({
           content: `You are eligible for the following roles on the following servers:\n${activeRolesMessage}\n\nIn order to claim one of the listed roles, run /lunar-view-roles from within the server corresponding to the role you want to claim.`,
-          ephemeral: privateResponse,
+          // ephemeral: privateResponse,
         });
       } else {
-        await interaction.reply({
+        await interaction.editReply({
           content: `You have not been granted any roles.`,
-          ephemeral: privateResponse,
+          // ephemeral: privateResponse,
         });
       }
     } catch (e) {
       if (e instanceof UserDocMissingError) {
-        await interaction.reply({
+        await interaction.editReply({
           content:
             "Cannot check for roles because you haven't linked a wallet yet. Please link a wallet with /lunar-link and try again.",
-          ephemeral: true,
+          // ephemeral: true,
         });
       } else if (e instanceof RandomEarthAPIError) {
-        await interaction.reply({
+        await interaction.editReply({
           content:
             "The bot is having trouble reading the RandomEarth listings, please try again later. Roles will be frozen until the bot can read RandomEarth listings again.",
-          ephemeral: true,
+          // ephemeral: true,
         });
       } else {
         console.error("Unknown error when running /lunar-view-roles:");
         console.error(e);
 
-        await interaction.reply({
+        await interaction.editReply({
           content: "There was an unknown error while executing this command!",
-          ephemeral: true,
+          // ephemeral: true,
         });
       }
     }
