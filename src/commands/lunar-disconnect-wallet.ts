@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { LunarAssistant } from "..";
-import db from "../services/admin";
+import { passportApi } from "../services/passport";
 
 export default {
   data: new SlashCommandBuilder()
@@ -12,14 +12,13 @@ export default {
     interaction: CommandInteraction
   ) => {
     // get the user document
-    const userDoc = await db.collection("users").doc(interaction.user.id).get();
+    const userWallets = await passportApi.getWalletsByDiscordId(
+      interaction.user.id
+    );
 
-    if (userDoc.exists) {
-      // delete the users document
-      await db.collection("users").doc(interaction.user.id).delete();
-
+    if (userWallets && userWallets.length > 0) {
       await interaction.reply({
-        content: "Your wallet has been disconnected successfully",
+        content: "Visit Passport in order to configure your linked wallets.",
         ephemeral: true,
       });
     } else {

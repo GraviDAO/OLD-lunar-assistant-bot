@@ -1,8 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { LunarAssistant } from "..";
-import db from "../services/admin";
-import { User } from "../shared/firestoreTypes";
+import { passportApi } from "../services/passport";
 
 export default {
   data: new SlashCommandBuilder()
@@ -12,15 +11,14 @@ export default {
     lunarAssistant: LunarAssistant,
     interaction: CommandInteraction
   ) => {
-    // get the user document
-    const userDoc = await db.collection("users").doc(interaction.user.id).get();
+    // get the user wallet addresses
+    const walletAddresses = await passportApi.getWalletsByDiscordId(
+      interaction.user.id
+    );
 
-    if (userDoc.exists) {
-      const wallet = (userDoc.data() as User).wallet;
-      const finderBaseAddress = "https://finder.terra.money/columbus-5/address";
-
+    if (walletAddresses.length > 0) {
       await interaction.reply({
-        content: "Your registered wallet: " + wallet,
+        content: `Your registered wallets: ${walletAddresses.join(",")}`,
         ephemeral: true,
       });
     } else {

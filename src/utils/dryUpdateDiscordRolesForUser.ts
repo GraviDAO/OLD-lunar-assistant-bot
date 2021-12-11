@@ -4,20 +4,16 @@ import {
   GuildRule,
   NFTRule,
   SimpleRule,
-  User,
 } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
-import { getWalletContents } from "./getWalletContents";
+import { getWalletsContents } from "./getWalletContents";
 import { guildRuleToSimpleRule, isNFTRule } from "./guildRuleHelpers";
 
 export async function dryUpdateDiscordRolesForUser(
-  userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
+  walletAddresses: string[],
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ): Promise<UpdateUserDiscordRolesResponse> {
-  // get the users wallet address
-  const walletAddress = (userDoc.data() as User).wallet;
-
   // mapping from discord server name to a list of active roles
   const activeRoles: { [guildName: string]: string[] } = {};
 
@@ -27,8 +23,8 @@ export async function dryUpdateDiscordRolesForUser(
   const relevantContractAddresses =
     getRelevantContractAddresses(guildConfigsSnapshot);
 
-  const userTokensCache = await getWalletContents(
-    walletAddress,
+  const userTokensCache = await getWalletsContents(
+    walletAddresses,
     relevantContractAddresses
   );
 
@@ -111,10 +107,15 @@ export async function dryUpdateDiscordRolesForUser(
     return p.then(() => coldUpdateDiscordRolesForUserInGuild(guildConfigDoc));
   }, new Promise((resolve, reject) => resolve(null)));
 
-  console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
-    activeRoles,
-    removedRoles,
-  });
+  console.log(
+    `Got all tokens and updated roles for user with wallet addresses: ${walletAddresses.join(
+      ","
+    )}:`,
+    {
+      activeRoles,
+      removedRoles,
+    }
+  );
 
   // return the list of the users active roles and removed roles
   return { activeRoles, removedRoles };

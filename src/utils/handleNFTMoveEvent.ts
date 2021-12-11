@@ -1,4 +1,5 @@
 import { LunarAssistant } from "..";
+import { passportApi } from "../services/passport";
 
 export async function handleNFTMoveEvent(
   this: LunarAssistant,
@@ -17,26 +18,20 @@ export async function handleNFTMoveEvent(
   // if so, update its discord roles
   await Promise.all(
     updatedWallets.map(async (wallet) => {
-      const usersRegisteredWithWallet = await this.db
-        .collection("users")
-        .where("wallet", "==", wallet)
-        .get();
+      const discordId = await passportApi.getDiscordIdByWallet(wallet);
+      const walletAddresses = await passportApi.getWalletsByDiscordId(
+        discordId
+      );
 
-      if (
-        !usersRegisteredWithWallet.empty &&
-        usersRegisteredWithWallet.docs.length === 1
-      ) {
-        console.log(
-          `Updating user roles for ${wallet} because of nft move event`
-        );
+      console.log(
+        `Updating user roles for ${wallet} because of nft move event`
+      );
 
-        const userDoc = usersRegisteredWithWallet.docs[0];
-        await this.coldUpdateDiscordRolesForUser(
-          userDoc.id,
-          userDoc,
-          guildConfigsSnapshot
-        );
-      }
+      await this.coldUpdateDiscordRolesForUser(
+        discordId,
+        walletAddresses,
+        guildConfigsSnapshot
+      );
     })
   );
 }

@@ -2,6 +2,7 @@ import { Client, Intents } from "discord.js";
 import cron from "node-cron";
 import { maintenance_mode, token } from "../config.json";
 import db from "./services/admin";
+import { PassportAPI, passportApi } from "./services/passport";
 import { coldUpdateDiscordRolesForUser } from "./utils/coldUpdateDiscordRolesForUser";
 import { connectObserver } from "./utils/connectObserver";
 import { handleNewBlock } from "./utils/handleNewBlock";
@@ -13,6 +14,7 @@ import { updateDiscordRolesForUser } from "./utils/updateDiscordRolesForUser";
 
 export class LunarAssistant {
   client: Client;
+  passportApi: PassportAPI;
   db: FirebaseFirestore.Firestore;
 
   // define functions
@@ -30,6 +32,9 @@ export class LunarAssistant {
 
     // save the db instance
     this.db = db;
+
+    // save the passportApi instance
+    this.passportApi = passportApi;
   }
 
   registerGuildCommands() {

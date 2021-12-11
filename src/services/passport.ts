@@ -8,7 +8,7 @@ import {
 
 const baseURL = "https://galactic-passport-server.herokuapp.com/v1";
 
-export default class PassportAPI {
+class PassportAPI {
   passportClient: AxiosInstance;
 
   constructor() {
@@ -24,25 +24,36 @@ export default class PassportAPI {
   // get requests
 
   // get wallets of discord id
-  getWalletsByDiscordId = async (discordId: string) => {
+  getWalletsByDiscordId = async (discordId: string): Promise<string[]> => {
     const res = (
       await this.passportClient.get(
         `/linked_addresses?platform_ids=discord_${discordId}`
       )
     ).data as LinkedAddressesResponse;
 
-    return res[discordId].wallets;
+    const wallets = res[discordId].wallets;
+
+    if (wallets == undefined) {
+      throw new Error("Wallets returned are undefined");
+    }
+
+    return wallets.map((walletObj) => walletObj.address);
   };
 
   // get discord id of wallet
-  getDiscordIdByWallet = async (address: string) => {
+  getDiscordIdByWallet = async (address: string): Promise<string> => {
     const res = (
       await this.passportClient.get(
         `/linked_accounts?platforms=discord&addresses=${address}`
       )
     ).data as LinkedAccountsResponse;
 
-    return res.accounts;
+    if (res.accounts == undefined) {
+      throw new Error("Accounts returned are undefined");
+    }
+
+    const discordId = res.accounts[0].accountId;
+    return discordId;
   };
 
   // post requests
@@ -56,4 +67,18 @@ export default class PassportAPI {
     const res = await this.passportClient.post("/linked_accounts", body);
     return res;
   };
+
+  unlinkAddressFromDiscord = async (address: string) => {
+    // first get the user's discord id
+    const discordId = await this.getDiscordIdByWallet(address);
+
+    const res = await this.passportClient.delete(
+      `/linked_accounts/discord_${discordId}/linked_addresses/${address}`
+    );
+    return res;
+  };
 }
+
+const passportApi = new PassportAPI();
+
+export { passportApi, PassportAPI };
