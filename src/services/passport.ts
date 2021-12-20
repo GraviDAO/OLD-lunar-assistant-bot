@@ -1,12 +1,14 @@
 import axios, { AxiosInstance } from "axios";
 import { PASSPORT_API_KEY } from "../../config.json";
-import {
-  LinkAccountBody,
-  LinkedAccountsResponse,
-  LinkedAddressesResponse,
-} from "../types/passport";
+import { LinkAccountBody, LinkedAddressesResponse } from "../types/passport";
 
 const baseURL = "https://galactic-passport-server.herokuapp.com/v1";
+
+interface PrimaryAccountsResponse {
+  [address: string]: {
+    primaryDiscord: string;
+  };
+}
 
 class PassportAPI {
   passportClient: AxiosInstance;
@@ -44,15 +46,18 @@ class PassportAPI {
   getDiscordIdByWallet = async (address: string): Promise<string> => {
     const res = (
       await this.passportClient.get(
-        `/linked_accounts?platforms=discord&addresses=${address}`
+        `/primary_accounts?platforms=discord&addresses=${address}`
       )
-    ).data as LinkedAccountsResponse;
+    ).data as PrimaryAccountsResponse;
 
-    if (res.accounts == undefined) {
-      throw new Error("Accounts returned are undefined");
+    if (
+      res[address] == undefined ||
+      res[address]["primaryDiscord"] == undefined
+    ) {
+      throw new Error("Can't find discord ID");
     }
 
-    const discordId = res.accounts[0].accountId;
+    const discordId = res[address]["primaryDiscord"];
     return discordId;
   };
 

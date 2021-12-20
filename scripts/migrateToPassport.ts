@@ -37,3 +37,5 @@ const migrateToPassport = async () => {
   // Update the users doc
   await db.collection("root").doc("users").set({ discordIds });
 };
+
+migrateToPassport();
