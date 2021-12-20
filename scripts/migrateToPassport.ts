@@ -22,14 +22,20 @@ const migrateToPassport = async () => {
   const usersSnapshot = await db.collection("users").get();
   const discordIds: string[] = [];
 
+  const numUsers = usersSnapshot.docs.length;
+
   // For each doc, link on galactic passport and
   await usersSnapshot.docs.reduce(
-    (p, doc) =>
+    (p, doc, index) =>
       p.then(() => {
         const wallet = (doc.data() as User).wallet;
         discordIds.push(doc.id);
-        console.log(`Linking ${wallet} to ${doc.id}`);
-        return passportApi.linkAddressToDiscordId(wallet, doc.id);
+        console.log(
+          `Linking ${wallet} to ${doc.id}. ${index + 1} / ${numUsers}`
+        );
+        return passportApi
+          .linkAddressToDiscordId(wallet, doc.id)
+          .catch(() => {});
       }),
     new Promise((resolve) => resolve(null))
   );

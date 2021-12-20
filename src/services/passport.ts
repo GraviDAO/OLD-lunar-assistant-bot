@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { PASSPORT_API_KEY } from "../../config.json";
 import { LinkAccountBody, LinkedAddressesResponse } from "../types/passport";
 
-const baseURL = "https://galactic-passport.herokuapp.com/";
+const baseURL = "https://galactic-passport.herokuapp.com/v1";
 
 interface PrimaryAccountsResponse {
   [address: string]: {
@@ -71,8 +71,17 @@ class PassportAPI {
       setAsPrimaryAccount: true,
       setAsPrimaryAddress: true,
     };
-    const res = await this.passportClient.post("/linked_accounts", body);
-    return res;
+    try {
+      const res = await this.passportClient.post("/linked_accounts", body);
+      return res;
+    } catch (error: any) {
+      if (error.response) {
+        console.error(error.response.data);
+      } else {
+        console.error(error);
+      }
+      throw new Error("Couldn't link address to discord id");
+    }
   };
 
   unlinkAddressFromDiscord = async (address: string) => {
