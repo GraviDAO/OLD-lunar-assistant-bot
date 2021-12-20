@@ -15,9 +15,12 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 
-const discordID = "791301617269866507";
+const discordID = "619663424812613662";
 
 const getUserWallet = async () => {
-  const wallet = passportApi.getWalletsByDiscordId(discordID);
+  const wallet = await passportApi.getWalletsByDiscordId(discordID);
+  console.log(wallet);
   console.log(`User wallet: ${wallet}`);
 };
+
+getUserWallet();

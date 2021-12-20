@@ -33,11 +33,11 @@ class PassportAPI {
       )
     ).data as LinkedAddressesResponse;
 
-    if (res[discordId] == undefined) {
+    if (res[`discord_${discordId}`] == undefined) {
       return [];
     }
 
-    const wallets = res[discordId].wallets;
+    const wallets = res[`discord_${discordId}`].wallets;
 
     if (wallets == undefined) {
       return [];
