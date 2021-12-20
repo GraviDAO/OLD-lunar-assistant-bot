@@ -57,7 +57,7 @@ export default {
       }
     } else {
       await interaction.reply({
-        content: `In order to activate Lunar Assistant for your Discord account, you must have a wallet linked to your Discord account on Galactic Passport. Please go to https://galacticpassport.com, log in with your Discord account, link your relevant wallets, and then try running \`/lunar-activate\` again.`,
+        content: `In order to activate Lunar Assistant for your Discord account, you must have a wallet linked to your Discord account on Galactic Passport. Please go to https://galacticpassport.app, log in with your Discord account, link your relevant wallets, and then try running \`/lunar-activate\` again.`,
         ephemeral: true,
       });
     }
