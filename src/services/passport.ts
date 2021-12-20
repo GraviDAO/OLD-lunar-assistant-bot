@@ -27,7 +27,7 @@ class PassportAPI {
   getWalletsByDiscordId = async (discordId: string): Promise<string[]> => {
     const res = (
       await this.passportClient.get(
-        `/linked_addresses?platform_ids=discord_${discordId}`
+        `/linked_addresses?platform_ids=discord_${discordId}&onlyIfPrimaryAccount=true`
       )
     ).data as LinkedAddressesResponse;
 
