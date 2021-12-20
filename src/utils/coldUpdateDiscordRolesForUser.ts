@@ -64,22 +64,31 @@ export async function coldUpdateDiscordRolesForUser(
       if (isNFTRule(rule)) {
         const nftRule = rule as NFTRule;
 
-        const tokens = userTokensCache.nft[nftRule.nftAddress].tokenIds;
+        try {
+          const tokens = userTokensCache.nft[nftRule.nftAddress].tokenIds;
 
-        // get the number of matching tokens
-        numMatchingTokens = (
-          nftRule.tokenIds != undefined
-            ? tokens.filter(
-                (token) => nftRule.tokenIds && nftRule.tokenIds.includes(token)
-              )
-            : tokens
-        ).length;
+          // get the number of matching tokens
+          numMatchingTokens = (
+            nftRule.tokenIds != undefined
+              ? tokens.filter(
+                  (token) =>
+                    nftRule.tokenIds && nftRule.tokenIds.includes(token)
+                )
+              : tokens
+          ).length;
+        } catch (e) {
+          numMatchingTokens = 0;
+        }
       } else {
         const cw20Rule = rule as CW20Rule;
 
-        const numTokens = userTokensCache.cw20[cw20Rule.cw20Address].quantity;
+        try {
+          const numTokens = userTokensCache.cw20[cw20Rule.cw20Address].quantity;
 
-        numMatchingTokens = numTokens;
+          numMatchingTokens = numTokens;
+        } catch (e) {
+          numMatchingTokens = 0;
+        }
       }
 
       if (numMatchingTokens >= rule.quantity) {
