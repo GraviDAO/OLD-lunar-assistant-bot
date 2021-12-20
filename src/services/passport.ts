@@ -63,6 +63,8 @@ class PassportAPI {
     const body: LinkAccountBody = {
       platform_id: `discord_${discordId}`,
       address,
+      setAsPrimaryAccount: true,
+      setAsPrimaryAddress: true,
     };
     const res = await this.passportClient.post("/linked_accounts", body);
     return res;
