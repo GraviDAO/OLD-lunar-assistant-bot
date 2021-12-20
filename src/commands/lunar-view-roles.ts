@@ -83,12 +83,12 @@ const lunarVerify = {
     } else if (walletAddresses.length > 0) {
       await interaction.editReply({
         content:
-          "Cannot check for roles because you haven't activated Lunar Assistant for your Discorda account yet. Please activate Lunar Assistant with /lunar-activate.",
+          "Cannot check for roles because you haven't activated Lunar Assistant for your Discord account yet. Please activate Lunar Assistant with /lunar-activate.",
       });
     } else {
       await interaction.editReply({
         content:
-          "Cannot check for roles because you haven't linked your wallet with Galactic Passport or activated Lunar Assistant for your Discord account. Please go to https://galacticpassport.com, log in with your Discord account, link your relevant wallets, and then try running `/lunar-activate`.`,.",
+          "Cannot check for roles because you haven't linked your wallet with Galactic Passport or activated Lunar Assistant for your Discord account. Please go to https://galacticpassport.com, log in with your Discord account, link your relevant wallets, and then run `/lunar-activate`.",
       });
     }
   },
