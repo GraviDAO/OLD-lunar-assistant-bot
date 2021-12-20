@@ -33,10 +33,14 @@ class PassportAPI {
       )
     ).data as LinkedAddressesResponse;
 
+    if (res[discordId] == undefined) {
+      return [];
+    }
+
     const wallets = res[discordId].wallets;
 
     if (wallets == undefined) {
-      throw new Error("Wallets returned are undefined");
+      return [];
     }
 
     return wallets.map((walletObj) => walletObj.address);
