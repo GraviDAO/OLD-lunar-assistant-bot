@@ -6,21 +6,23 @@ import {
   GuildRule,
   NFTRule,
   SimpleRule,
-  User,
+  Users,
 } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
-import { getWalletContents } from "./getWalletContents";
+import { getWalletsContents } from "./getWalletContents";
 import { guildRuleToSimpleRule, isNFTRule } from "./guildRuleHelpers";
 
 export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
   userID: string,
-  userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
+  walletAddresses: string[],
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ): Promise<UpdateUserDiscordRolesResponse> {
-  // get the users wallet address
-  const walletAddress = (userDoc.data() as User).wallet;
+  // Get the user document
+  const users = (
+    await this.db.collection("root").doc("users").get()
+  ).data() as Users;
 
   // mapping from discord server name to a list of active roles
   const activeRoles: { [guildName: string]: string[] } = {};
@@ -31,10 +33,9 @@ export async function coldUpdateDiscordRolesForUser(
   const relevantContractAddresses =
     getRelevantContractAddresses(guildConfigsSnapshot);
 
-  const userTokensCache = await getWalletContents(
-    walletAddress,
-    relevantContractAddresses
-  );
+  const userTokensCache = users.discordIds.includes(userID)
+    ? await getWalletsContents(walletAddresses, relevantContractAddresses)
+    : { nft: {}, cw20: {} };
 
   // update roles for user in guild
   const coldUpdateDiscordRolesForUserInGuild = async (
@@ -68,22 +69,31 @@ export async function coldUpdateDiscordRolesForUser(
       if (isNFTRule(rule)) {
         const nftRule = rule as NFTRule;
 
-        const tokens = userTokensCache.nft[nftRule.nftAddress].tokenIds;
+        try {
+          const tokens = userTokensCache.nft[nftRule.nftAddress].tokenIds;
 
-        // get the number of matching tokens
-        numMatchingTokens = (
-          nftRule.tokenIds != undefined
-            ? tokens.filter(
-                (token) => nftRule.tokenIds && nftRule.tokenIds.includes(token)
-              )
-            : tokens
-        ).length;
+          // get the number of matching tokens
+          numMatchingTokens = (
+            nftRule.tokenIds != undefined
+              ? tokens.filter(
+                  (token) =>
+                    nftRule.tokenIds && nftRule.tokenIds.includes(token)
+                )
+              : tokens
+          ).length;
+        } catch (e) {
+          numMatchingTokens = 0;
+        }
       } else {
         const cw20Rule = rule as CW20Rule;
 
-        const numTokens = userTokensCache.cw20[cw20Rule.cw20Address].quantity;
+        try {
+          const numTokens = userTokensCache.cw20[cw20Rule.cw20Address].quantity;
 
-        numMatchingTokens = numTokens;
+          numMatchingTokens = numTokens;
+        } catch (e) {
+          numMatchingTokens = 0;
+        }
       }
 
       if (numMatchingTokens >= rule.quantity) {
@@ -164,10 +174,13 @@ export async function coldUpdateDiscordRolesForUser(
     });
   }, new Promise((resolve, reject) => resolve(null)));
 
-  console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
-    activeRoles,
-    removedRoles,
-  });
+  console.log(
+    `Got all tokens and updated roles for ${walletAddresses.join(",")}:`,
+    {
+      activeRoles,
+      removedRoles,
+    }
+  );
 
   // return the list of the users active roles and removed roles
   return { activeRoles, removedRoles };

@@ -2,6 +2,7 @@ import { Client, Intents } from "discord.js";
 import cron from "node-cron";
 import { maintenance_mode, token } from "../config.json";
 import db from "./services/admin";
+import { PassportAPI, passportApi } from "./services/passport";
 import { coldUpdateDiscordRolesForUser } from "./utils/coldUpdateDiscordRolesForUser";
 import { connectObserver } from "./utils/connectObserver";
 import { handleNewBlock } from "./utils/handleNewBlock";
@@ -13,6 +14,7 @@ import { updateDiscordRolesForUser } from "./utils/updateDiscordRolesForUser";
 
 export class LunarAssistant {
   client: Client;
+  passportApi: PassportAPI;
   db: FirebaseFirestore.Firestore;
 
   // define functions
@@ -30,6 +32,9 @@ export class LunarAssistant {
 
     // save the db instance
     this.db = db;
+
+    // save the passportApi instance
+    this.passportApi = passportApi;
   }
 
   registerGuildCommands() {
@@ -66,33 +71,33 @@ export class LunarAssistant {
       // only start triggering updates after the initial snapshot
       let initialSnapshot = true;
 
-      // update discord roles whenever a user document changes
-      this.db.collection("users").onSnapshot((querySnapshot) => {
-        if (!initialSnapshot) {
-          const changedDocs = querySnapshot.docChanges();
-          console.log("Docs changed: " + changedDocs.map((doc) => doc.doc.id));
-          changedDocs.reduce(
-            (p, changedDoc) =>
-              p
-                .then(() =>
-                  this.updateDiscordRolesForUser(changedDoc.doc.id).catch(
-                    // ignore errors
-                    (error) => {}
-                  )
-                )
-                .then(
-                  // delay for one second between processing each user
-                  () =>
-                    new Promise((resolve) =>
-                      setTimeout(() => resolve(null), 1000)
-                    )
-                ),
-            new Promise((resolve) => resolve(null))
-          );
-        } else {
-          initialSnapshot = false;
-        }
-      });
+      // // update discord roles whenever a user document changes
+      // this.db.collection("users").onSnapshot((querySnapshot) => {
+      //   if (!initialSnapshot) {
+      //     const changedDocs = querySnapshot.docChanges();
+      //     console.log("Docs changed: " + changedDocs.map((doc) => doc.doc.id));
+      //     changedDocs.reduce(
+      //       (p, changedDoc) =>
+      //         p
+      //           .then(() =>
+      //             this.updateDiscordRolesForUser(changedDoc.doc.id).catch(
+      //               // ignore errors
+      //               (error) => {}
+      //             )
+      //           )
+      //           .then(
+      //             // delay for one second between processing each user
+      //             () =>
+      //               new Promise((resolve) =>
+      //                 setTimeout(() => resolve(null), 1000)
+      //               )
+      //           ),
+      //       new Promise((resolve) => resolve(null))
+      //     );
+      //   } else {
+      //     initialSnapshot = false;
+      //   }
+      // });
 
       // listen to nft transfer events
       this.connectObserver();

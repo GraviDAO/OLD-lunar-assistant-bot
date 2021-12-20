@@ -1,17 +1,12 @@
 import { LunarAssistant } from "../index";
+import { passportApi } from "../services/passport";
 import { UpdateUserDiscordRolesResponse } from "../types";
-import { UserDocMissingError } from "../types/errors";
 
 export async function updateDiscordRolesForUser(
   this: LunarAssistant,
   userID: string
 ): Promise<UpdateUserDiscordRolesResponse> {
-  // get the user document
-  const userDoc = await this.db.collection("users").doc(userID).get();
-
-  // check that the user document exists
-  if (!userDoc.exists)
-    throw new UserDocMissingError("Couldn't find user document");
+  const walletAddresses = await passportApi.getWalletsByDiscordId(userID);
 
   // get guilds from db
   // later store this in memory for performance reasons
@@ -21,7 +16,7 @@ export async function updateDiscordRolesForUser(
 
   return this.coldUpdateDiscordRolesForUser(
     userID,
-    userDoc,
+    walletAddresses,
     guildConfigsSnapshot
   );
 }

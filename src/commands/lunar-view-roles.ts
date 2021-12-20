@@ -1,13 +1,15 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { LunarAssistant } from "..";
-import { RandomEarthAPIError, UserDocMissingError } from "../types/errors";
+import { passportApi } from "../services/passport";
+import { Users } from "../shared/firestoreTypes";
+import { RandomEarthAPIError } from "../types/errors";
 
 const lunarVerify = {
   data: new SlashCommandBuilder()
     .setName("lunar-view-roles")
     .setDescription(
-      "View the roles that you have been granted based on the contents of your wallet."
+      "View the roles that you have been granted based on your wallets linked via Galactic Passport."
     )
     .addBooleanOption((option) =>
       option
@@ -30,51 +32,64 @@ const lunarVerify = {
 
     await interaction.deferReply({ ephemeral: privateResponse });
 
-    try {
-      const userActiveRoles = (
-        await lunarAssistant.updateDiscordRolesForUser(interaction.user.id)
-      ).activeRoles;
+    const walletAddresses = await passportApi.getWalletsByDiscordId(
+      interaction.user.id
+    );
 
-      if (Object.keys(userActiveRoles).length > 0) {
-        const activeRolesMessage = Object.keys(userActiveRoles)
-          .map(
-            (guildName) =>
-              `${guildName}: ${userActiveRoles[guildName].join(", ")}`
-          )
-          .join("\n");
+    const users = (
+      await lunarAssistant.db.collection("root").doc("users").get()
+    ).data() as Users;
 
-        await interaction.editReply({
-          content: `Hello ser! You have been granted the following roles on the following servers: \n${activeRolesMessage}`,
-          // ephemeral: privateResponse,
-        });
-      } else {
-        await interaction.editReply({
-          content: `You have not been granted any roles.`,
-          // ephemeral: privateResponse,
-        });
+    if (
+      users.discordIds.includes(interaction.user.id) &&
+      walletAddresses.length > 0
+    ) {
+      try {
+        const userActiveRoles = (
+          await lunarAssistant.updateDiscordRolesForUser(interaction.user.id)
+        ).activeRoles;
+
+        if (Object.keys(userActiveRoles).length > 0) {
+          const activeRolesMessage = Object.keys(userActiveRoles)
+            .map(
+              (guildName) =>
+                `${guildName}: ${userActiveRoles[guildName].join(", ")}`
+            )
+            .join("\n");
+
+          await interaction.editReply({
+            content: `Hello ser! You have been granted the following roles on the following servers: \n${activeRolesMessage}`,
+          });
+        } else {
+          await interaction.editReply({
+            content: `You have not been granted any roles.`,
+          });
+        }
+      } catch (error) {
+        if (error instanceof RandomEarthAPIError) {
+          await interaction.editReply({
+            content:
+              "The bot is having trouble reading the RandomEarth listings, please try again later. Roles will be frozen until the bot can read RandomEarth listings again.",
+          });
+        } else {
+          console.error("Unknown error when running /lunar-view-roles:");
+          console.error(error);
+
+          await interaction.editReply({
+            content: "There was an unknown error while executing this command!",
+          });
+        }
       }
-    } catch (e) {
-      if (e instanceof UserDocMissingError) {
-        await interaction.editReply({
-          content:
-            "Cannot check for roles because you haven't linked a wallet yet. Please link a wallet with /lunar-link and try again.",
-          // ephemeral: true,
-        });
-      } else if (e instanceof RandomEarthAPIError) {
-        await interaction.editReply({
-          content:
-            "The bot is having trouble reading the RandomEarth listings, please try again later. Roles will be frozen until the bot can read RandomEarth listings again.",
-          // ephemeral: true,
-        });
-      } else {
-        console.error("Unknown error when running /lunar-view-roles:");
-        console.error(e);
-
-        await interaction.editReply({
-          content: "There was an unknown error while executing this command!",
-          // ephemeral: true,
-        });
-      }
+    } else if (walletAddresses.length > 0) {
+      await interaction.editReply({
+        content:
+          "Cannot check for roles because you haven't activated Lunar Assistant for your Discord account yet. Please activate Lunar Assistant with /lunar-activate.",
+      });
+    } else {
+      await interaction.editReply({
+        content:
+          "Cannot check for roles because you haven't linked your wallet with Galactic Passport or activated Lunar Assistant for your Discord account. Please go to https://galacticpassport.app, log in with your Discord account, link your relevant wallets, and then run `/lunar-activate`.",
+      });
     }
   },
 };
