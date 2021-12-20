@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { PASSPORT_API_KEY } from "../../config.json";
 import { LinkAccountBody, LinkedAddressesResponse } from "../types/passport";
 
-const baseURL = "https://galactic-passport-server.herokuapp.com/v1";
+const baseURL = "https://galactic-passport.herokuapp.com/";
 
 interface PrimaryAccountsResponse {
   [address: string]: {
