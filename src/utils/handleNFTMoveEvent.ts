@@ -18,20 +18,25 @@ export async function handleNFTMoveEvent(
   // if so, update its discord roles
   await Promise.all(
     updatedWallets.map(async (wallet) => {
-      const discordId = await passportApi.getDiscordIdByWallet(wallet);
-      const walletAddresses = await passportApi.getWalletsByDiscordId(
-        discordId
-      );
+      try {
+        const discordId = await passportApi.getDiscordIdByWallet(wallet);
 
-      console.log(
-        `Updating user roles for ${wallet} because of nft move event`
-      );
+        const walletAddresses = await passportApi.getWalletsByDiscordId(
+          discordId
+        );
 
-      await this.coldUpdateDiscordRolesForUser(
-        discordId,
-        walletAddresses,
-        guildConfigsSnapshot
-      );
+        console.log(
+          `Updating user roles for ${wallet} because of nft move event`
+        );
+
+        await this.coldUpdateDiscordRolesForUser(
+          discordId,
+          walletAddresses,
+          guildConfigsSnapshot
+        );
+      } catch (error) {
+        // wallet not linked to discord account
+      }
     })
   );
 }
