@@ -1,5 +1,6 @@
 import { LunarAssistant } from "..";
-import { User } from "../shared/firestoreTypes";
+import { passportApi } from "../services/passport";
+import { Users } from "../shared/firestoreTypes";
 
 export async function updateAllDiscordUserRoles(this: LunarAssistant) {
   // read all users from firestore
@@ -15,27 +16,34 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
   console.log("Running updateAllDiscordUserRoles cronjob!");
 
   // loop over every user
-  const usersSnapshot = await this.db.collection("users").get();
+
+  const users = (
+    await this.db.collection("root").doc("users").get()
+  ).data() as Users;
   const guildConfigsSnapshot = await this.db.collection("guildConfigs").get();
 
-  const numUsers = usersSnapshot.docs.length;
+  const numUsers = users.discordIds.length;
 
-  await usersSnapshot.docs.reduce(
-    (p, userDoc, index) =>
+  await users.discordIds.reduce(
+    (p, discordId, index) =>
       p
         .then(() => {
           console.log(`Cronjob status: ${index} / ${numUsers}`);
+
           // update the user's discord roles
-          return this.coldUpdateDiscordRolesForUser(
-            userDoc.id,
-            userDoc,
-            guildConfigsSnapshot
-          ).catch((error) => {
-            console.log(
-              `Failed to update roles for ${(userDoc.data() as User).wallet}`
-            );
-            console.error(error);
-          });
+          return passportApi
+            .getWalletsByDiscordId(discordId)
+            .then((walletAddresses) =>
+              this.coldUpdateDiscordRolesForUser(
+                discordId,
+                walletAddresses,
+                guildConfigsSnapshot
+              )
+            )
+            .catch((error) => {
+              console.log(`Failed to update roles for ${discordId}`);
+              console.error(error);
+            });
         })
         .then(
           // delay for one second between processing each user
