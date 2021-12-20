@@ -2,6 +2,10 @@ export interface User {
   wallet: string;
 }
 
+export interface Users {
+  discordIds: string[];
+}
+
 export type NFTRule = {
   nftAddress: string;
   tokenIds?: string[];
