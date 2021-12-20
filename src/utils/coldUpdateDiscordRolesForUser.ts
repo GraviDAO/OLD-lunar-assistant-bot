@@ -6,6 +6,7 @@ import {
   GuildRule,
   NFTRule,
   SimpleRule,
+  Users,
 } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
@@ -18,6 +19,11 @@ export async function coldUpdateDiscordRolesForUser(
   walletAddresses: string[],
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ): Promise<UpdateUserDiscordRolesResponse> {
+  // Get the user document
+  const users = (
+    await this.db.collection("root").doc("users").get()
+  ).data() as Users;
+
   // mapping from discord server name to a list of active roles
   const activeRoles: { [guildName: string]: string[] } = {};
 
@@ -27,10 +33,9 @@ export async function coldUpdateDiscordRolesForUser(
   const relevantContractAddresses =
     getRelevantContractAddresses(guildConfigsSnapshot);
 
-  const userTokensCache = await getWalletsContents(
-    walletAddresses,
-    relevantContractAddresses
-  );
+  const userTokensCache = users.discordIds.includes(userID)
+    ? await getWalletsContents(walletAddresses, relevantContractAddresses)
+    : { nft: {}, cw20: {} };
 
   // update roles for user in guild
   const coldUpdateDiscordRolesForUserInGuild = async (
