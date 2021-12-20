@@ -1,5 +1,6 @@
 import admin, { ServiceAccount } from "firebase-admin";
 import { FIREBASE_ADMIN_SERVICE_ACCOUNT } from "../config.json";
+import { Users } from "../src/shared/firestoreTypes";
 
 if (!admin.apps.length) {
   try {
@@ -31,8 +32,10 @@ const analysis = async () => {
   // );
 
   // Number of users
-  const usersSnapshot = await db.collection("users").get();
-  console.log("Number of registered users: " + usersSnapshot.docs.length);
+  const users = (
+    await db.collection("root").doc("users").get()
+  ).data() as Users;
+  console.log("Number of registered users: " + users.discordIds.length);
 };
 
 analysis();
