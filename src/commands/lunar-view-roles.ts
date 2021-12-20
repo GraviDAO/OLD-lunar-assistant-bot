@@ -9,7 +9,7 @@ const lunarVerify = {
   data: new SlashCommandBuilder()
     .setName("lunar-view-roles")
     .setDescription(
-      "View the roles that you have been granted based on the contents of your wallets linked on Galactic Passport."
+      "View the roles that you have been granted based on your wallets linked via Galactic Passport."
     )
     .addBooleanOption((option) =>
       option
