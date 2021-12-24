@@ -1,6 +1,10 @@
 import { terra } from "../services/terra";
 import { BalanceResponse, GetTokensResponse } from "../shared/contractTypes";
 
+interface TalisResponse {
+  tokens: { token_id: string }[];
+}
+
 export const getWalletTokensOfOwner = async (
   owner: string,
   contractAddress: string
@@ -12,17 +16,37 @@ export const getWalletTokensOfOwner = async (
   let tokens: GetTokensResponse | undefined;
   try {
     do {
-      tokens = (await terra.wasm.contractQuery(contractAddress, {
+      const query = {
         tokens: {
           owner,
           limit: 30,
-          start_after: tokens && tokens.tokens.at(-1),
+          start_after: tokens && tokens.tokens[tokens.tokens.length - 1],
         },
-      })) as GetTokensResponse;
+      };
+      const queryResponse = (await terra.wasm.contractQuery(
+        contractAddress,
+        query
+      )) as GetTokensResponse | TalisResponse;
+
+      if (queryResponse.tokens.length > 0) {
+        if (typeof queryResponse.tokens[0] == "string") {
+          tokens = queryResponse as GetTokensResponse;
+        } else {
+          tokens = {
+            tokens: (queryResponse as TalisResponse).tokens.map(
+              (obj) => obj.token_id
+            ),
+          };
+        }
+      } else {
+        tokens = { tokens: [] };
+      }
 
       res.tokens.push(...tokens.tokens);
     } while (tokens.tokens.length == 30);
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
   return res;
 };
 
