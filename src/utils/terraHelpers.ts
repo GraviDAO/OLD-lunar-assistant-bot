@@ -7,16 +7,22 @@ export const getWalletTokensOfOwner = async (
 ): Promise<GetTokensResponse> => {
   // QUERY GAME STATUS
   const query_msg = {
-    tokens: { owner },
+    tokens: { owner, limit: 30 },
   };
 
-  let res: GetTokensResponse;
+  let res: GetTokensResponse = { tokens: [] };
 
+  let tokens: GetTokensResponse;
   try {
-    res = await terra.wasm.contractQuery(contractAddress, query_msg);
-  } catch (e) {
-    res = { tokens: [] };
-  }
+    do {
+      tokens = (await terra.wasm.contractQuery(
+        contractAddress,
+        query_msg
+      )) as GetTokensResponse;
+
+      res.tokens.push(...tokens.tokens);
+    } while (tokens.tokens.length == 30);
+  } catch (e) {}
   return res;
 };
 
