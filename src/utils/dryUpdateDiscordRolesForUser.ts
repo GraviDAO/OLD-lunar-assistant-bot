@@ -4,7 +4,6 @@ import {
   GuildRule,
   NFTRule,
   SimpleRule,
-  User,
 } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
@@ -12,11 +11,11 @@ import { getWalletContents } from "./getWalletContents";
 import { guildRuleToSimpleRule, isNFTRule } from "./guildRuleHelpers";
 
 export async function dryUpdateDiscordRolesForUser(
-  userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
+  walletAddress: string,
+  // userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ): Promise<UpdateUserDiscordRolesResponse> {
   // get the users wallet address
-  const walletAddress = (userDoc.data() as User).wallet;
 
   // mapping from discord server name to a list of active roles
   const activeRoles: { [guildName: string]: string[] } = {};
