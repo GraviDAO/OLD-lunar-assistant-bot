@@ -33,6 +33,13 @@ export async function dryUpdateDiscordRolesForUser(
 
   console.log(userTokensCache);
 
+  console.log(
+    Object.keys(userTokensCache.nft).map((key) => ({
+      address: key,
+      count: userTokensCache.nft[key].tokenIds.length,
+    }))
+  );
+
   // update roles for user in guild
   const coldUpdateDiscordRolesForUserInGuild = async (
     guildConfigDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
@@ -68,8 +75,6 @@ export async function dryUpdateDiscordRolesForUser(
         ).length;
       } else {
         const cw20Rule = rule as CW20Rule;
-
-        console.log(cw20Rule);
 
         const numTokens = userTokensCache.cw20[cw20Rule.cw20Address].quantity;
 

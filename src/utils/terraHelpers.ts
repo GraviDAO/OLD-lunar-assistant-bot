@@ -13,9 +13,11 @@ export const getWalletTokensOfOwner = async (
   try {
     do {
       tokens = (await terra.wasm.contractQuery(contractAddress, {
-        owner,
-        limit: 30,
-        start_after: tokens && tokens.tokens.at(-1),
+        tokens: {
+          owner,
+          limit: 30,
+          start_after: tokens && tokens.tokens.at(-1),
+        },
       })) as GetTokensResponse;
 
       res.tokens.push(...tokens.tokens);
