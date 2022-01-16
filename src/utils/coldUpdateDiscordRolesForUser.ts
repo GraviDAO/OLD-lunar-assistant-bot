@@ -88,7 +88,14 @@ export async function coldUpdateDiscordRolesForUser(
 
       // How to deal with multiple roles that have the same name?
 
-      if (numMatchingTokens >= rule.quantity) {
+      if (
+        numMatchingTokens >= rule.quantity &&
+        // don't duplicate role if it was already granted
+        !(
+          activeRoles[guild.name] &&
+          activeRoles[guild.name].includes(newRole.name)
+        )
+      ) {
         // the user matches the role rules, update accordingly
 
         // update activeRoles
