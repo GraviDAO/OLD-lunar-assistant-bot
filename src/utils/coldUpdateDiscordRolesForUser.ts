@@ -162,7 +162,11 @@ export async function coldUpdateDiscordRolesForUser(
         // if not a member then skip
         if (!member) return;
 
-        coldUpdateDiscordRolesForUserInGuild(guild, member, guildConfigDoc);
+        await coldUpdateDiscordRolesForUserInGuild(
+          guild,
+          member,
+          guildConfigDoc
+        );
 
         // add the relevant roles
         await Promise.all(

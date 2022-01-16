@@ -81,20 +81,21 @@ export async function dryUpdateDiscordRolesForUser(
         numMatchingTokens = numTokens;
       }
 
-      if (numMatchingTokens >= rule.quantity) {
+      if (
+        numMatchingTokens >= rule.quantity &&
+        // don't duplicate role if it was already granted
+        !(
+          activeRoles[guildConfigDoc.id] &&
+          activeRoles[guildConfigDoc.id].includes(rule.roleName)
+        )
+      ) {
         // the user matches the role rules, update accordingly
 
-        try {
-          // update activeRoles
-          if (activeRoles[guildConfigDoc.id]) {
-            activeRoles[guildConfigDoc.id].push(rule.roleName);
-          } else {
-            activeRoles[guildConfigDoc.id] = [rule.roleName];
-          }
-        } catch (e) {
-          console.error(
-            "Couldn't add role, probably because of role hierarchy."
-          );
+        // update activeRoles
+        if (activeRoles[guildConfigDoc.id]) {
+          activeRoles[guildConfigDoc.id].push(rule.roleName);
+        } else {
+          activeRoles[guildConfigDoc.id] = [rule.roleName];
         }
       }
     };
@@ -112,7 +113,12 @@ export async function dryUpdateDiscordRolesForUser(
 
   // loop through guilds registered with lunar assistant in sequence
   await guildConfigsSnapshot.docs.reduce((p, guildConfigDoc) => {
-    return p.then(() => coldUpdateDiscordRolesForUserInGuild(guildConfigDoc));
+    return p.then(async () => {
+      await coldUpdateDiscordRolesForUserInGuild(guildConfigDoc);
+
+      console.log(activeRoles[guildConfigDoc.id]);
+      console.log(removedRoles[guildConfigDoc.id]);
+    });
   }, new Promise((resolve, reject) => resolve(null)));
 
   console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
