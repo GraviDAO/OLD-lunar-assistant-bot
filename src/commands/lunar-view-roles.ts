@@ -76,6 +76,11 @@ const lunarVerify = {
         });
       }
     }
+
+    // Wait 30 seconds, then delete the reply
+    setInterval(async () => {
+      await interaction.deleteReply();
+    }, 30 * 1000);
   },
 };
 
