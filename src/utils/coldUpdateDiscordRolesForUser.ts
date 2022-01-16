@@ -99,7 +99,10 @@ export async function coldUpdateDiscordRolesForUser(
         }
 
         // if removedRoles includes the role, delete it
-        if (removedRoles[guild.name].includes(newRole.name)) {
+        if (
+          removedRoles[guild.name] &&
+          removedRoles[guild.name].includes(newRole.name)
+        ) {
           removedRoles[guild.name].splice(
             removedRoles[guild.name].indexOf(newRole.name)
           );
@@ -110,7 +113,10 @@ export async function coldUpdateDiscordRolesForUser(
         // make sure member has role
         member.roles.cache.some((role) => role.name === newRole.name) &&
         // make sure member wasn't granted the role
-        !activeRoles[guild.name].includes(newRole.name)
+        !(
+          activeRoles[guild.name] &&
+          activeRoles[guild.name].includes(newRole.name)
+        )
       ) {
         // the user doesn't match the role rules but has the role anyways
         // update accordingly
