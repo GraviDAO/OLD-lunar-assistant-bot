@@ -270,24 +270,18 @@ export default {
 
       const guildConfigRules = (guildConfigDoc.data() as GuildConfig).rules;
 
-      const rulesMessage = guildConfigRules
-        .map((guildRule, index) => {
-          try {
-            const simpleRule = guildRuleToSimpleRule(guildRule);
+      const res: any = {};
 
-            const ruleString = JSON.stringify(simpleRule);
+      guildConfigRules.forEach((guildRule, index) => {
+        try {
+          const simpleRule = guildRuleToSimpleRule(guildRule);
 
-            const ruleDisplay = ruleString;
-            // ruleString.length > ruleDisplayMaxLength
-            //   ? ruleString.substr(0, ruleDisplayMaxLength) + "..."
-            //   : ruleString;
-
-            return `Rule ${index}: ${JSON.stringify(ruleDisplay)}\n`;
-          } catch (err) {
-            return `Malformed rule: ${JSON.stringify(guildRule)}\n`;
-          }
-        })
-        .join("\n");
+          res[`rule-${index}`] = simpleRule;
+          // return `Rule ${index}: ${JSON.stringify(ruleDisplay)}\n`;
+        } catch (err) {
+          res[`rule-${index}`] = guildRule;
+        }
+      });
 
       // reply with list of configured rules
       await interaction.reply({
@@ -295,7 +289,7 @@ export default {
         ephemeral: true,
         files: [
           new MessageAttachment(
-            Buffer.from(rulesMessage),
+            Buffer.from(JSON.stringify(res, null, 4)),
             `lunar-assistant-rules.txt`
           ),
         ],
