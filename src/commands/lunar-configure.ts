@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, MessageAttachment } from "discord.js";
 import { LunarAssistant } from "..";
 import db from "../services/admin";
 import { GuildConfig, GuildRule } from "../shared/firestoreTypes";
@@ -270,12 +270,6 @@ export default {
 
       const guildConfigRules = (guildConfigDoc.data() as GuildConfig).rules;
 
-      const responseMaxLength = 1800;
-
-      const ruleDisplayMaxLength = Math.floor(
-        responseMaxLength / guildConfigRules.length
-      );
-
       const rulesMessage = guildConfigRules
         .map((guildRule, index) => {
           try {
@@ -283,22 +277,28 @@ export default {
 
             const ruleString = JSON.stringify(simpleRule);
 
-            const ruleDisplay =
-              ruleString.length > ruleDisplayMaxLength
-                ? ruleString.substr(0, ruleDisplayMaxLength) + "..."
-                : ruleString;
+            const ruleDisplay = ruleString;
+            // ruleString.length > ruleDisplayMaxLength
+            //   ? ruleString.substr(0, ruleDisplayMaxLength) + "..."
+            //   : ruleString;
 
-            return `Rule ${index}: ${JSON.stringify(ruleDisplay)}`;
+            return `Rule ${index}: ${JSON.stringify(ruleDisplay)}\n`;
           } catch (err) {
-            return `Malformed rule: ${JSON.stringify(guildRule)}`;
+            return `Malformed rule: ${JSON.stringify(guildRule)}\n`;
           }
         })
         .join("\n");
 
       // reply with list of configured rules
       await interaction.reply({
-        content: "Your configured rules:\n" + rulesMessage,
+        content: "Your configured rules are attached!",
         ephemeral: true,
+        files: [
+          new MessageAttachment(
+            Buffer.from(rulesMessage),
+            `lunar-assistant-rules.txt`
+          ),
+        ],
       });
     } else if (interaction.options.getSubcommand() === "remove-rule") {
       const ruleNumber = interaction.options.getNumber("rule-number");
