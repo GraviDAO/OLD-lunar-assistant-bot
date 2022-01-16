@@ -44,8 +44,11 @@ export const getWalletTokensOfOwner = async (
 
       res.tokens.push(...tokens.tokens);
     } while (tokens.tokens.length == 30);
-  } catch (e) {
-    console.error(e);
+  } catch (e: any) {
+    // console.error(e);
+    console.error(
+      `Couldn't query tokens for ${contractAddress}. Status code ${e?.response?.status}`
+    );
   }
   return res;
 };
@@ -63,8 +66,12 @@ export const getCW20TokensOfWallet = async (
 
   try {
     res = await terra.wasm.contractQuery(contractAddress, query_msg);
-  } catch (e) {
+  } catch (e: any) {
     res = { balance: 0 };
+
+    console.error(
+      `Couldn't query tokens for ${contractAddress}. Status code ${e?.response?.status}`
+    );
   }
   return res;
 };
