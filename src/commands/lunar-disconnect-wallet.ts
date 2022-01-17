@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import firebase from "firebase-admin";
 import { LunarAssistant } from "..";
 import db from "../services/admin";
 
@@ -18,7 +19,7 @@ export default {
 
     if (userDoc.exists) {
       const batch = db.batch();
-      const increment = FirebaseFirestore.FieldValue.increment(-1);
+      const increment = firebase.firestore.FieldValue.increment(-1);
 
       // delete the users document
       batch.delete(userRef);
