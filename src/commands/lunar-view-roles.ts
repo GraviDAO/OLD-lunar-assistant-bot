@@ -77,11 +77,14 @@ const lunarVerify = {
       }
     }
 
-    // If not ephemeral than wait 30 seconds, then delete the reply
+    // If not ephemeral than wait 15 seconds, then delete the reply
     if (!privateResponse) {
       setInterval(async () => {
-        await interaction.deleteReply();
-      }, 30 * 1000);
+        // Sometimes the message will be gone but we don't want to throw an error when that happens
+        try {
+          await interaction.deleteReply();
+        } catch {}
+      }, 15 * 1000);
     }
   },
 };
