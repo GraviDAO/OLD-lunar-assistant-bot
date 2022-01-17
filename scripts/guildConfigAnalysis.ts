@@ -14,6 +14,7 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 
+const statsRef = db.collection("root").doc("stats");
 const analysis = async () => {
   const guildConfigSnapshot = await db.collection("guildConfigs").get();
 
@@ -33,6 +34,8 @@ const analysis = async () => {
   // Number of users
   const usersSnapshot = await db.collection("users").get();
   console.log("Number of registered users: " + usersSnapshot.docs.length);
+
+  statsRef.set({ userCount: usersSnapshot.docs.length });
 };
 
 analysis();
