@@ -77,14 +77,14 @@ const lunarVerify = {
       }
     } finally {
       // If not ephemeral than wait 10 seconds, then delete the reply
-      if (!privateResponse) {
-        setInterval(async () => {
-          // Sometimes the message will be gone but we don't want to throw an error when that happens
-          try {
-            await interaction.deleteReply();
-          } catch {}
-        }, 10 * 1000);
-      }
+      // if (!privateResponse) {
+      //   setInterval(async () => {
+      //     // Sometimes the message will be gone but we don't want to throw an error when that happens
+      //     try {
+      //       await interaction.deleteReply();
+      //     } catch {}
+      //   }, 10 * 1000);
+      // }
     }
   },
 };
