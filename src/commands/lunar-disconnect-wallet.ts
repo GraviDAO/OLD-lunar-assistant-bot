@@ -11,12 +11,20 @@ export default {
     lunarAssistant: LunarAssistant,
     interaction: CommandInteraction
   ) => {
+    const userRef = db.collection("users").doc(interaction.user.id);
+    const statsRef = db.collection("root").doc("stats");
     // get the user document
-    const userDoc = await db.collection("users").doc(interaction.user.id).get();
+    const userDoc = await userRef.get();
 
     if (userDoc.exists) {
+      const batch = db.batch();
+      const increment = FirebaseFirestore.FieldValue.increment(-1);
+
       // delete the users document
-      await db.collection("users").doc(interaction.user.id).delete();
+      batch.delete(userRef);
+      batch.set(statsRef, { userCount: increment }, { merge: true });
+
+      await batch.commit();
 
       await interaction.reply({
         content: "Your wallet has been disconnected successfully",
