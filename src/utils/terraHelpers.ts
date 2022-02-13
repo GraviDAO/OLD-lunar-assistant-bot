@@ -47,7 +47,7 @@ export const getWalletTokensOfOwner = async (
   } catch (e: any) {
     // console.error(e);
     console.error(
-      `Couldn't query tokens for ${contractAddress}. Status code ${
+      `NFT. Couldn't query tokens for ${contractAddress}. Status code ${
         e?.response?.status
       }. Data: ${JSON.stringify(e?.response?.data)}`
     );
@@ -72,7 +72,7 @@ export const getCW20TokensOfWallet = async (
     res = { balance: 0 };
 
     console.error(
-      `Couldn't query tokens for ${contractAddress}. Status code ${
+      `CW20. Couldn't query tokens for ${contractAddress}. Status code ${
         e?.response?.status
       }. Data: ${JSON.stringify(e?.response?.data)}`
     );
