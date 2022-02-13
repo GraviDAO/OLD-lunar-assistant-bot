@@ -31,13 +31,15 @@ export async function dryUpdateDiscordRolesForUser(
     relevantContractAddresses
   );
 
-  console.log(userTokensCache);
+  // console.log(userTokensCache);
 
   console.log(
-    Object.keys(userTokensCache.nft).map((key) => ({
-      address: key,
-      count: userTokensCache.nft[key].tokenIds.length,
-    }))
+    Object.keys(userTokensCache.nft)
+      .map((key) => ({
+        address: key,
+        count: userTokensCache.nft[key].tokenIds.length,
+      }))
+      .filter((info) => info.count > 0)
   );
 
   // update roles for user in guild
@@ -116,8 +118,8 @@ export async function dryUpdateDiscordRolesForUser(
     return p.then(async () => {
       await coldUpdateDiscordRolesForUserInGuild(guildConfigDoc);
 
-      console.log(activeRoles[guildConfigDoc.id]);
-      console.log(removedRoles[guildConfigDoc.id]);
+      // console.log(activeRoles[guildConfigDoc.id]);
+      // console.log(removedRoles[guildConfigDoc.id]);
     });
   }, new Promise((resolve, reject) => resolve(null)));
 
