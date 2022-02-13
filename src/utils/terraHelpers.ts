@@ -47,7 +47,7 @@ export const getWalletTokensOfOwner = async (
   } catch (e: any) {
     // console.error(e);
     console.error(
-      `Couldn't query tokens for ${contractAddress}. Status code ${e?.response?.status}`
+      `Couldn't query tokens for ${contractAddress}. Status code ${e?.response?.status}. Data: ${e?.response?.data}`
     );
   }
   return res;
