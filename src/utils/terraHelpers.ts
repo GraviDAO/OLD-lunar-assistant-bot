@@ -72,7 +72,9 @@ export const getCW20TokensOfWallet = async (
     res = { balance: 0 };
 
     console.error(
-      `Couldn't query tokens for ${contractAddress}. Status code ${e?.response?.status}`
+      `Couldn't query tokens for ${contractAddress}. Status code ${
+        e?.response?.status
+      }. Data: ${JSON.stringify(e?.response?.data)}`
     );
   }
   return res;
