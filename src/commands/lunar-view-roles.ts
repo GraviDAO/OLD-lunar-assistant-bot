@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, MessageAttachment } from "discord.js";
 import { LunarAssistant } from "..";
 import { RandomEarthAPIError, UserDocMissingError } from "../types/errors";
 
@@ -43,10 +43,22 @@ const lunarVerify = {
           )
           .join("\n");
 
-        await interaction.editReply({
-          content: `Hello ser! You have been granted the following roles on the following servers: \n${activeRolesMessage}`,
-          // ephemeral: privateResponse,
-        });
+        const message = `Hello ser! You have been granted the following roles on the following servers: \n${activeRolesMessage}`;
+
+        if (message.length > 2000) {
+          await interaction.reply({
+            content:
+              "Your rules are attached! They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats! :)",
+            ephemeral: true,
+            files: [
+              new MessageAttachment(Buffer.from(message), `your-roles.txt`),
+            ],
+          });
+        } else {
+          await interaction.editReply({
+            content: message,
+          });
+        }
       } else {
         await interaction.editReply({
           content: `You have not been granted any roles.`,
