@@ -46,10 +46,9 @@ const lunarVerify = {
         const message = `Hello ser! You have been granted the following roles on the following servers: \n${activeRolesMessage}`;
 
         if (message.length > 2000) {
-          await interaction.reply({
+          await interaction.editReply({
             content:
               "Your rules are attached! They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats! :)",
-            ephemeral: true,
             files: [
               new MessageAttachment(Buffer.from(message), `your-roles.txt`),
             ],
