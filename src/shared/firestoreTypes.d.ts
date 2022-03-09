@@ -43,3 +43,27 @@ export type GuildRule = {
 export interface GuildConfig {
   rules: GuildRule[];
 }
+
+export type OldGuildRule = {
+  version: string;
+  nft: {
+    [nftAddress: string]: {
+      tokenIds?: string[];
+      quantity: number;
+    };
+  };
+  cw20: {
+    [cw20Address: string]: {
+      quantity: number;
+    };
+  };
+  nativeToken: {
+    [denom: string]: {
+      quantity: number;
+    };
+  };
+  roleName: string;
+};
+export interface OldGuildConfig {
+  rules: OldGuildRule[];
+}
