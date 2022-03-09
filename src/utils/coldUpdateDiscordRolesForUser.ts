@@ -19,13 +19,13 @@ export async function coldUpdateDiscordRolesForUser(
   userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ): Promise<UpdateUserDiscordRolesResponse> {
-  // get the users wallet address
+  // Get the users wallet address
   const walletAddress = (userDoc.data() as User).wallet;
 
-  // mapping from discord server name to a list of active roles
+  // Mapping from discord server id to a list of active role ids
   const activeRoles: { [guildName: string]: string[] } = {};
 
-  // mapping from discord server name to a list of roles being removed
+  // Mapping from discord server id to a list of role ids being removed
   const removedRoles: { [guildName: string]: string[] } = {};
 
   const relevantContractAddresses =
@@ -146,6 +146,12 @@ export async function coldUpdateDiscordRolesForUser(
     );
   };
 
+  // Mapping from discord server name to a list of active role names
+  const activeRolesNames: { [guildName: string]: string[] } = {};
+
+  // Mapping from discord server name to a list of roles names being removed
+  const removedRolesNames: { [guildName: string]: string[] } = {};
+
   // loop through guilds registered with lunar assistant in sequence
   await guildConfigsSnapshot.docs.reduce((p, guildConfigDoc) => {
     // get the guild from the discord client
@@ -178,8 +184,11 @@ export async function coldUpdateDiscordRolesForUser(
             }
 
             try {
-              // add the role to the member
+              // Add the role to the member
               await member.roles.add(newRole);
+
+              // Add the role to activeRolesNames
+              activeRolesNames[guild.name].push(newRole.name);
             } catch (e) {
               console.error(
                 "Couldn't add role, probably because of role hierarchy.",
@@ -202,8 +211,11 @@ export async function coldUpdateDiscordRolesForUser(
             }
 
             try {
-              // remove the role from the member
+              // Remove the role from the member
               await member.roles.remove(newRole);
+
+              // Add the role to removedRolesNames
+              removedRolesNames[guild.name].push(newRole.name);
             } catch (e) {
               console.error(
                 "Couldn't remove role, probably because of role hierarchy.",
@@ -220,10 +232,10 @@ export async function coldUpdateDiscordRolesForUser(
   }, new Promise((resolve, reject) => resolve(null)));
 
   console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
-    activeRoles,
-    removedRoles,
+    activeRoles: activeRolesNames,
+    removedRoles: removedRolesNames,
   });
 
   // return the list of the users active roles and removed roles
-  return { activeRoles, removedRoles };
+  return { activeRoles: activeRolesNames, removedRoles: removedRolesNames };
 }
