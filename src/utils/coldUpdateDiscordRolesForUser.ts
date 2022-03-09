@@ -188,7 +188,11 @@ export async function coldUpdateDiscordRolesForUser(
               await member.roles.add(newRole);
 
               // Add the role to activeRolesNames
-              activeRolesNames[guild.name].push(newRole.name);
+              if (activeRolesNames[guild.name]) {
+                activeRolesNames[guild.name].push(newRole.name);
+              } else {
+                activeRolesNames[guild.name] = [newRole.name];
+              }
             } catch (e) {
               console.error(
                 "Couldn't add role, probably because of role hierarchy.",
@@ -215,7 +219,11 @@ export async function coldUpdateDiscordRolesForUser(
               await member.roles.remove(newRole);
 
               // Add the role to removedRolesNames
-              removedRolesNames[guild.name].push(newRole.name);
+              if (removedRolesNames[guild.name]) {
+                removedRolesNames[guild.name].push(newRole.name);
+              } else {
+                removedRolesNames[guild.name] = [newRole.name];
+              }
             } catch (e) {
               console.error(
                 "Couldn't remove role, probably because of role hierarchy.",
