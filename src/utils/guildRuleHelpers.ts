@@ -1,6 +1,9 @@
 import {
   CW20Rule,
   GuildRule,
+  HumanCW20Rule,
+  HumanNFTRule,
+  HumanSimpleRule,
   NFTRule,
   SimpleRule,
 } from "../shared/firestoreTypes";
@@ -49,5 +52,31 @@ export const guildRuleToSimpleRule = (guildRule: GuildRule): SimpleRule => {
     return rule;
   } else {
     throw new Error("Malformed GuildRule");
+  }
+};
+
+export const simpleRuleToHumanSimpleRule = (
+  simpleRule: SimpleRule,
+  roleName: string
+): HumanSimpleRule => {
+  if (Object.keys(simpleRule).includes("nftAddress")) {
+    let nftRule = simpleRule as NFTRule;
+    let humanNftRule: HumanNFTRule = {
+      nftAddress: nftRule.nftAddress,
+      tokenIds: nftRule.tokenIds,
+      quantity: nftRule.quantity,
+      roleName: roleName,
+    };
+    return humanNftRule;
+  } else if (Object.keys(simpleRule).includes("cw20Address")) {
+    let cw20Rule = simpleRule as CW20Rule;
+    let humanCw20Rule: HumanCW20Rule = {
+      cw20Address: cw20Rule.cw20Address,
+      quantity: cw20Rule.quantity,
+      roleName: roleName,
+    };
+    return humanCw20Rule;
+  } else {
+    throw new Error("Malformed Simple Rule");
   }
 };

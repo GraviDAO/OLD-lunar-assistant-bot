@@ -3,7 +3,10 @@ import { CommandInteraction, MessageAttachment } from "discord.js";
 import { LunarAssistant } from "..";
 import db from "../services/admin";
 import { GuildConfig, GuildRule } from "../shared/firestoreTypes";
-import { guildRuleToSimpleRule } from "../utils/guildRuleHelpers";
+import {
+  guildRuleToSimpleRule,
+  simpleRuleToHumanSimpleRule,
+} from "../utils/guildRuleHelpers";
 
 export default {
   data: new SlashCommandBuilder()
@@ -254,6 +257,11 @@ export default {
         ephemeral: true,
       });
     } else if (interaction.options.getSubcommand() === "view-rules") {
+      if (!interaction.guildId || !interaction.guild || !interaction.member)
+        return;
+
+      let guild = interaction.guild;
+
       const guildConfigDoc = await db
         .collection("guildConfigs")
         .doc(interaction.guildId)
@@ -276,8 +284,17 @@ export default {
         try {
           const simpleRule = guildRuleToSimpleRule(guildRule);
 
-          res[`rule-${index}`] = simpleRule;
-          // return `Rule ${index}: ${JSON.stringify(ruleDisplay)}\n`;
+          let roleName = guild.roles.cache.find(
+            (role) => role.id == simpleRule.roleId
+          )?.name;
+
+          const humanSimpleRule = simpleRuleToHumanSimpleRule(
+            simpleRule,
+            roleName ||
+              "unknown: Role has been deleted since creating the rule."
+          );
+
+          res[`rule-${index}`] = humanSimpleRule;
         } catch (err) {
           res[`rule-${index}`] = guildRule;
         }

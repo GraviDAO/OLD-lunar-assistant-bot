@@ -17,6 +17,21 @@ export type CW20Rule = {
 
 export type SimpleRule = NFTRule | CW20Rule;
 
+export type HumanNFTRule = {
+  nftAddress: string;
+  tokenIds?: string[];
+  quantity: number;
+  roleName: string;
+};
+
+export type HumanCW20Rule = {
+  cw20Address: string;
+  quantity: number;
+  roleName: string;
+};
+
+export type HumanSimpleRule = HumanNFTRule | HumanCW20Rule;
+
 // GuildRule is designed to accomodate future rule types.
 // For now "nativeToken" is never used.
 // And nft and token are never both populated in the same rule.
