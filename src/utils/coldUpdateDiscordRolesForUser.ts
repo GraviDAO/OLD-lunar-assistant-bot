@@ -53,7 +53,9 @@ export async function coldUpdateDiscordRolesForUser(
       try {
         rule = guildRuleToSimpleRule(guildRule);
       } catch (err) {
-        console.error("Couldn't convert to simple rule");
+        console.error(
+          `Couldn't convert to simple rule: ${JSON.stringify(guildRule)}`
+        );
         return;
       }
 
@@ -63,7 +65,7 @@ export async function coldUpdateDiscordRolesForUser(
       );
 
       if (!newRole) {
-        console.error("No role with that name");
+        console.error(`No role with that name: ${newRole}`);
         return;
       }
 
