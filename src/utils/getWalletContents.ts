@@ -58,21 +58,6 @@ export const getWalletContents = async (
           throw new RandomEarthAPIError("Failed to request the knowhere api.");
         })
     );
-
-    // Get the cw20 tokens
-    pendingRequests.push(
-      ...contractAddresses.cw20.map(async (cw20Address) => {
-        const balanceResponse = await getCW20TokensOfWallet(
-          walletAddress,
-          cw20Address
-        );
-
-        // Update userTokensCache
-        userTokensCache.cw20[cw20Address] = {
-          quantity: balanceResponse.balance,
-        };
-      })
-    );
   } else {
     // Only request nfts at the contract level in dev
     // in order to avoid 429 errors from the number of nft contracts
@@ -88,6 +73,21 @@ export const getWalletContents = async (
       })
     );
   }
+
+  // Get the cw20 tokens
+  pendingRequests.push(
+    ...contractAddresses.cw20.map(async (cw20Address) => {
+      const balanceResponse = await getCW20TokensOfWallet(
+        walletAddress,
+        cw20Address
+      );
+
+      // Update userTokensCache
+      userTokensCache.cw20[cw20Address] = {
+        quantity: balanceResponse.balance,
+      };
+    })
+  );
 
   // Update user tokens cache
   try {
