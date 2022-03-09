@@ -53,6 +53,7 @@ export async function coldUpdateDiscordRolesForUser(
       try {
         rule = guildRuleToSimpleRule(guildRule);
       } catch (err) {
+        console.error("Couldn't convert to simple rule");
         return;
       }
 
@@ -61,7 +62,10 @@ export async function coldUpdateDiscordRolesForUser(
         (role) => role.name == rule.roleName
       );
 
-      if (!newRole) return;
+      if (!newRole) {
+        console.error("No role with that name");
+        return;
+      }
 
       // set numMatchingTokens
       let numMatchingTokens: number;
@@ -171,7 +175,7 @@ export async function coldUpdateDiscordRolesForUser(
         // add the relevant roles
         await Promise.all(
           activeRoles[guild.name].map(async (roleName) => {
-            // get the discord role from the discord client
+            // Get the discord role from the discord client
             const newRole = guild.roles.cache.find(
               (role) => role.name == roleName
             );

@@ -37,7 +37,6 @@ const getRolesOfUser = async () => {
     walletAddress,
     guildConfigsSnapshot
   );
-  console.log(roles);
 };
 
 getRolesOfUser();

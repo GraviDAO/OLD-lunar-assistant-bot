@@ -31,8 +31,6 @@ export async function dryUpdateDiscordRolesForUser(
     relevantContractAddresses
   );
 
-  // console.log(userTokensCache);
-
   console.log(
     Object.keys(userTokensCache.nft)
       .map((key) => ({
@@ -57,6 +55,7 @@ export async function dryUpdateDiscordRolesForUser(
       try {
         rule = guildRuleToSimpleRule(guildRule);
       } catch (err) {
+        console.error("Couldn't convert to simple rule");
         return;
       }
 
@@ -117,9 +116,6 @@ export async function dryUpdateDiscordRolesForUser(
   await guildConfigsSnapshot.docs.reduce((p, guildConfigDoc) => {
     return p.then(async () => {
       await coldUpdateDiscordRolesForUserInGuild(guildConfigDoc);
-
-      // console.log(activeRoles[guildConfigDoc.id]);
-      // console.log(removedRoles[guildConfigDoc.id]);
     });
   }, new Promise((resolve, reject) => resolve(null)));
 
