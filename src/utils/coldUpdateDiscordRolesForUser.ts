@@ -65,7 +65,7 @@ export async function coldUpdateDiscordRolesForUser(
       );
 
       if (!newRole) {
-        console.error(`No role with that name: ${newRole}`);
+        console.error(`No role with that name: ${rule.roleName}`);
         return;
       }
 
