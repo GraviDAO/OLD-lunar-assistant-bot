@@ -164,7 +164,7 @@ export default {
         },
         cw20: {},
         nativeToken: {},
-        roleName: role.name,
+        roleId: role.id,
       };
 
       const guildConfigDoc = await db
@@ -206,7 +206,7 @@ export default {
 
       const quantity = rawQuantity ? rawQuantity : 1;
 
-      // check if the bot role is above the verified role
+      // Check if the bot role is above the verified role
       const lunarAssistantRole = interaction.guild.roles.cache.find(
         (role) => role.name == "Lunar Assistant"
       )!;
@@ -228,7 +228,7 @@ export default {
           },
         },
         nativeToken: {},
-        roleName: role.name,
+        roleId: role.id,
       };
 
       const guildConfigDoc = await db

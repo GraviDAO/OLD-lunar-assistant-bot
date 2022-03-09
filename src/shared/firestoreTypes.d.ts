@@ -6,13 +6,13 @@ export type NFTRule = {
   nftAddress: string;
   tokenIds?: string[];
   quantity: number;
-  roleName: string;
+  roleId: string;
 };
 
 export type CW20Rule = {
   cw20Address: string;
   quantity: number;
-  roleName: string;
+  roleId: string;
 };
 
 export type SimpleRule = NFTRule | CW20Rule;
@@ -38,7 +38,7 @@ export type GuildRule = {
       quantity: number;
     };
   };
-  roleName: string;
+  roleId: string;
 };
 export interface GuildConfig {
   rules: GuildRule[];

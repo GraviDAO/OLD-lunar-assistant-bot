@@ -60,12 +60,10 @@ export async function coldUpdateDiscordRolesForUser(
       }
 
       // get the discord role from the discord client
-      const newRole = guild.roles.cache.find(
-        (role) => role.name == rule.roleName
-      );
+      const newRole = guild.roles.cache.find((role) => role.id == rule.roleId);
 
       if (!newRole) {
-        console.error(`No role with that name: ${rule.roleName}`);
+        console.error(`No role with that name: ${rule.roleId}`);
         return;
       }
 
@@ -97,48 +95,42 @@ export async function coldUpdateDiscordRolesForUser(
       if (
         numMatchingTokens >= rule.quantity &&
         // don't duplicate role if it was already granted
-        !(
-          activeRoles[guild.name] &&
-          activeRoles[guild.name].includes(newRole.name)
-        )
+        !(activeRoles[guild.id] && activeRoles[guild.id].includes(newRole.id))
       ) {
         // the user matches the role rules, update accordingly
 
         // update activeRoles
-        if (activeRoles[guild.name]) {
-          activeRoles[guild.name].push(newRole.name);
+        if (activeRoles[guild.id]) {
+          activeRoles[guild.id].push(newRole.id);
         } else {
-          activeRoles[guild.name] = [newRole.name];
+          activeRoles[guild.id] = [newRole.id];
         }
 
         // if removedRoles includes the role, delete it
         if (
-          removedRoles[guild.name] &&
-          removedRoles[guild.name].includes(newRole.name)
+          removedRoles[guild.id] &&
+          removedRoles[guild.id].includes(newRole.id)
         ) {
-          removedRoles[guild.name].splice(
-            removedRoles[guild.name].indexOf(newRole.name)
+          removedRoles[guild.id].splice(
+            removedRoles[guild.id].indexOf(newRole.id)
           );
         }
       } else if (
-        // make sure member exists
+        // Make sure member exists
         member &&
-        // make sure member has role
-        member.roles.cache.some((role) => role.name === newRole.name) &&
-        // make sure member wasn't granted the role
-        !(
-          activeRoles[guild.name] &&
-          activeRoles[guild.name].includes(newRole.name)
-        )
+        // Make sure member has role
+        member.roles.cache.some((role) => role.id === newRole.id) &&
+        // Make sure member wasn't granted the role
+        !(activeRoles[guild.id] && activeRoles[guild.id].includes(newRole.id))
       ) {
         // the user doesn't match the role rules but has the role anyways
         // update accordingly
 
         // update removedRoles
-        if (removedRoles[guild.name]) {
-          removedRoles[guild.name].push(newRole.name);
+        if (removedRoles[guild.id]) {
+          removedRoles[guild.id].push(newRole.id);
         } else {
-          removedRoles[guild.name] = [newRole.name];
+          removedRoles[guild.id] = [newRole.id];
         }
       }
     };
@@ -176,13 +168,14 @@ export async function coldUpdateDiscordRolesForUser(
 
         // add the relevant roles
         await Promise.all(
-          activeRoles[guild.name].map(async (roleName) => {
+          activeRoles[guild.id].map(async (roleId) => {
             // Get the discord role from the discord client
-            const newRole = guild.roles.cache.find(
-              (role) => role.name == roleName
-            );
+            const newRole = guild.roles.cache.find((role) => role.id == roleId);
 
-            if (!newRole) return;
+            if (!newRole) {
+              console.error("This shouldn't happen. Role missing to add.");
+              return;
+            }
 
             try {
               // add the role to the member
@@ -191,7 +184,7 @@ export async function coldUpdateDiscordRolesForUser(
               console.error(
                 "Couldn't add role, probably because of role hierarchy.",
                 guild.name,
-                newRole.name
+                newRole.id
               );
             }
           })
@@ -199,13 +192,14 @@ export async function coldUpdateDiscordRolesForUser(
 
         // remove the relevant roles
         await Promise.all(
-          removedRoles[guild.name].map(async (roleName) => {
+          removedRoles[guild.id].map(async (roleId) => {
             // get the discord role from the discord client
-            const newRole = guild.roles.cache.find(
-              (role) => role.name == roleName
-            );
+            const newRole = guild.roles.cache.find((role) => role.id == roleId);
 
-            if (!newRole) return;
+            if (!newRole) {
+              console.error("This shouldn't happen. Role missing to remove.");
+              return;
+            }
 
             try {
               // remove the role from the member
@@ -214,7 +208,7 @@ export async function coldUpdateDiscordRolesForUser(
               console.error(
                 "Couldn't remove role, probably because of role hierarchy.",
                 guild.name,
-                newRole.name
+                newRole.id
               );
             }
           })

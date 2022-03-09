@@ -87,16 +87,16 @@ export async function dryUpdateDiscordRolesForUser(
         // don't duplicate role if it was already granted
         !(
           activeRoles[guildConfigDoc.id] &&
-          activeRoles[guildConfigDoc.id].includes(rule.roleName)
+          activeRoles[guildConfigDoc.id].includes(rule.roleId)
         )
       ) {
         // the user matches the role rules, update accordingly
 
         // update activeRoles
         if (activeRoles[guildConfigDoc.id]) {
-          activeRoles[guildConfigDoc.id].push(rule.roleName);
+          activeRoles[guildConfigDoc.id].push(rule.roleId);
         } else {
-          activeRoles[guildConfigDoc.id] = [rule.roleName];
+          activeRoles[guildConfigDoc.id] = [rule.roleId];
         }
       }
     };

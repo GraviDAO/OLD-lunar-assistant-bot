@@ -33,7 +33,7 @@ export const guildRuleToSimpleRule = (guildRule: GuildRule): SimpleRule => {
       nftAddress,
       tokenIds: guildRule.nft[nftAddress].tokenIds,
       quantity: guildRule.nft[nftAddress].quantity,
-      roleName: guildRule.roleName,
+      roleId: guildRule.roleId,
     };
     return rule;
   } else if (Object.keys(guildRule.cw20).length > 0) {
@@ -44,7 +44,7 @@ export const guildRuleToSimpleRule = (guildRule: GuildRule): SimpleRule => {
     const rule: CW20Rule = {
       cw20Address: cw20Address,
       quantity: guildRule.cw20[cw20Address].quantity,
-      roleName: guildRule.roleName,
+      roleId: guildRule.roleId,
     };
     return rule;
   } else {
