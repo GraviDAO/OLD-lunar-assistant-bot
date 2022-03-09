@@ -26,7 +26,7 @@ const lunarVerify = {
 
     const rawPrivateResponse =
       interaction.options.getBoolean("private-response");
-    const privateResponse = rawPrivateResponse ? rawPrivateResponse : false;
+    const privateResponse = (rawPrivateResponse || rawPrivateResponse == null)  ? true : false;
 
     await interaction.deferReply({ ephemeral: privateResponse });
 

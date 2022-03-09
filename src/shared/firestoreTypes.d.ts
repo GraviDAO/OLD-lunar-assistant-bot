@@ -15,7 +15,12 @@ export type CW20Rule = {
   roleId: string;
 };
 
-export type SimpleRule = NFTRule | CW20Rule;
+export type APIRule = {
+  apiUrl: string;
+  roleId: string;
+}
+
+export type SimpleRule = NFTRule | CW20Rule | APIRule;
 
 export type HumanNFTRule = {
   nftAddress: string;
@@ -30,7 +35,12 @@ export type HumanCW20Rule = {
   roleName: string;
 };
 
-export type HumanSimpleRule = HumanNFTRule | HumanCW20Rule;
+export type HumanAPIRule = {
+  apiUrl: string;
+  roleName: string;
+}
+
+export type HumanSimpleRule = HumanNFTRule | HumanCW20Rule | HumanAPIRule;
 
 // GuildRule is designed to accomodate future rule types.
 // For now "nativeToken" is never used.
@@ -48,6 +58,9 @@ export type GuildRule = {
       quantity: number;
     };
   };
+  api: {
+    [apiUrl: string]: {}
+  }
   nativeToken: {
     [denom: string]: {
       quantity: number;
@@ -72,6 +85,9 @@ export type OldGuildRule = {
       quantity: number;
     };
   };
+  api: {
+    [apiUrl: string]: {}
+  }
   nativeToken: {
     [denom: string]: {
       quantity: number;

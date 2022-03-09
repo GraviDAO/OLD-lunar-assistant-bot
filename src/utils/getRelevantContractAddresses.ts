@@ -1,6 +1,6 @@
 import { CW20Rule, GuildConfig, NFTRule } from "../shared/firestoreTypes";
 import { ContractAddresses } from "../types";
-import { guildRuleToSimpleRule, isNFTRule } from "./guildRuleHelpers";
+import { guildRuleToSimpleRule, isCW20Rule, isNFTRule } from "./guildRuleHelpers";
 
 export const getContractAddressesRelevantToGuildConfig = (
   guildConfig: GuildConfig
@@ -12,9 +12,11 @@ export const getContractAddressesRelevantToGuildConfig = (
         if (isNFTRule(simpleRule)) {
           let nftRule = simpleRule as NFTRule;
           acc.nft.push(nftRule.nftAddress);
-        } else {
+        } else if (isCW20Rule(simpleRule)){
           let cw20Rule = simpleRule as CW20Rule;
           acc.cw20.push(cw20Rule.cw20Address);
+        } else {
+          //apiRule: do nothing
         }
         return acc;
       } catch (err) {
