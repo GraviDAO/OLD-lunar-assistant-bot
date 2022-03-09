@@ -58,32 +58,34 @@ export const getWalletContents = async (
           throw new RandomEarthAPIError("Failed to request the knowhere api.");
         })
     );
-  } else {
-    // Only request at the contract level in dev
-    // in order to avoid 429 errors
+
+    // Get the cw20 tokens
     pendingRequests.push(
-      ...[
-        ...contractAddresses.nft.map(async (nftAddress) => {
-          const walletTokensOfOwner = await getWalletTokensOfOwner(
-            walletAddress,
-            nftAddress
-          );
+      ...contractAddresses.cw20.map(async (cw20Address) => {
+        const balanceResponse = await getCW20TokensOfWallet(
+          walletAddress,
+          cw20Address
+        );
 
-          // Update userTokensCache
-          unionIntoNftCache(nftAddress, walletTokensOfOwner.tokens);
-        }),
-        ...contractAddresses.cw20.map(async (cw20Address) => {
-          const balanceResponse = await getCW20TokensOfWallet(
-            walletAddress,
-            cw20Address
-          );
+        // Update userTokensCache
+        userTokensCache.cw20[cw20Address] = {
+          quantity: balanceResponse.balance,
+        };
+      })
+    );
+  } else {
+    // Only request nfts at the contract level in dev
+    // in order to avoid 429 errors from the number of nft contracts
+    pendingRequests.push(
+      ...contractAddresses.nft.map(async (nftAddress) => {
+        const walletTokensOfOwner = await getWalletTokensOfOwner(
+          walletAddress,
+          nftAddress
+        );
 
-          // Update userTokensCache
-          userTokensCache.cw20[cw20Address] = {
-            quantity: balanceResponse.balance,
-          };
-        }),
-      ]
+        // Update userTokensCache
+        unionIntoNftCache(nftAddress, walletTokensOfOwner.tokens);
+      })
     );
   }
 
