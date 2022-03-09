@@ -58,33 +58,38 @@ export const getWalletContents = async (
           throw new RandomEarthAPIError("Failed to request the knowhere api.");
         })
     );
+  } else {
+    // Only request at the contract level in dev
+    // in order to avoid 429 errors
+    pendingRequests.push(
+      ...[
+        ...contractAddresses.nft.map(async (nftAddress) => {
+          const walletTokensOfOwner = await getWalletTokensOfOwner(
+            walletAddress,
+            nftAddress
+          );
+
+          // Update userTokensCache
+          unionIntoNftCache(nftAddress, walletTokensOfOwner.tokens);
+        }),
+        ...contractAddresses.cw20.map(async (cw20Address) => {
+          const balanceResponse = await getCW20TokensOfWallet(
+            walletAddress,
+            cw20Address
+          );
+
+          // Update userTokensCache
+          userTokensCache.cw20[cw20Address] = {
+            quantity: balanceResponse.balance,
+          };
+        }),
+      ]
+    );
   }
 
   // Update user tokens cache
   try {
-    await Promise.all([
-      ...pendingRequests,
-      ...contractAddresses.nft.map(async (nftAddress) => {
-        const walletTokensOfOwner = await getWalletTokensOfOwner(
-          walletAddress,
-          nftAddress
-        );
-
-        // Update userTokensCache
-        unionIntoNftCache(nftAddress, walletTokensOfOwner.tokens);
-      }),
-      ...contractAddresses.cw20.map(async (cw20Address) => {
-        const balanceResponse = await getCW20TokensOfWallet(
-          walletAddress,
-          cw20Address
-        );
-
-        // Update userTokensCache
-        userTokensCache.cw20[cw20Address] = {
-          quantity: balanceResponse.balance,
-        };
-      }),
-    ]);
+    await Promise.all(pendingRequests);
   } catch (e) {
     throw new TokenFetchingError(
       "Failed to fetch user tokens for unknown reasons. Please report to GraviDAO."
