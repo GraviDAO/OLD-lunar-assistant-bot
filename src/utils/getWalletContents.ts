@@ -93,6 +93,9 @@ export const getWalletContents = async (
   try {
     await Promise.all(pendingRequests);
   } catch (e) {
+    console.error(
+      "Failed to fetch user tokens for unknown reasons. Please report to GraviDAO."
+    );
     throw new TokenFetchingError(
       "Failed to fetch user tokens for unknown reasons. Please report to GraviDAO."
     );
