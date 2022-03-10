@@ -39,10 +39,10 @@ export const getWalletContents = async (
           )
         )
         .catch((err) => {
+          console.error(err);
           throw new RandomEarthAPIError(
             "Failed to request the randomearth api."
           );
-          console.error(err);
         })
     );
 
