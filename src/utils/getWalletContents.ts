@@ -42,6 +42,7 @@ export const getWalletContents = async (
           throw new RandomEarthAPIError(
             "Failed to request the randomearth api."
           );
+          console.error(err);
         })
     );
 
