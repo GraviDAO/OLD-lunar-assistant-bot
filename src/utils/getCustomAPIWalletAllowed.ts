@@ -16,7 +16,7 @@ export const getCustomAPIWalletAllowed = async (
     return walletAllowedRes.allowed;
 
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
     throw new Error("Failed to request the custom api");
   }
