@@ -18,6 +18,7 @@ export const getCustomAPIWalletAllowed = async (
   } catch (e) {
     console.error(e);
 
-    throw new Error("Failed to request the custom api");
+    //return false so role update can continue
+    return false;
   }
 };
