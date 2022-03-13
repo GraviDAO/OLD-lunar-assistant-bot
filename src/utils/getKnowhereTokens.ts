@@ -29,9 +29,9 @@ export const getKnowhereTokens = async (
 
     return userTokens;
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
-    console.log(
+    console.error(
       "error",
       walletAddress,
       `https://prod-backend-mainnet.knowhere.art/sales/on-sell/${walletAddress}`

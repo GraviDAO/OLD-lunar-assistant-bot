@@ -236,6 +236,7 @@ export async function coldUpdateDiscordRolesForUser(
         );
       } catch (e) {
         // member doesn't exist in guild
+        console.error("Not a member in the guild");
       }
     });
   }, new Promise((resolve, reject) => resolve(null)));

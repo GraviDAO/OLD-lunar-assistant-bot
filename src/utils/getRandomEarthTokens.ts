@@ -44,9 +44,9 @@ export const getRandomEarthTokens = async (
 
     return userTokens;
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
-    console.log(
+    console.error(
       "error",
       walletAddress,
       `https://randomearth.io/api/items?user_addr=${walletAddress}`
