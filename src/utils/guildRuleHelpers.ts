@@ -1,8 +1,10 @@
 import {
+  APIRule,
   CW20Rule,
   GuildRule,
   HumanCW20Rule,
   HumanNFTRule,
+  HumanAPIRule,
   HumanSimpleRule,
   NFTRule,
   SimpleRule,
@@ -23,7 +25,11 @@ export const isNFTRule = (simpleRule: SimpleRule) => {
 };
 
 export const isCW20Rule = (simpleRule: SimpleRule) => {
-  return "cw20Rule" in simpleRule;
+  return "cw20Address" in simpleRule;
+};
+
+export const isApiRule = (simpleRule: SimpleRule) => {
+  return "apiUrl" in simpleRule;
 };
 
 export const guildRuleToSimpleRule = (guildRule: GuildRule): SimpleRule => {
@@ -50,6 +56,16 @@ export const guildRuleToSimpleRule = (guildRule: GuildRule): SimpleRule => {
       roleId: guildRule.roleId,
     };
     return rule;
+  } else if (Object.keys(guildRule.api).length > 0) {
+  // build the single api rule
+  const apiUrls = Object.keys(guildRule.api);
+  if (apiUrls.length !== 1) throw new Error("Malformed GuildRule");
+    const apiUrl = apiUrls[0];
+    const rule: APIRule = {
+    apiUrl: apiUrl,
+    roleId: guildRule.roleId,
+  };
+  return rule;
   } else {
     throw new Error("Malformed GuildRule");
   }
@@ -75,7 +91,15 @@ export const simpleRuleToHumanSimpleRule = (
       quantity: cw20Rule.quantity,
       roleName: roleName,
     };
+    
     return humanCw20Rule;
+  } else if (Object.keys(simpleRule).includes("apiUrl")) {
+  let apiRule = simpleRule as APIRule;
+    let humanAPIRule: HumanAPIRule = {
+      apiUrl: apiRule.apiUrl,
+      roleName: roleName,
+  };
+  return humanAPIRule;
   } else {
     throw new Error("Malformed Simple Rule");
   }

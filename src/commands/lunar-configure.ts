@@ -7,6 +7,7 @@ import {
   guildRuleToSimpleRule,
   simpleRuleToHumanSimpleRule,
 } from "../utils/guildRuleHelpers";
+import { isValidHttpUrl } from "../utils/helper";
 
 export default {
   data: new SlashCommandBuilder()
@@ -74,6 +75,27 @@ export default {
             .setDescription(
               "The quantity of matching cw20 tokens that a user must hold in order to meet the rule."
             )
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("add-api-rule")
+        .setDescription(
+          "Adds a rule for granting a role to a user based on the response of your custom API."
+        )
+        .addStringOption((option) =>
+          option
+            .setName("api-url")
+            .setDescription(
+              "Format: 'https://yourApiUrl.com?wallet=$(wallet)' $(wallet) will be replaced by user wallet address"
+            )
+            .setRequired(true)
+        )
+        .addRoleOption((option) =>
+          option
+            .setName("role")
+            .setDescription("The role to give to users which meet this rule.")
+            .setRequired(true)
         )
     )
     .addSubcommand((subcommand) =>
@@ -166,6 +188,7 @@ export default {
           },
         },
         cw20: {},
+        api: {},
         nativeToken: {},
         roleId: role.id,
       };
@@ -230,6 +253,7 @@ export default {
             quantity,
           },
         },
+        api: {},
         nativeToken: {},
         roleId: role.id,
       };
@@ -252,6 +276,73 @@ export default {
         .set(guildConfig);
 
       // reply
+      await interaction.reply({
+        content: "Rule added successfully!",
+        ephemeral: true,
+      });
+    } else if (interaction.options.getSubcommand() === "add-api-rule") {
+      // configure the server settings
+      const apiUrl = interaction.options.getString("api-url");
+      const role = interaction.options.getRole("role");
+
+      // verify that nftAddress and role are defined
+      if (!apiUrl || !role) {
+        await interaction.reply({
+          content: "Could not get api-url or role",
+          ephemeral: true,
+        });
+        return;
+      } else if (!isValidHttpUrl(apiUrl)) //Verify url is valid
+      {
+        await interaction.reply({
+          content: "api-url is not a valid url",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      // check if the bot role is above the verified role
+      const lunarAssistantRole = interaction.guild.roles.cache.find(
+        (role) => role.name == "Lunar Assistant"
+      )!;
+
+      if (role.position > lunarAssistantRole.position) {
+        await interaction.reply({
+          content: `Please update the role hierarchy with 'Lunar Assistant' above of ${role.name} and try again.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const newRule: GuildRule = {
+        version: "1.0",
+        nft: {},
+        cw20: {},
+        api: { 
+          [apiUrl]: {},
+        },
+        nativeToken: {},
+        roleId: role.id,
+      };
+
+      const guildConfigDoc = await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .get();
+
+      const guildConfig: GuildConfig = guildConfigDoc.exists
+        ? (guildConfigDoc.data() as GuildConfig)
+        : { rules: [] };
+
+        guildConfig.rules.push(newRule);
+
+      // update the db
+      await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .set(guildConfig);
+      
+        // reply
       await interaction.reply({
         content: "Rule added successfully!",
         ephemeral: true,

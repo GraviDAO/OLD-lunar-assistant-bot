@@ -4,11 +4,13 @@ import {
   GuildRule,
   NFTRule,
   SimpleRule,
+  APIRule,
 } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
-import { guildRuleToSimpleRule, isNFTRule } from "./guildRuleHelpers";
+import { guildRuleToSimpleRule, isNFTRule, isApiRule } from "./guildRuleHelpers";
+import { getCustomAPIWalletAllowed } from "./getCustomAPIWalletAllowed"
 
 export async function dryUpdateDiscordRolesForUser(
   walletAddress: string,
@@ -61,8 +63,12 @@ export async function dryUpdateDiscordRolesForUser(
 
       // set numMatchingTokens
       let numMatchingTokens: number;
+      let customApiAllowed: boolean;
+      let quantity: number;
       if (isNFTRule(rule)) {
         const nftRule = rule as NFTRule;
+        quantity = nftRule.quantity;
+        customApiAllowed = false;
 
         const tokens = userTokensCache.nft[nftRule.nftAddress]?.tokenIds || [];
 
@@ -74,17 +80,24 @@ export async function dryUpdateDiscordRolesForUser(
               )
             : tokens
         ).length;
-      } else {
+      } else if (isApiRule(rule)) {
+        const apiRule = rule as APIRule;
+        customApiAllowed = await getCustomAPIWalletAllowed(apiRule.apiUrl, walletAddress);
+        numMatchingTokens = 0;
+        quantity = Number.MAX_SAFE_INTEGER; //not used for apiRule
+    } else {
         const cw20Rule = rule as CW20Rule;
+        quantity = cw20Rule.quantity;
 
         const numTokens =
           userTokensCache.cw20[cw20Rule.cw20Address]?.quantity || 0;
 
         numMatchingTokens = numTokens;
+        customApiAllowed = false;
       }
 
       if (
-        numMatchingTokens >= rule.quantity &&
+        ((numMatchingTokens >= quantity) || customApiAllowed) &&
         // don't duplicate role if it was already granted
         !(
           activeRoles[guildConfigDoc.id] &&
