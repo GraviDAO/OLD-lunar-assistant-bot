@@ -20,8 +20,8 @@ export function connectObserver(this: LunarAssistant) {
     // get data from message
     const data = JSON.parse(message.data.toString());
 
-    // wait 2 seconds for changes to propogate before handling new block
-    setTimeout(() => this.handleNewBlock(data), 2000);
+    // Wait 20 seconds for changes to propogate before handling new block
+    setTimeout(() => this.handleNewBlock(data), 20000);
   };
   ws.onclose = (e) => {
     console.log("Websocket closed. Reopening...");

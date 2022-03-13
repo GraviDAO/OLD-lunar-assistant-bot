@@ -69,7 +69,8 @@ export async function dryUpdateDiscordRolesForUser(
         const nftRule = rule as NFTRule;
         quantity = nftRule.quantity;
         customApiAllowed = false;
-        const tokens = userTokensCache.nft[nftRule.nftAddress].tokenIds;
+
+        const tokens = userTokensCache.nft[nftRule.nftAddress]?.tokenIds || [];
 
         // get the number of matching tokens
         numMatchingTokens = (
@@ -87,7 +88,9 @@ export async function dryUpdateDiscordRolesForUser(
     } else {
         const cw20Rule = rule as CW20Rule;
         quantity = cw20Rule.quantity;
-        const numTokens = userTokensCache.cw20[cw20Rule.cw20Address].quantity;
+
+        const numTokens =
+          userTokensCache.cw20[cw20Rule.cw20Address]?.quantity || 0;
 
         numMatchingTokens = numTokens;
         customApiAllowed = false;
