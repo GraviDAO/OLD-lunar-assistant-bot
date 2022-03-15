@@ -1,6 +1,6 @@
 import admin, { ServiceAccount } from "firebase-admin";
 import { FIREBASE_ADMIN_SERVICE_ACCOUNT } from "../config.json";
-import { dryUpdateDiscordRolesForUser } from "../src/utils/dryUpdateDiscordRolesForUser";
+import { testGetAddedPersistedRemovedRoleIds } from "../src/utils/testColdUpdateDiscordRolesForUser";
 
 if (!admin.apps.length) {
   try {
@@ -33,10 +33,12 @@ const getRolesOfUser = async () => {
 
   if (guildConfigsSnapshot.empty) return { activeRoles: {}, removedRoles: {} };
 
-  const roles = await dryUpdateDiscordRolesForUser(
+  const roles = await testGetAddedPersistedRemovedRoleIds(
     walletAddress,
     guildConfigsSnapshot
   );
+
+  console.log(roles);
 };
 
 getRolesOfUser();

@@ -46,7 +46,7 @@ export async function coldUpdateDiscordRolesForUser(
   };
 }
 
-const getAddedPersistedRemovedRoleIds = async (
+export const getAddedPersistedRemovedRoleIds = async (
   lunar: LunarAssistant,
   userID: string,
   userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
@@ -73,6 +73,7 @@ const getAddedPersistedRemovedRoleIds = async (
   const removedRoles: { [guildId: string]: string[] } = {};
 
   for (const guildConfigDoc of guildConfigsSnapshot.docs) {
+    // If lunar is null than we want to query across all guilds
     // Get the guild from the discord client
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
     if (!guild) continue;
@@ -124,7 +125,7 @@ const getAddedPersistedRemovedRoleIds = async (
   return { addedRoles, persistedRoles, removedRoles };
 };
 
-const propogateRoleUpdates = async (
+export const propogateRoleUpdates = async (
   lunar: LunarAssistant,
   userID: string,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
