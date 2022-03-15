@@ -49,3 +49,7 @@ export interface WalletContents {
     };
   };
 }
+
+export interface CustomAPIWalletAllowed {
+  allowed: boolean;
+}
