@@ -1,19 +1,9 @@
-import { Guild, GuildMember } from "discord.js";
 import { LunarAssistant } from "../index";
-import {
-  APIRule,
-  CW20Rule,
-  GuildConfig,
-  GuildRule,
-  NFTRule,
-  SimpleRule,
-  User,
-} from "../shared/firestoreTypes";
+import { GuildConfig, User } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
+import { checkRulesQualifies } from "./checkRuleQualifies";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
-import { guildRuleToSimpleRule, isApiRule, isNFTRule } from "./guildRuleHelpers";
-import { getCustomAPIWalletAllowed } from "./getCustomAPIWalletAllowed"
 
 export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
@@ -24,11 +14,46 @@ export async function coldUpdateDiscordRolesForUser(
   // Get the users wallet address
   const walletAddress = (userDoc.data() as User).wallet;
 
-  // Mapping from discord server id to a list of active role ids
-  const activeRoles: { [guildName: string]: string[] } = {};
+  const { addedRoles, persistedRoles, removedRoles } =
+    await getAddedPersistedRemovedRoleIds(
+      this,
+      userID,
+      userDoc,
+      guildConfigsSnapshot
+    );
 
-  // Mapping from discord server id to a list of role ids being removed
-  const removedRoles: { [guildName: string]: string[] } = {};
+  const { addedRoleNames, persistedRoleNames, removedRoleNames } =
+    await propogateRoleUpdates(
+      this,
+      userID,
+      guildConfigsSnapshot,
+      addedRoles,
+      persistedRoles,
+      removedRoles
+    );
+
+  console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
+    addedRoles: addedRoleNames,
+    persistedRoles: persistedRoleNames,
+    removedRoles: removedRoleNames,
+  });
+
+  // Return the list of the users active roles and removed roles
+  return {
+    addedRoleNames: addedRoleNames,
+    persistedRoleNames: persistedRoleNames,
+    removedRoleNames: removedRoleNames,
+  };
+}
+
+const getAddedPersistedRemovedRoleIds = async (
+  lunar: LunarAssistant,
+  userID: string,
+  userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
+) => {
+  // Get the users wallet address
+  const walletAddress = (userDoc.data() as User).wallet;
 
   const relevantContractAddresses =
     getRelevantContractAddresses(guildConfigsSnapshot);
@@ -38,227 +63,176 @@ export async function coldUpdateDiscordRolesForUser(
     relevantContractAddresses
   );
 
-  // update roles for user in guild
-  const coldUpdateDiscordRolesForUserInGuild = async (
-    guild: Guild,
-    member: GuildMember | undefined,
-    guildConfigDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
-  ) => {
-    // update roles for user in guild according to a specific rule
-    const coldUpdateDiscordRolesForUserInGuildRule = async (
-      guildRule: GuildRule
-    ) => {
-      // for now we are only handling a single nft rule
-      // build the single NFT rule
+  // Mapping from discord server id to a list of added role ids
+  const addedRoles: { [guildId: string]: string[] } = {};
 
-      let rule: SimpleRule;
-      try {
-        rule = guildRuleToSimpleRule(guildRule);
-      } catch (err) {
-        console.error(
-          `Couldn't convert to simple rule: ${JSON.stringify(guildRule)}`
-        );
-        return;
+  // Mapping from discord server id to a list of persisted role ids
+  const persistedRoles: { [guildId: string]: string[] } = {};
+
+  // Mapping from discord server id to a list of removed role ids
+  const removedRoles: { [guildId: string]: string[] } = {};
+
+  for (const guildConfigDoc of guildConfigsSnapshot.docs) {
+    // Get the guild from the discord client
+    const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
+    if (!guild) continue;
+
+    // Get the member from the guild
+    const member = await guild.members.fetch(userID);
+    if (!member) continue;
+
+    // Get the guild rules
+    const guildRules = (guildConfigDoc.data() as GuildConfig).rules;
+
+    // Iterate over the guild rules
+    for (const guildRule of guildRules) {
+      // Get the role corresponding to the guildRule
+      const newRole = guild.roles.cache.find(
+        (role) => role.id == guildRule.roleId
+      );
+
+      // If rule doesn't exist, skip
+      if (!newRole) {
+        console.error(`No role with that id: ${guildRule.roleId}`);
+        continue;
       }
 
-      // get the discord role from the discord client
-      const newRole = guild.roles.cache.find((role) => role.id == rule.roleId);
+      // Get ruleQualifies and hasRole
+      let ruleQualifies: boolean = await checkRulesQualifies(
+        guildRule,
+        userTokensCache,
+        walletAddress
+      );
+
+      const hasRole = // Check if member exists and has the role
+        // TODO member should always exist
+        (member && member.roles.cache.some((role) => role.id === newRole.id)) ||
+        false;
+
+      // Propogate the information to addedRoles, persistedRoles, and removedRoles
+      updateActivePersistedRemovedRoles(
+        guild.id,
+        newRole.id,
+        ruleQualifies,
+        hasRole,
+        addedRoles,
+        persistedRoles,
+        removedRoles
+      );
+    }
+  }
+  return { addedRoles, persistedRoles, removedRoles };
+};
+
+const propogateRoleUpdates = async (
+  lunar: LunarAssistant,
+  userID: string,
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+  addedRoles: { [guildId: string]: string[] },
+  persistedRoles: { [guildId: string]: string[] },
+  removedRoles: { [guildId: string]: string[] }
+) => {
+  // Mapping from discord server name to a list of added role names
+  const addedRoleNames: { [guildId: string]: string[] } = {};
+
+  // Mapping from discord server name to a list of persisted role names
+  const persistedRoleNames: { [guildId: string]: string[] } = {};
+
+  // Mapping from discord server name to a list of removed roles names
+  const removedRoleNames: { [guildId: string]: string[] } = {};
+
+  for (const guildConfigDoc of guildConfigsSnapshot.docs) {
+    // Get the guild from the discord client
+    const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
+    if (!guild) continue;
+
+    // Get the member from the guild
+    const member = await guild.members.fetch(userID);
+    if (!member) continue;
+
+    const guildId = guildConfigDoc.id;
+
+    const uniqueAddedRoles = [...new Set(addedRoles[guildId])];
+    const uniquePersistedRoles = [...new Set(persistedRoles[guildId])];
+    const uniqueRemovedRoles = [...new Set(removedRoles[guildId])].filter((x) =>
+      uniquePersistedRoles.includes(x)
+    );
+
+    for (const roleId of uniqueAddedRoles || []) {
+      const newRole = guild.roles.cache.find((role) => role.id == roleId);
 
       if (!newRole) {
-        console.error(`No role with that name: ${rule.roleId}`);
-        return;
+        console.error("This shouldn't happen. Role missing to add.");
+        continue;
       }
 
-      // set numMatchingTokens
-      let numMatchingTokens: number;
-      let customApiAllowed: boolean;
-      let quantity: number;
-      if (isNFTRule(rule)) {
-        const nftRule = rule as NFTRule;
-        quantity = nftRule.quantity;
-        customApiAllowed = false;
-
-        const tokens = userTokensCache.nft[nftRule.nftAddress]?.tokenIds || [];
-
-        // get the number of matching tokens
-        numMatchingTokens = (
-          nftRule.tokenIds != undefined
-            ? tokens.filter(
-                (token) => nftRule.tokenIds && nftRule.tokenIds.includes(token)
-              )
-            : tokens
-        ).length;
-      } else if (isApiRule(rule)) {
-          const apiRule = rule as APIRule;
-          customApiAllowed = await getCustomAPIWalletAllowed(apiRule.apiUrl, walletAddress);
-          numMatchingTokens = 0;
-          quantity = Number.MAX_SAFE_INTEGER; //not used for apiRule
-      } else {
-        const cw20Rule = rule as CW20Rule;
-        quantity = cw20Rule.quantity;
-
-        const numTokens =
-          userTokensCache.cw20[cw20Rule.cw20Address]?.quantity || 0;
-
-        numMatchingTokens = numTokens;
-        customApiAllowed = false;
-      }
-
-      // How to deal with multiple roles that have the same name?
-
-      if (
-        ((numMatchingTokens >= quantity) || customApiAllowed) &&
-        // don't duplicate role if it was already granted
-        !(activeRoles[guild.id] && activeRoles[guild.id].includes(newRole.id))
-      ) {
-        // the user matches the role rules, update accordingly
-
-        // update activeRoles
-        if (activeRoles[guild.id]) {
-          activeRoles[guild.id].push(newRole.id);
-        } else {
-          activeRoles[guild.id] = [newRole.id];
-        }
-
-        // if removedRoles includes the role, delete it
-        if (
-          removedRoles[guild.id] &&
-          removedRoles[guild.id].includes(newRole.id)
-        ) {
-          removedRoles[guild.id].splice(
-            removedRoles[guild.id].indexOf(newRole.id)
-          );
-        }
-      } else if (
-        // Make sure member exists
-        member &&
-        // Make sure member has role
-        member.roles.cache.some((role) => role.id === newRole.id) &&
-        // Make sure member wasn't granted the role
-        !(activeRoles[guild.id] && activeRoles[guild.id].includes(newRole.id))
-      ) {
-        // the user doesn't match the role rules but has the role anyways
-        // update accordingly
-
-        // update removedRoles
-        if (removedRoles[guild.id]) {
-          removedRoles[guild.id].push(newRole.id);
-        } else {
-          removedRoles[guild.id] = [newRole.id];
-        }
-      }
-    };
-
-    // loop through each of the rules registered with the guild in sequence
-    await (guildConfigDoc.data() as GuildConfig).rules.reduce(
-      (p, guildRule) => {
-        return p.then(() =>
-          coldUpdateDiscordRolesForUserInGuildRule(guildRule)
-        );
-      },
-      new Promise((resolve) => resolve(null))
-    );
-  };
-
-  // Mapping from discord server name to a list of active role names
-  const activeRolesNames: { [guildName: string]: string[] } = {};
-
-  // Mapping from discord server name to a list of roles names being removed
-  const removedRolesNames: { [guildName: string]: string[] } = {};
-
-  // loop through guilds registered with lunar assistant in sequence
-  await guildConfigsSnapshot.docs.reduce((p, guildConfigDoc) => {
-    // get the guild from the discord client
-    const guild = this.client.guilds.cache.get(guildConfigDoc.id);
-
-    if (!guild) return p.then(() => new Promise((resolve) => resolve(null)));
-
-    return p.then(async () => {
       try {
-        const member = await guild.members.fetch(userID);
+        // Add the role to the member
+        await member.roles.add(newRole);
 
-        // if not a member then skip
-        if (!member) return;
-
-        await coldUpdateDiscordRolesForUserInGuild(
-          guild,
-          member,
-          guildConfigDoc
-        );
-
-        // add the relevant roles
-        await Promise.all(
-          activeRoles[guild.id].map(async (roleId) => {
-            // Get the discord role from the discord client
-            const newRole = guild.roles.cache.find((role) => role.id == roleId);
-
-            if (!newRole) {
-              console.error("This shouldn't happen. Role missing to add.");
-              return;
-            }
-
-            try {
-              // Add the role to the member
-              await member.roles.add(newRole);
-
-              // Add the role to activeRolesNames
-              if (activeRolesNames[guild.name]) {
-                activeRolesNames[guild.name].push(newRole.name);
-              } else {
-                activeRolesNames[guild.name] = [newRole.name];
-              }
-            } catch (e) {
-              console.error(
-                "Couldn't add role, probably because of role hierarchy.",
-                guild.name,
-                newRole.id
-              );
-            }
-          })
-        );
-
-        // remove the relevant roles
-        await Promise.all(
-          removedRoles[guild.id].map(async (roleId) => {
-            // get the discord role from the discord client
-            const newRole = guild.roles.cache.find((role) => role.id == roleId);
-
-            if (!newRole) {
-              console.error("This shouldn't happen. Role missing to remove.");
-              return;
-            }
-
-            try {
-              // Remove the role from the member
-              await member.roles.remove(newRole);
-
-              // Add the role to removedRolesNames
-              if (removedRolesNames[guild.name]) {
-                removedRolesNames[guild.name].push(newRole.name);
-              } else {
-                removedRolesNames[guild.name] = [newRole.name];
-              }
-            } catch (e) {
-              console.error(
-                "Couldn't remove role, probably because of role hierarchy.",
-                guild.name,
-                newRole.id
-              );
-            }
-          })
-        );
+        // Add the role to activeRolesNames
+        if (addedRoleNames[guild.name]) {
+          addedRoleNames[guild.name].push(newRole.name);
+        } else {
+          addedRoleNames[guild.name] = [newRole.name];
+        }
       } catch (e) {
-        // member doesn't exist in guild
-        console.error("Not a member in the guild");
+        console.error(
+          "Couldn't add role, probably because of role hierarchy.",
+          guild.name,
+          newRole.id
+        );
       }
-    });
-  }, new Promise((resolve, reject) => resolve(null)));
+    }
 
-  console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
-    activeRoles: activeRolesNames,
-    removedRoles: removedRolesNames,
-  });
+    for (const roleId of uniquePersistedRoles || []) {
+      const newRole = guild.roles.cache.find((role) => role.id == roleId);
 
-  // return the list of the users active roles and removed roles
-  return { activeRoles: activeRolesNames, removedRoles: removedRolesNames };
-}
+      if (!newRole) {
+        console.error("This shouldn't happen. Role missing to add.");
+        continue;
+      }
+
+      // Add the role to activeRolesNames
+      if (persistedRoleNames[guild.name]) {
+        persistedRoleNames[guild.name].push(newRole.name);
+      } else {
+        persistedRoleNames[guild.name] = [newRole.name];
+      }
+    }
+
+    for (const roleId of uniqueRemovedRoles || []) {
+      const newRole = guild.roles.cache.find((role) => role.id == roleId);
+
+      if (!newRole) {
+        console.error("This shouldn't happen. Role missing to add.");
+        continue;
+      }
+
+      try {
+        // Add the role to the member
+        await member.roles.remove(newRole);
+
+        // Add the role to activeRolesNames
+        if (removedRoleNames[guild.name]) {
+          removedRoleNames[guild.name].push(newRole.name);
+        } else {
+          removedRoleNames[guild.name] = [newRole.name];
+        }
+      } catch (e) {
+        console.error(
+          "Couldn't remove role, probably because of role hierarchy.",
+          guild.name,
+          newRole.id
+        );
+      }
+    }
+  }
+
+  // Return the list of the users active roles and removed roles
+  return {
+    addedRoleNames: addedRoleNames,
+    persistedRoleNames: persistedRoleNames,
+    removedRoleNames: removedRoleNames,
+  };
+};

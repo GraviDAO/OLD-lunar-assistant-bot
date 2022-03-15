@@ -11,8 +11,9 @@ export interface SlashCommandData {
 }
 
 export interface UpdateUserDiscordRolesResponse {
-  activeRoles: { [guildName: string]: string[] };
-  removedRoles: { [guildName: string]: string[] };
+  addedRoleNames: { [guildName: string]: string[] };
+  persistedRoleNames: { [guildName: string]: string[] };
+  removedRoleNames: { [guildName: string]: string[] };
 }
 
 export interface RandomEarthUserItem {

@@ -26,14 +26,40 @@ const lunarVerify = {
 
     const rawPrivateResponse =
       interaction.options.getBoolean("private-response");
-    const privateResponse = (rawPrivateResponse || rawPrivateResponse == null)  ? true : false;
+    const privateResponse =
+      rawPrivateResponse || rawPrivateResponse == null ? true : false;
 
     await interaction.deferReply({ ephemeral: privateResponse });
 
     try {
-      const userActiveRoles = (
-        await lunarAssistant.updateDiscordRolesForUser(interaction.user.id)
-      ).activeRoles;
+      const updateRolesResponse =
+        await lunarAssistant.updateDiscordRolesForUser(interaction.user.id);
+
+      const userActiveRoles: { [guildName: string]: string[] } = {};
+
+      for (const guildId of Object.keys(updateRolesResponse.addedRoleNames)) {
+        if (userActiveRoles[guildId]) {
+          userActiveRoles[guildId].push(
+            ...updateRolesResponse.addedRoleNames[guildId]
+          );
+        } else {
+          userActiveRoles[guildId] =
+            updateRolesResponse.addedRoleNames[guildId];
+        }
+      }
+
+      for (const guildId of Object.keys(
+        updateRolesResponse.persistedRoleNames
+      )) {
+        if (userActiveRoles[guildId]) {
+          userActiveRoles[guildId].push(
+            ...updateRolesResponse.persistedRoleNames[guildId]
+          );
+        } else {
+          userActiveRoles[guildId] =
+            updateRolesResponse.persistedRoleNames[guildId];
+        }
+      }
 
       if (Object.keys(userActiveRoles).length > 0) {
         const activeRolesMessage = Object.keys(userActiveRoles)
