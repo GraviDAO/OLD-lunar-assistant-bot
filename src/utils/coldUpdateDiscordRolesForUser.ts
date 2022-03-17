@@ -10,10 +10,14 @@ import {
   User,
 } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
+import { getCustomAPIWalletAllowed } from "./getCustomAPIWalletAllowed";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
-import { guildRuleToSimpleRule, isApiRule, isNFTRule } from "./guildRuleHelpers";
-import { getCustomAPIWalletAllowed } from "./getCustomAPIWalletAllowed"
+import {
+  guildRuleToSimpleRule,
+  isApiRule,
+  isNFTRule,
+} from "./guildRuleHelpers";
 
 export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
@@ -89,10 +93,13 @@ export async function coldUpdateDiscordRolesForUser(
             : tokens
         ).length;
       } else if (isApiRule(rule)) {
-          const apiRule = rule as APIRule;
-          customApiAllowed = await getCustomAPIWalletAllowed(apiRule.apiUrl, walletAddress);
-          numMatchingTokens = 0;
-          quantity = Number.MAX_SAFE_INTEGER; //not used for apiRule
+        const apiRule = rule as APIRule;
+        customApiAllowed = await getCustomAPIWalletAllowed(
+          apiRule.apiUrl,
+          walletAddress
+        );
+        numMatchingTokens = 0;
+        quantity = Number.MAX_SAFE_INTEGER; //not used for apiRule
       } else {
         const cw20Rule = rule as CW20Rule;
         quantity = cw20Rule.quantity;
@@ -107,7 +114,7 @@ export async function coldUpdateDiscordRolesForUser(
       // How to deal with multiple roles that have the same name?
 
       if (
-        ((numMatchingTokens >= quantity) || customApiAllowed) &&
+        (numMatchingTokens >= quantity || customApiAllowed) &&
         // don't duplicate role if it was already granted
         !(activeRoles[guild.id] && activeRoles[guild.id].includes(newRole.id))
       ) {

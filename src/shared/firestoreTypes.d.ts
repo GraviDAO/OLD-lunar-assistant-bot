@@ -18,7 +18,7 @@ export type CW20Rule = {
 export type APIRule = {
   apiUrl: string;
   roleId: string;
-}
+};
 
 export type SimpleRule = NFTRule | CW20Rule | APIRule;
 
@@ -38,7 +38,7 @@ export type HumanCW20Rule = {
 export type HumanAPIRule = {
   apiUrl: string;
   roleName: string;
-}
+};
 
 export type HumanSimpleRule = HumanNFTRule | HumanCW20Rule | HumanAPIRule;
 
@@ -59,8 +59,8 @@ export type GuildRule = {
     };
   };
   api: {
-    [apiUrl: string]: {}
-  }
+    [apiUrl: string]: {};
+  };
   nativeToken: {
     [denom: string]: {
       quantity: number;
@@ -86,8 +86,8 @@ export type OldGuildRule = {
     };
   };
   api: {
-    [apiUrl: string]: {}
-  }
+    [apiUrl: string]: {};
+  };
   nativeToken: {
     [denom: string]: {
       quantity: number;
