@@ -18,8 +18,7 @@ export const getMessierArtTokens = async (
     ).data as MessierArtUserItems;
 
     userTokensItems.push(...userTokensRes.data);
-    //TODO: cleanup test log
-    console.log("wallet: " + walletAddress + " page: " + page);
+
     while(userTokensRes.item_count >= 30)
     {
         page = page + 1;
@@ -29,8 +28,7 @@ export const getMessierArtTokens = async (
             )
           ).data as MessierArtUserItems;
         userTokensItems.push(...userTokensRes.data);
-        //TODO: cleanup test log
-        console.log("wallet: " + walletAddress + " page: " + page);
+
     }
 
     // convert Messier Art response to usable form
