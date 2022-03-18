@@ -3,6 +3,7 @@ import { ContractAddresses, WalletContents } from "../types";
 import { RandomEarthAPIError, TokenFetchingError } from "../types/errors";
 import { getKnowhereTokens } from "./getKnowhereTokens";
 import { getRandomEarthTokens } from "./getRandomEarthTokens";
+import { getMessierArtTokens } from "./getMessierArtTokens";
 import { getCW20TokensOfWallet, getWalletTokensOfOwner } from "./terraHelpers";
 
 export const getWalletContents = async (
@@ -57,6 +58,20 @@ export const getWalletContents = async (
         )
         .catch((err) => {
           throw new RandomEarthAPIError("Failed to request the knowhere api.");
+        })
+    );
+
+    // Update user tokens cache with Messier art in settlement tokens
+    pendingRequests.push(
+      getMessierArtTokens(walletAddress)
+        .then((messierTokens) =>
+          Object.entries(messierTokens.nft).forEach(
+            ([contractAddress, nftHoldingInfo]) =>
+              unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
+          )
+        )
+        .catch((err) => {
+          throw new RandomEarthAPIError("Failed to request the Messier api.");
         })
     );
   } else {

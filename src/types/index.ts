@@ -32,6 +32,17 @@ export interface KnowhereUserItem {
   tokenId: string;
 }
 
+export interface MessierArtUserItem {
+  nft_contract: string;
+  token_id: string;
+}
+
+export interface MessierArtUserItems {
+  data: MessierArtUserItem[];
+  page_no: number;
+  item_count: number;
+}
+
 export interface ContractAddresses {
   nft: string[];
   cw20: string[];
