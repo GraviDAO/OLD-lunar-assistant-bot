@@ -10,7 +10,7 @@ export const getMessierArtTokens = async (
   try {
     const userTokensItems = [];
 
-    // query user wallet holdings from random earth
+    // query user wallet holdings from Messier Art
     userTokensRes = (
       await axios.get(
         `https://api.messier.art/api/user/${walletAddress}/nfts?page_no=${page}`

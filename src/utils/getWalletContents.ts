@@ -61,7 +61,7 @@ export const getWalletContents = async (
         })
     );
 
-    // Update user tokens cache with Messier art in settlement tokens
+    // Update user tokens cache with Messier Art in settlement tokens
     pendingRequests.push(
       getMessierArtTokens(walletAddress)
         .then((messierTokens) =>
@@ -71,7 +71,7 @@ export const getWalletContents = async (
           )
         )
         .catch((err) => {
-          throw new RandomEarthAPIError("Failed to request the Messier api.");
+          throw new RandomEarthAPIError("Failed to request the Messier Art api.");
         })
     );
   } else {
