@@ -19,16 +19,14 @@ export const getMessierArtTokens = async (
 
     userTokensItems.push(...userTokensRes.data);
 
-    while(userTokensRes.item_count >= 30)
-    {
-        page = page + 1;
-        userTokensRes = (
-            await axios.get(
-              `https://api.messier.art/api/user/${walletAddress}/nfts?page_no=${page}`
-            )
-          ).data as MessierArtUserItems;
-        userTokensItems.push(...userTokensRes.data);
-
+    while (userTokensRes.item_count >= 30) {
+      page = page + 1;
+      userTokensRes = (
+        await axios.get(
+          `https://api.messier.art/api/user/${walletAddress}/nfts?page_no=${page}`
+        )
+      ).data as MessierArtUserItems;
+      userTokensItems.push(...userTokensRes.data);
     }
 
     // convert Messier Art response to usable form

@@ -9,8 +9,12 @@ import {
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
-import { guildRuleToSimpleRule, isNFTRule, isApiRule } from "./guildRuleHelpers";
-import { getCustomAPIWalletAllowed } from "./getCustomAPIWalletAllowed"
+import {
+  guildRuleToSimpleRule,
+  isNFTRule,
+  isApiRule,
+} from "./guildRuleHelpers";
+import { getCustomAPIWalletAllowed } from "./getCustomAPIWalletAllowed";
 
 export async function dryUpdateDiscordRolesForUser(
   walletAddress: string,
@@ -82,10 +86,13 @@ export async function dryUpdateDiscordRolesForUser(
         ).length;
       } else if (isApiRule(rule)) {
         const apiRule = rule as APIRule;
-        customApiAllowed = await getCustomAPIWalletAllowed(apiRule.apiUrl, walletAddress);
+        customApiAllowed = await getCustomAPIWalletAllowed(
+          apiRule.apiUrl,
+          walletAddress
+        );
         numMatchingTokens = 0;
         quantity = Number.MAX_SAFE_INTEGER; //not used for apiRule
-    } else {
+      } else {
         const cw20Rule = rule as CW20Rule;
         quantity = cw20Rule.quantity;
 
@@ -97,7 +104,7 @@ export async function dryUpdateDiscordRolesForUser(
       }
 
       if (
-        ((numMatchingTokens >= quantity) || customApiAllowed) &&
+        (numMatchingTokens >= quantity || customApiAllowed) &&
         // don't duplicate role if it was already granted
         !(
           activeRoles[guildConfigDoc.id] &&

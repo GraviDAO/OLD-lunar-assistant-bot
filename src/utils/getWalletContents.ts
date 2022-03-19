@@ -71,7 +71,9 @@ export const getWalletContents = async (
           )
         )
         .catch((err) => {
-          throw new RandomEarthAPIError("Failed to request the Messier Art api.");
+          throw new RandomEarthAPIError(
+            "Failed to request the Messier Art api."
+          );
         })
     );
   } else {

@@ -292,8 +292,8 @@ export default {
           ephemeral: true,
         });
         return;
-      } else if (!isValidHttpUrl(apiUrl)) //Verify url is valid
-      {
+      } else if (!isValidHttpUrl(apiUrl)) {
+        //Verify url is valid
         await interaction.reply({
           content: "api-url is not a valid url",
           ephemeral: true,
@@ -318,7 +318,7 @@ export default {
         version: "1.0",
         nft: {},
         cw20: {},
-        api: { 
+        api: {
           [apiUrl]: {},
         },
         nativeToken: {},
@@ -334,15 +334,15 @@ export default {
         ? (guildConfigDoc.data() as GuildConfig)
         : { rules: [] };
 
-        guildConfig.rules.push(newRule);
+      guildConfig.rules.push(newRule);
 
       // update the db
       await db
         .collection("guildConfigs")
         .doc(interaction.guildId)
         .set(guildConfig);
-      
-        // reply
+
+      // reply
       await interaction.reply({
         content: "Rule added successfully!",
         ephemeral: true,
