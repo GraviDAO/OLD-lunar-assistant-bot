@@ -25,6 +25,16 @@ Adds a rule for granting a role to users based on cw20 token ownership. When a u
 - role (required) : The role to give to users which meet this rule.
 - quantity (optional, 1 by default) : The quantity of cw20 tokens that a user must hold in order to meet the rule.
 
+#### add-api-rule
+
+Adds a rule for granting a role to users based on the response of the specified API. When a user's wallet meets the conditions of the rule, they will be granted the relevant role. Takes the following arguments:
+- api-url (required) : The URL of your custom API against which to check for permission.
+- role (required) : The role to give to users which meet this rule.
+
+Creating your custom API:
+- The url must contain $(wallet) which is an identifier that will be replaced by each user wallet at execution time. Example url: https://myApiUrl.com?walletAddress=$(wallet) 
+- The API must return its response (true or false) in the following format to be parsed correctly: {"allowed":true}
+
 
 #### view-rules
 

@@ -12,7 +12,10 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
   //         update user's discord roles according to rule
   //         save the user's discord roles to firestore
 
-  console.log("Running updateAllDiscordUserRoles cronjob!");
+  const startTime = Date.now();
+  console.log(
+    `Running updateAllDiscordUserRoles cronjob! Start time: ${startTime}`
+  );
 
   // loop over every user
   const usersSnapshot = await this.db.collection("users").get();
@@ -38,11 +41,15 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
           });
         })
         .then(
-          // delay for one second between processing each user
-          () => new Promise((resolve) => setTimeout(() => resolve(null), 1500))
+          // delay for 5 seconds between processing each user
+          () => new Promise((resolve) => setTimeout(() => resolve(null), 5000))
         ),
     new Promise((resolve, reject) => resolve(null))
   );
 
-  console.log("Finished cronjob!");
+  const endTime = Date.now();
+
+  console.log(
+    `Finished cronjob! End time: ${endTime}. Time taken: ${endTime - startTime}`
+  );
 }
