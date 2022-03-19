@@ -4,13 +4,16 @@ import {
   GuildRule,
   NFTRule,
   SimpleRule,
+  StakedNFTRule,
 } from "../shared/firestoreTypes";
 import { WalletContents } from "../types";
 import { getCustomAPIWalletAllowed } from "./getCustomAPIWalletAllowed";
 import {
   guildRuleToSimpleRule,
   isApiRule,
+  isCW20Rule,
   isNFTRule,
+  isStakedNFTRule,
 } from "./guildRuleHelpers";
 
 export const checkRulesQualifies = async (
@@ -47,6 +50,25 @@ export const checkRulesQualifies = async (
     if (numMatchingTokens >= quantity) {
       ruleQualifies = true;
     }
+  } else if (isStakedNFTRule(rule)) {
+    const stakedNFTRule = rule as StakedNFTRule;
+    const quantity = stakedNFTRule.quantity;
+    const tokens =
+      userTokensCache.nft[stakedNFTRule.stakedNFTAddress]?.tokenIds || [];
+
+    // get the number of matching tokens
+    const numMatchingTokens = (
+      stakedNFTRule.tokenIds != undefined
+        ? tokens.filter(
+            (token) =>
+              stakedNFTRule.tokenIds && stakedNFTRule.tokenIds.includes(token)
+          )
+        : tokens
+    ).length;
+
+    if (numMatchingTokens >= quantity) {
+      ruleQualifies = true;
+    }
   } else if (isApiRule(rule)) {
     const apiRule = rule as APIRule;
     const customApiAllowed = await getCustomAPIWalletAllowed(
@@ -57,7 +79,7 @@ export const checkRulesQualifies = async (
     if (customApiAllowed) {
       ruleQualifies = true;
     }
-  } else {
+  } else if (isCW20Rule(rule)) {
     const cw20Rule = rule as CW20Rule;
     const quantity = cw20Rule.quantity;
 
@@ -66,6 +88,8 @@ export const checkRulesQualifies = async (
     if (numTokens >= quantity) {
       ruleQualifies = true;
     }
+  } else {
+    console.error("DO NOT ENTER. Rule type didn't match. checkRuleQualifies");
   }
 
   return ruleQualifies;

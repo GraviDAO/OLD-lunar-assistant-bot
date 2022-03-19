@@ -2,15 +2,19 @@ import { environment } from "../../config.json";
 import { ContractAddresses, WalletContents } from "../types";
 import { RandomEarthAPIError, TokenFetchingError } from "../types/errors";
 import { getKnowhereTokens } from "./getKnowhereTokens";
-import { getRandomEarthTokens } from "./getRandomEarthTokens";
 import { getMessierArtTokens } from "./getMessierArtTokens";
-import { getCW20TokensOfWallet, getWalletTokensOfOwner } from "./terraHelpers";
+import { getRandomEarthTokens } from "./getRandomEarthTokens";
+import {
+  getCW20TokensOfWallet,
+  getStakedNFTsOfWallet,
+  getWalletTokensOfOwner,
+} from "./terraHelpers";
 
 export const getWalletContents = async (
   walletAddress: string,
   contractAddresses: ContractAddresses
 ): Promise<WalletContents> => {
-  const userTokensCache: WalletContents = { nft: {}, cw20: {} };
+  const userTokensCache: WalletContents = { nft: {}, cw20: {}, stakedNFT: {} };
 
   const unionIntoNftCache = (contractAddress: string, tokenIds: string[]) => {
     if (userTokensCache.nft[contractAddress]) {
@@ -24,6 +28,24 @@ export const getWalletContents = async (
       };
     } else {
       userTokensCache.nft[contractAddress] = { tokenIds };
+    }
+  };
+
+  const unionIntoStakedNftCache = (
+    contractAddress: string,
+    tokenIds: string[]
+  ) => {
+    if (userTokensCache.stakedNFT[contractAddress]) {
+      userTokensCache.stakedNFT[contractAddress] = {
+        tokenIds: Array.from(
+          new Set([
+            ...tokenIds,
+            ...userTokensCache.stakedNFT[contractAddress].tokenIds,
+          ])
+        ),
+      };
+    } else {
+      userTokensCache.stakedNFT[contractAddress] = { tokenIds };
     }
   };
 
@@ -71,7 +93,9 @@ export const getWalletContents = async (
           )
         )
         .catch((err) => {
-          throw new RandomEarthAPIError("Failed to request the Messier Art api.");
+          throw new RandomEarthAPIError(
+            "Failed to request the Messier Art api."
+          );
         })
     );
   } else {
@@ -102,6 +126,19 @@ export const getWalletContents = async (
       userTokensCache.cw20[cw20Address] = {
         quantity: balanceResponse.balance,
       };
+    })
+  );
+
+  // Get the staked nft tokens
+  pendingRequests.push(
+    ...contractAddresses.stakedNFT.map(async (stakedNFTAddress) => {
+      const stakedTokenIds = await getStakedNFTsOfWallet(
+        walletAddress,
+        stakedNFTAddress
+      );
+
+      // Update userTokensCache
+      unionIntoStakedNftCache(stakedNFTAddress, stakedTokenIds.tokens);
     })
   );
 

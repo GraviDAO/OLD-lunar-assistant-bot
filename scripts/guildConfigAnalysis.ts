@@ -33,6 +33,11 @@ const analysis = async () => {
   );
 
   console.log(
+    "Number of unique staked nft addresses across registered rules: " +
+      relevantContractAddresses.stakedNFT.length
+  );
+
+  console.log(
     "Number of unique cw20 addresses across registered rules: " +
       relevantContractAddresses.cw20.length
   );

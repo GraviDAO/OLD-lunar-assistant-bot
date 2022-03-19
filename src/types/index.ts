@@ -47,11 +47,17 @@ export interface MessierArtUserItems {
 export interface ContractAddresses {
   nft: string[];
   cw20: string[];
+  stakedNFT: string[];
 }
 
 export interface WalletContents {
   nft: {
     [nftAddress: string]: {
+      tokenIds: string[];
+    };
+  };
+  stakedNFT: {
+    [stakedNFTAddress: string]: {
       tokenIds: string[];
     };
   };
