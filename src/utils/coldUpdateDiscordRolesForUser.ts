@@ -16,6 +16,23 @@ export async function coldUpdateDiscordRolesForUser(
   // Get the users wallet address
   const walletAddress = (userDoc.data() as User).wallet;
 
+  const benchmark = {
+    functions: {
+      getAddedPersistedRemovedRoleIds: {
+        start: 0,
+        end: 0,
+        diff: 0,
+      },
+      propogateRoleUpdates: {
+        start: 0,
+        end: 0,
+        diff: 0,
+      },
+    },
+  };
+
+  benchmark.functions.getAddedPersistedRemovedRoleIds.start = Date.now();
+
   const { addedRoles, persistedRoles, removedRoles } =
     await getAddedPersistedRemovedRoleIds(
       this,
@@ -23,6 +40,13 @@ export async function coldUpdateDiscordRolesForUser(
       userDoc,
       guildConfigsSnapshot
     );
+
+  benchmark.functions.getAddedPersistedRemovedRoleIds.end = Date.now();
+  benchmark.functions.getAddedPersistedRemovedRoleIds.diff =
+    benchmark.functions.getAddedPersistedRemovedRoleIds.end -
+    benchmark.functions.getAddedPersistedRemovedRoleIds.start;
+
+  benchmark.functions.propogateRoleUpdates.start = Date.now();
 
   const { addedRoleNames, persistedRoleNames, removedRoleNames } =
     await propogateRoleUpdates(
@@ -33,6 +57,13 @@ export async function coldUpdateDiscordRolesForUser(
       persistedRoles,
       removedRoles
     );
+
+  benchmark.functions.propogateRoleUpdates.end = Date.now();
+  benchmark.functions.propogateRoleUpdates.diff =
+    benchmark.functions.propogateRoleUpdates.end -
+    benchmark.functions.propogateRoleUpdates.start;
+
+  console.log(benchmark);
 
   console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
     addedRoles: addedRoleNames,
@@ -174,74 +205,40 @@ export const propogateRoleUpdates = async (
       uniquePersistedRoles.includes(x)
     );
 
-    for (const roleId of uniqueAddedRoles || []) {
+    const roleIdToRoleName = (roleId: string) => {
       const newRole = guild.roles.cache.find((role) => role.id == roleId);
 
       if (!newRole) {
         console.error("This shouldn't happen. Role missing to add.");
-        continue;
       }
 
-      try {
-        // Add the role to the member
-        await member.roles.add(newRole);
+      return newRole?.name || "Undefined";
+    };
 
-        // Add the role to activeRolesNames
-        if (addedRoleNames[guild.name]) {
-          addedRoleNames[guild.name].push(newRole.name);
-        } else {
-          addedRoleNames[guild.name] = [newRole.name];
-        }
-      } catch (e) {
-        console.error(
-          "Couldn't add role, probably because of role hierarchy.",
-          guild.name,
-          newRole.id
-        );
-      }
+    addedRoleNames[guild.name] = uniqueAddedRoles.map(roleIdToRoleName);
+    persistedRoleNames[guild.name] = uniquePersistedRoles.map(roleIdToRoleName);
+    removedRoleNames[guild.name] = uniqueRemovedRoles.map(roleIdToRoleName);
+
+    try {
+      await member.roles.add(uniqueAddedRoles);
+    } catch (e) {
+      console.error(
+        "Couldn't add role, probably because of role hierarchy.",
+        guild.name,
+        uniqueAddedRoles,
+        addedRoleNames[guild.name]
+      );
     }
 
-    for (const roleId of uniquePersistedRoles || []) {
-      const newRole = guild.roles.cache.find((role) => role.id == roleId);
-
-      if (!newRole) {
-        console.error("This shouldn't happen. Role missing to add.");
-        continue;
-      }
-
-      // Add the role to activeRolesNames
-      if (persistedRoleNames[guild.name]) {
-        persistedRoleNames[guild.name].push(newRole.name);
-      } else {
-        persistedRoleNames[guild.name] = [newRole.name];
-      }
-    }
-
-    for (const roleId of uniqueRemovedRoles || []) {
-      const newRole = guild.roles.cache.find((role) => role.id == roleId);
-
-      if (!newRole) {
-        console.error("This shouldn't happen. Role missing to add.");
-        continue;
-      }
-
-      try {
-        // Add the role to the member
-        await member.roles.remove(newRole);
-
-        // Add the role to activeRolesNames
-        if (removedRoleNames[guild.name]) {
-          removedRoleNames[guild.name].push(newRole.name);
-        } else {
-          removedRoleNames[guild.name] = [newRole.name];
-        }
-      } catch (e) {
-        console.error(
-          "Couldn't remove role, probably because of role hierarchy.",
-          guild.name,
-          newRole.id
-        );
-      }
+    try {
+      await member.roles.remove(uniqueRemovedRoles);
+    } catch (e) {
+      console.error(
+        "Couldn't remove role, probably because of role hierarchy.",
+        guild.name,
+        uniqueRemovedRoles,
+        removedRoleNames[guild.name]
+      );
     }
   }
 
