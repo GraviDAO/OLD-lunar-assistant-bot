@@ -1,9 +1,9 @@
 import { environment } from "../../config.json";
 import { ContractAddresses, WalletContents } from "../types";
-import { RandomEarthAPIError, TokenFetchingError } from "../types/errors";
+import { APICallError, TokenFetchingError } from "../types/errors";
 import { getKnowhereTokens } from "./getKnowhereTokens";
-import { getRandomEarthTokens } from "./getRandomEarthTokens";
 import { getMessierArtTokens } from "./getMessierArtTokens";
+import { getRandomEarthTokens } from "./getRandomEarthTokens";
 import { getCW20TokensOfWallet, getWalletTokensOfOwner } from "./terraHelpers";
 
 export const getWalletContents = async (
@@ -11,6 +11,30 @@ export const getWalletContents = async (
   contractAddresses: ContractAddresses
 ): Promise<WalletContents> => {
   const userTokensCache: WalletContents = { nft: {}, cw20: {} };
+
+  const start = Date.now();
+
+  const benchmarking = {
+    start: start,
+    calls: {
+      re: {
+        end: 0,
+        diff: 0,
+      },
+      knowhere: {
+        end: 0,
+        diff: 0,
+      },
+      messier: {
+        end: 0,
+        diff: 0,
+      },
+      cw20: {
+        end: 0,
+        diff: 0,
+      },
+    },
+  };
 
   const unionIntoNftCache = (contractAddress: string, tokenIds: string[]) => {
     if (userTokensCache.nft[contractAddress]) {
@@ -33,47 +57,55 @@ export const getWalletContents = async (
     // Update user tokens cache with random earth in settlement tokens
     pendingRequests.push(
       getRandomEarthTokens(walletAddress)
-        .then((randomEarthUserTokens) =>
+        .then((randomEarthUserTokens) => {
           Object.entries(randomEarthUserTokens.nft).forEach(
             ([contractAddress, nftHoldingInfo]) =>
               unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-          )
-        )
+          );
+          benchmarking.calls.re.end = Date.now();
+          benchmarking.calls.re.diff =
+            benchmarking.calls.re.end - benchmarking.start;
+        })
         .catch((err) => {
           console.error(err);
-          throw new RandomEarthAPIError(
-            "Failed to request the randomearth api."
-          );
+          throw new APICallError("Failed to request the randomearth api.");
         })
     );
 
     // Update user tokens cache with knowhere art in settlement tokens
     pendingRequests.push(
       getKnowhereTokens(walletAddress)
-        .then((knowhereTokens) =>
+        .then((knowhereTokens) => {
           Object.entries(knowhereTokens.nft).forEach(
             ([contractAddress, nftHoldingInfo]) =>
               unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-          )
-        )
+          );
+
+          benchmarking.calls.knowhere.end = Date.now();
+          benchmarking.calls.knowhere.diff =
+            benchmarking.calls.knowhere.end - benchmarking.start;
+        })
         .catch((err) => {
-          throw new RandomEarthAPIError("Failed to request the knowhere api.");
+          throw new APICallError("Failed to request the knowhere api.");
         })
     );
 
     // Update user tokens cache with Messier Art in settlement tokens
     pendingRequests.push(
       getMessierArtTokens(walletAddress)
-        .then((messierTokens) =>
+        .then((messierTokens) => {
           Object.entries(messierTokens.nft).forEach(
             ([contractAddress, nftHoldingInfo]) =>
               unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-          )
-        )
-        .catch((err) => {
-          throw new RandomEarthAPIError(
-            "Failed to request the Messier Art api."
           );
+
+          benchmarking.calls.messier.end = Date.now();
+
+          benchmarking.calls.messier.diff =
+            benchmarking.calls.messier.end - benchmarking.start;
+        })
+        .catch((err) => {
+          throw new APICallError("Failed to request the Messier Art api.");
         })
     );
   } else {
@@ -104,6 +136,11 @@ export const getWalletContents = async (
       userTokensCache.cw20[cw20Address] = {
         quantity: balanceResponse.balance,
       };
+
+      benchmarking.calls.cw20.end = Date.now();
+
+      benchmarking.calls.cw20.diff =
+        benchmarking.calls.cw20.end - benchmarking.start;
     })
   );
 
@@ -119,6 +156,8 @@ export const getWalletContents = async (
       "Failed to fetch user tokens for unknown reasons. Please report to GraviDAO."
     );
   }
+
+  console.log(benchmarking);
 
   return userTokensCache;
 };

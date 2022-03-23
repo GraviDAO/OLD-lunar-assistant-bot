@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageAttachment } from "discord.js";
 import { LunarAssistant } from "..";
-import { RandomEarthAPIError, UserDocMissingError } from "../types/errors";
+import { APICallError, UserDocMissingError } from "../types/errors";
 
 const lunarVerify = {
   data: new SlashCommandBuilder()
@@ -72,10 +72,10 @@ const lunarVerify = {
             "Cannot check for roles because you haven't linked a wallet yet. Please link a wallet with /lunar-link and try again.",
           // ephemeral: true,
         });
-      } else if (e instanceof RandomEarthAPIError) {
+      } else if (e instanceof APICallError) {
         await interaction.editReply({
           content:
-            "The bot is having trouble reading the RandomEarth listings, please try again later. Roles will be frozen until the bot can read RandomEarth listings again.",
+            "The bot is having trouble reading the nft listings, please try again later. Roles will be frozen until the bot can read listings again.",
           // ephemeral: true,
         });
       } else {

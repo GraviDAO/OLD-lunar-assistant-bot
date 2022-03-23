@@ -7,12 +7,12 @@ export class UserDocMissingError extends Error {
   }
 }
 
-export class RandomEarthAPIError extends Error {
+export class APICallError extends Error {
   constructor(m: string) {
     super(m);
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, RandomEarthAPIError.prototype);
+    Object.setPrototypeOf(this, APICallError.prototype);
   }
 }
 
