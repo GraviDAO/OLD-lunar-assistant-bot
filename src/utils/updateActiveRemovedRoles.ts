@@ -1,4 +1,4 @@
-const updateActivePersistedRemovedRoles = (
+export const updateActivePersistedRemovedRoles = (
   guildId: string,
   newRoleId: string,
   ruleQualifies: boolean,

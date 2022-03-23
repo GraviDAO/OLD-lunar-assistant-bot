@@ -5,6 +5,7 @@ import { UpdateUserDiscordRolesResponse } from "../types";
 import { checkRulesQualifies } from "./checkRuleQualifies";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
+import { updateActivePersistedRemovedRoles } from "./updateActiveRemovedRoles";
 
 export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
