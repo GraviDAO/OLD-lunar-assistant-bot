@@ -63,6 +63,7 @@ const lunarVerify = {
 
       if (Object.keys(userActiveRoles).length > 0) {
         const activeRolesMessage = Object.keys(userActiveRoles)
+          .filter((guildName) => (userActiveRoles[guildName] || []).length > 0)
           .map(
             (guildName) =>
               `${guildName}: ${userActiveRoles[guildName].join(", ")}`

@@ -91,10 +91,12 @@ export const getAddedPersistedRemovedRoleIds = async (
   const relevantContractAddresses =
     getRelevantContractAddresses(guildConfigsSnapshot);
 
+  const prefetchWallet = Date.now();
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses
   );
+  console.log(`Time to get wallet contents: ${Date.now() - prefetchWallet}`);
 
   // Mapping from discord server id to a list of added role ids
   const addedRoles: { [guildId: string]: string[] } = {};
@@ -111,6 +113,8 @@ export const getAddedPersistedRemovedRoleIds = async (
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
     if (!guild) continue;
 
+    const prefetch = Date.now();
+
     // Get the member from the guild
     let member: GuildMember;
     try {
@@ -120,6 +124,8 @@ export const getAddedPersistedRemovedRoleIds = async (
       // Member doesn't exist in guild
       continue;
     }
+
+    console.log(`Time to fetch member: ${Date.now() - prefetch}`);
 
     // Get the guild rules
     const guildRules = (guildConfigDoc.data() as GuildConfig).rules;
@@ -219,26 +225,30 @@ export const propogateRoleUpdates = async (
     persistedRoleNames[guild.name] = uniquePersistedRoles.map(roleIdToRoleName);
     removedRoleNames[guild.name] = uniqueRemovedRoles.map(roleIdToRoleName);
 
-    try {
-      await member.roles.add(uniqueAddedRoles);
-    } catch (e) {
-      console.error(
-        "Couldn't add role, probably because of role hierarchy.",
-        guild.name,
-        uniqueAddedRoles,
-        addedRoleNames[guild.name]
-      );
+    if (uniqueAddedRoles.length > 0) {
+      try {
+        await member.roles.add(uniqueAddedRoles);
+      } catch (e) {
+        console.error(
+          "Couldn't add role, probably because of role hierarchy.",
+          guild.name,
+          uniqueAddedRoles,
+          addedRoleNames[guild.name]
+        );
+      }
     }
 
-    try {
-      await member.roles.remove(uniqueRemovedRoles);
-    } catch (e) {
-      console.error(
-        "Couldn't remove role, probably because of role hierarchy.",
-        guild.name,
-        uniqueRemovedRoles,
-        removedRoleNames[guild.name]
-      );
+    if (uniqueRemovedRoles.length > 0) {
+      try {
+        await member.roles.remove(uniqueRemovedRoles);
+      } catch (e) {
+        console.error(
+          "Couldn't remove role, probably because of role hierarchy.",
+          guild.name,
+          uniqueRemovedRoles,
+          removedRoleNames[guild.name]
+        );
+      }
     }
   }
 
