@@ -32,11 +32,17 @@ export class LunarAssistant {
     this.db = db;
   }
 
-  registerGuildCommands() {
-    this.client.guilds.cache.forEach((guild) => {
+  async registerGuildCommands() {
+    for (const guild of this.client.guilds.cache.values()) {
       console.log(`Registering commands for ${guild.name}`);
-      registerCommands(guild);
-    });
+      try {
+        await registerCommands(guild);
+      } catch (e) {
+        console.error(`Couldn't register commands for ${guild.name}`);
+        console.error(e);
+      }
+      await new Promise((r) => setTimeout(r, 1000));
+    }
   }
 
   start(onReady: () => void) {
