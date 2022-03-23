@@ -1,5 +1,10 @@
 import { terra } from "../services/terra";
-import { BalanceResponse, GetTokensResponse } from "../shared/contractTypes";
+import {
+  BalanceResponse,
+  GetTokensResponse,
+  StakedNFTsByAddressResponse,
+  stakedNFTsByAddressResponseToGetTokensResponse,
+} from "../shared/contractTypes";
 
 interface TalisResponse {
   tokens: { token_id: string }[];
@@ -9,8 +14,6 @@ export const getWalletTokensOfOwner = async (
   owner: string,
   contractAddress: string
 ): Promise<GetTokensResponse> => {
-  // QUERY GAME STATUS
-
   let res: GetTokensResponse = { tokens: [] };
 
   let tokens: GetTokensResponse | undefined;
@@ -48,6 +51,49 @@ export const getWalletTokensOfOwner = async (
     // console.error(e);
     console.error(
       `NFT. Couldn't query tokens for ${contractAddress}. Status code ${
+        e?.response?.status
+      }. Data: ${JSON.stringify(e?.response?.data)}`
+    );
+  }
+  return res;
+};
+
+export const getStakedNFTsOfWallet = async (
+  owner: string,
+  contractAddress: string
+): Promise<GetTokensResponse> => {
+  let res: GetTokensResponse = { tokens: [] };
+
+  let tokens: GetTokensResponse | undefined;
+  try {
+    do {
+      const query = {
+        staked_by_addr: {
+          address: owner,
+          limit: 30,
+          start_after_token: tokens && tokens.tokens[tokens.tokens.length - 1],
+        },
+      };
+      const rawQueryResponse = (await terra.wasm.contractQuery(
+        contractAddress,
+        query
+      )) as StakedNFTsByAddressResponse;
+
+      const queryResponse =
+        stakedNFTsByAddressResponseToGetTokensResponse(rawQueryResponse);
+
+      if (queryResponse.tokens.length > 0) {
+        tokens = queryResponse as GetTokensResponse;
+      } else {
+        tokens = { tokens: [] };
+      }
+
+      res.tokens.push(...tokens.tokens);
+    } while (tokens.tokens.length == 30);
+  } catch (e: any) {
+    // console.error(e);
+    console.error(
+      `Staked NFT. Couldn't query tokens for ${contractAddress}. Status code ${
         e?.response?.status
       }. Data: ${JSON.stringify(e?.response?.data)}`
     );

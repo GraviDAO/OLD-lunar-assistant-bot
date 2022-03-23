@@ -11,8 +11,9 @@ export interface SlashCommandData {
 }
 
 export interface UpdateUserDiscordRolesResponse {
-  activeRoles: { [guildName: string]: string[] };
-  removedRoles: { [guildName: string]: string[] };
+  addedRoleNames: { [guildName: string]: string[] };
+  persistedRoleNames: { [guildName: string]: string[] };
+  removedRoleNames: { [guildName: string]: string[] };
 }
 
 export interface RandomEarthUserItem {
@@ -46,11 +47,17 @@ export interface MessierArtUserItems {
 export interface ContractAddresses {
   nft: string[];
   cw20: string[];
+  stakedNFT: string[];
 }
 
 export interface WalletContents {
   nft: {
     [nftAddress: string]: {
+      tokenIds: string[];
+    };
+  };
+  stakedNFT: {
+    [stakedNFTAddress: string]: {
       tokenIds: string[];
     };
   };

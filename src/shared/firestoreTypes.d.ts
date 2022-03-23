@@ -9,6 +9,13 @@ export type NFTRule = {
   roleId: string;
 };
 
+export type StakedNFTRule = {
+  stakedNFTAddress: string;
+  tokenIds?: string[];
+  quantity: number;
+  roleId: string;
+};
+
 export type CW20Rule = {
   cw20Address: string;
   quantity: number;
@@ -20,10 +27,17 @@ export type APIRule = {
   roleId: string;
 };
 
-export type SimpleRule = NFTRule | CW20Rule | APIRule;
+export type SimpleRule = NFTRule | StakedNFTRule | CW20Rule | APIRule;
 
 export type HumanNFTRule = {
   nftAddress: string;
+  tokenIds?: string[];
+  quantity: number;
+  roleName: string;
+};
+
+export type HumanStakedNFTRule = {
+  stakedNFTAddress: string;
   tokenIds?: string[];
   quantity: number;
   roleName: string;
@@ -40,7 +54,11 @@ export type HumanAPIRule = {
   roleName: string;
 };
 
-export type HumanSimpleRule = HumanNFTRule | HumanCW20Rule | HumanAPIRule;
+export type HumanSimpleRule =
+  | HumanNFTRule
+  | HumanStakedNFTRule
+  | HumanCW20Rule
+  | HumanAPIRule;
 
 // GuildRule is designed to accomodate future rule types.
 // For now "nativeToken" is never used.
@@ -49,6 +67,12 @@ export type GuildRule = {
   version: string;
   nft: {
     [nftAddress: string]: {
+      tokenIds?: string[];
+      quantity: number;
+    };
+  };
+  stakedNFT: {
+    [stakedNFTAddress: string]: {
       tokenIds?: string[];
       quantity: number;
     };

@@ -39,12 +39,14 @@ export const getRandomEarthTokens = async (
         }
         return acc;
       },
-      { nft: {}, cw20: {} }
+      { nft: {}, cw20: {}, stakedNFT: {} }
     );
 
     return userTokens;
-  } catch (e) {
-    console.error(e);
+  } catch (error: any) {
+    console.error(
+      `Failed to call random earth api. Status: ${error.response.status}`
+    );
 
     console.error(
       "error",

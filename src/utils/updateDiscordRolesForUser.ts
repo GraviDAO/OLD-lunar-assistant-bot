@@ -17,7 +17,8 @@ export async function updateDiscordRolesForUser(
   // later store this in memory for performance reasons
   const guildConfigsSnapshot = await this.db.collection("guildConfigs").get();
 
-  if (guildConfigsSnapshot.empty) return { activeRoles: {}, removedRoles: {} };
+  if (guildConfigsSnapshot.empty)
+    return { addedRoleNames: {}, persistedRoleNames: {}, removedRoleNames: {} };
 
   return this.coldUpdateDiscordRolesForUser(
     userID,

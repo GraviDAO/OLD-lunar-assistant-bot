@@ -39,7 +39,7 @@ export const getMessierArtTokens = async (
         }
         return acc;
       },
-      { nft: {}, cw20: {} }
+      { nft: {}, cw20: {}, stakedNFT: {} }
     );
 
     return userTokens;

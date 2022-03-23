@@ -51,6 +51,41 @@ export default {
     )
     .addSubcommand((subcommand) =>
       subcommand
+        .setName("add-staked-nft-rule")
+        .setDescription(
+          "Adds a rule for granting a role to users based on nft staking."
+        )
+        .addStringOption((option) =>
+          option
+            .setName("staked-nft-address")
+            .setDescription(
+              "The contract address against which to check for nft staking for this rule."
+            )
+            .setRequired(true)
+        )
+        .addRoleOption((option) =>
+          option
+            .setName("role")
+            .setDescription("The role to give to users which meet this rule.")
+            .setRequired(true)
+        )
+        .addNumberOption((option) =>
+          option
+            .setName("quantity")
+            .setDescription(
+              "The quantity of matching nfts that a user must hold in order to meet the rule."
+            )
+        )
+        .addStringOption((option) =>
+          option
+            .setName("token-ids")
+            .setDescription(
+              "A list of token ids that the rule is restricted to."
+            )
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
         .setName("add-cw20-rule")
         .setDescription(
           "Adds a rule for granting a role to users based on cw20 ownership."
@@ -187,6 +222,99 @@ export default {
             quantity,
           },
         },
+        stakedNFT: {},
+        cw20: {},
+        api: {},
+        nativeToken: {},
+        roleId: role.id,
+      };
+
+      const guildConfigDoc = await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .get();
+
+      const guildConfig: GuildConfig = guildConfigDoc.exists
+        ? (guildConfigDoc.data() as GuildConfig)
+        : { rules: [] };
+
+      guildConfig.rules.push(newRule);
+
+      // update the db
+      await db
+        .collection("guildConfigs")
+        .doc(interaction.guildId)
+        .set(guildConfig);
+
+      // reply
+      await interaction.reply({
+        content: "Rule added successfully!",
+        ephemeral: true,
+      });
+    } else if (interaction.options.getSubcommand() === "add-staked-nft-rule") {
+      // configure the server settings
+      const nftAddress = interaction.options.getString("staked-nft-address");
+      const role = interaction.options.getRole("role");
+      const rawQuantity = interaction.options.getNumber("quantity");
+      const rawTokenIds = interaction.options.getString("token-ids");
+
+      // verify that nftAddress and role are defined
+      if (!nftAddress || !role) {
+        await interaction.reply({
+          content: "Could not get nftAddress or role",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      // verify that we can parse tokenIds
+      let tokenIds;
+      try {
+        tokenIds = rawTokenIds ? JSON.parse(rawTokenIds) : undefined;
+        // check that the tokenIds is properly formatted
+        if (
+          tokenIds &&
+          !(
+            Array.isArray(tokenIds) &&
+            tokenIds.every((tokenId) => typeof tokenId == "string")
+          )
+        ) {
+          throw new Error("Token ids are not an array of strings");
+        }
+      } catch {
+        await interaction.reply({
+          content:
+            'Could not parse token ids, please pass token ids in the following format: ["1", "2", "4"]',
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const quantity = rawQuantity ? rawQuantity : 1;
+
+      // check if the bot role is above the verified role
+      const lunarAssistantRole = interaction.guild.roles.cache.find(
+        (role) => role.name == "Lunar Assistant"
+      )!;
+
+      if (role.position > lunarAssistantRole.position) {
+        await interaction.reply({
+          content: `Please update the role hierarchy with 'Lunar Assistant' above of ${role.name} and try again.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const newRule: GuildRule = {
+        version: "1.0",
+        nft: {},
+        stakedNFT: {
+          [nftAddress]: {
+            // only include tokenIds if defined
+            ...(tokenIds && { tokenIds }),
+            quantity,
+          },
+        },
         cw20: {},
         api: {},
         nativeToken: {},
@@ -248,6 +376,7 @@ export default {
       const newRule: GuildRule = {
         version: "1.0",
         nft: {},
+        stakedNFT: {},
         cw20: {
           [cw20Address]: {
             quantity,
@@ -317,6 +446,7 @@ export default {
       const newRule: GuildRule = {
         version: "1.0",
         nft: {},
+        stakedNFT: {},
         cw20: {},
         api: {
           [apiUrl]: {},

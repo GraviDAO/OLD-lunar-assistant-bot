@@ -4,13 +4,17 @@ import { APICallError, TokenFetchingError } from "../types/errors";
 import { getKnowhereTokens } from "./getKnowhereTokens";
 import { getMessierArtTokens } from "./getMessierArtTokens";
 import { getRandomEarthTokens } from "./getRandomEarthTokens";
-import { getCW20TokensOfWallet, getWalletTokensOfOwner } from "./terraHelpers";
+import {
+  getCW20TokensOfWallet,
+  getStakedNFTsOfWallet,
+  getWalletTokensOfOwner,
+} from "./terraHelpers";
 
 export const getWalletContents = async (
   walletAddress: string,
   contractAddresses: ContractAddresses
 ): Promise<WalletContents> => {
-  const userTokensCache: WalletContents = { nft: {}, cw20: {} };
+  const userTokensCache: WalletContents = { nft: {}, cw20: {}, stakedNFT: {} };
 
   const start = Date.now();
 
@@ -48,6 +52,24 @@ export const getWalletContents = async (
       };
     } else {
       userTokensCache.nft[contractAddress] = { tokenIds };
+    }
+  };
+
+  const unionIntoStakedNftCache = (
+    contractAddress: string,
+    tokenIds: string[]
+  ) => {
+    if (userTokensCache.stakedNFT[contractAddress]) {
+      userTokensCache.stakedNFT[contractAddress] = {
+        tokenIds: Array.from(
+          new Set([
+            ...tokenIds,
+            ...userTokensCache.stakedNFT[contractAddress].tokenIds,
+          ])
+        ),
+      };
+    } else {
+      userTokensCache.stakedNFT[contractAddress] = { tokenIds };
     }
   };
 
@@ -141,6 +163,19 @@ export const getWalletContents = async (
 
       benchmarking.calls.cw20.diff =
         benchmarking.calls.cw20.end - benchmarking.start;
+    })
+  );
+
+  // Get the staked nft tokens
+  pendingRequests.push(
+    ...contractAddresses.stakedNFT.map(async (stakedNFTAddress) => {
+      const stakedTokenIds = await getStakedNFTsOfWallet(
+        walletAddress,
+        stakedNFTAddress
+      );
+
+      // Update userTokensCache
+      unionIntoStakedNftCache(stakedNFTAddress, stakedTokenIds.tokens);
     })
   );
 

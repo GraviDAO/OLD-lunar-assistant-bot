@@ -2,12 +2,14 @@ import {
   APIRule,
   CW20Rule,
   GuildRule,
+  HumanAPIRule,
   HumanCW20Rule,
   HumanNFTRule,
-  HumanAPIRule,
   HumanSimpleRule,
+  HumanStakedNFTRule,
   NFTRule,
   SimpleRule,
+  StakedNFTRule,
 } from "../shared/firestoreTypes";
 
 // export const getGuildRuleType = (guildRule: GuildRule): GuildRuleType => {
@@ -28,6 +30,10 @@ export const isCW20Rule = (simpleRule: SimpleRule) => {
   return "cw20Address" in simpleRule;
 };
 
+export const isStakedNFTRule = (simpleRule: SimpleRule) => {
+  return "stakedNFTAddress" in simpleRule;
+};
+
 export const isApiRule = (simpleRule: SimpleRule) => {
   return "apiUrl" in simpleRule;
 };
@@ -42,6 +48,18 @@ export const guildRuleToSimpleRule = (guildRule: GuildRule): SimpleRule => {
       nftAddress,
       tokenIds: guildRule.nft[nftAddress].tokenIds,
       quantity: guildRule.nft[nftAddress].quantity,
+      roleId: guildRule.roleId,
+    };
+    return rule;
+  } else if (Object.keys(guildRule.stakedNFT).length > 0) {
+    // build the single NFT rule
+    const nftAddresses = Object.keys(guildRule.stakedNFT);
+    if (nftAddresses.length !== 1) throw new Error("Malformed GuildRule");
+    const stakedNFTAddress = nftAddresses[0];
+    const rule: StakedNFTRule = {
+      stakedNFTAddress,
+      tokenIds: guildRule.stakedNFT[stakedNFTAddress].tokenIds,
+      quantity: guildRule.stakedNFT[stakedNFTAddress].quantity,
       roleId: guildRule.roleId,
     };
     return rule;
@@ -75,7 +93,7 @@ export const simpleRuleToHumanSimpleRule = (
   simpleRule: SimpleRule,
   roleName: string
 ): HumanSimpleRule => {
-  if (Object.keys(simpleRule).includes("nftAddress")) {
+  if (isNFTRule(simpleRule)) {
     let nftRule = simpleRule as NFTRule;
     let humanNftRule: HumanNFTRule = {
       nftAddress: nftRule.nftAddress,
@@ -84,7 +102,16 @@ export const simpleRuleToHumanSimpleRule = (
       roleName: roleName,
     };
     return humanNftRule;
-  } else if (Object.keys(simpleRule).includes("cw20Address")) {
+  } else if (isStakedNFTRule(simpleRule)) {
+    let stakedNFTRule = simpleRule as StakedNFTRule;
+    let humanStakedNftRule: HumanStakedNFTRule = {
+      stakedNFTAddress: stakedNFTRule.stakedNFTAddress,
+      tokenIds: stakedNFTRule.tokenIds,
+      quantity: stakedNFTRule.quantity,
+      roleName: roleName,
+    };
+    return humanStakedNftRule;
+  } else if (isCW20Rule(simpleRule)) {
     let cw20Rule = simpleRule as CW20Rule;
     let humanCw20Rule: HumanCW20Rule = {
       cw20Address: cw20Rule.cw20Address,
@@ -93,7 +120,7 @@ export const simpleRuleToHumanSimpleRule = (
     };
 
     return humanCw20Rule;
-  } else if (Object.keys(simpleRule).includes("apiUrl")) {
+  } else if (isApiRule(simpleRule)) {
     let apiRule = simpleRule as APIRule;
     let humanAPIRule: HumanAPIRule = {
       apiUrl: apiRule.apiUrl,
