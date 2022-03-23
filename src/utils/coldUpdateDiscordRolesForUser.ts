@@ -96,7 +96,7 @@ export const getAddedPersistedRemovedRoleIds = async (
     walletAddress,
     relevantContractAddresses
   );
-  console.log(`Time to get wallet contents: ${Date.now() - prefetchWallet}`);
+  // console.log(`Time to get wallet contents: ${Date.now() - prefetchWallet}`);
 
   // Mapping from discord server id to a list of added role ids
   const addedRoles: { [guildId: string]: string[] } = {};
@@ -125,7 +125,7 @@ export const getAddedPersistedRemovedRoleIds = async (
       continue;
     }
 
-    console.log(`Time to fetch member: ${Date.now() - prefetch}`);
+    // console.log(`Time to fetch member: ${Date.now() - prefetch}`);
 
     // Get the guild rules
     const guildRules = (guildConfigDoc.data() as GuildConfig).rules;
