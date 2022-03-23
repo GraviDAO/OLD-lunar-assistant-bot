@@ -80,8 +80,14 @@ export const getAddedPersistedRemovedRoleIds = async (
     if (!guild) continue;
 
     // Get the member from the guild
-    const member = await guild.members.fetch(userID);
-    if (!member) continue;
+    let member: GuildMember;
+    try {
+      member = await guild.members.fetch(userID);
+      if (!member) continue;
+    } catch (e) {
+      // Member doesn't exist in guild
+      continue;
+    }
 
     // Get the guild rules
     const guildRules = (guildConfigDoc.data() as GuildConfig).rules;
