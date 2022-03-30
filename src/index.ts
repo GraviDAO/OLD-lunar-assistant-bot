@@ -55,7 +55,7 @@ export class LunarAssistant {
       this.registerGuildCommands();
 
       // only add listeners when not in maintenance mode
-      if (!run_sync_processes) {
+      if (run_sync_processes) {
         this.runSyncProcesses();
       }
       // Call the passed onReady function
