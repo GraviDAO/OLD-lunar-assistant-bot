@@ -94,7 +94,8 @@ export const getAddedPersistedRemovedRoleIds = async (
   const prefetchWallet = Date.now();
   const userTokensCache = await getWalletContents(
     walletAddress,
-    relevantContractAddresses
+    relevantContractAddresses,
+    lunar.db,
   );
   // console.log(`Time to get wallet contents: ${Date.now() - prefetchWallet}`);
 

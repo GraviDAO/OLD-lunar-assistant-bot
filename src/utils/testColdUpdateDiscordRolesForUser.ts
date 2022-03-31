@@ -6,14 +6,16 @@ import { updateActivePersistedRemovedRoles } from "./updateActiveRemovedRoles";
 
 export const testGetAddedPersistedRemovedRoleIds = async (
   walletAddress: string,
-  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+  db: FirebaseFirestore.Firestore,
 ) => {
   const relevantContractAddresses =
     getRelevantContractAddresses(guildConfigsSnapshot);
 
   const userTokensCache = await getWalletContents(
     walletAddress,
-    relevantContractAddresses
+    relevantContractAddresses,
+    db,
   );
 
   // Mapping from discord server id to a list of added role ids

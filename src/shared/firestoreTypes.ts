@@ -122,3 +122,7 @@ export type OldGuildRule = {
 export interface OldGuildConfig {
   rules: OldGuildRule[];
 }
+
+export interface Configs {
+  marketplaceContracts: string[];
+}

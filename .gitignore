@@ -3,3 +3,15 @@ node_modules/
 config.json
 config.prod.json
 dist/
+tests/messierAPIResponse.json
+tests/RandomEarthResponse.json
+.2ce175f245eef4c044a031af9c6403f08b67c33c-audit.json
+.83e28a7b003c0ecc0e49a7837b881cf032d05f75-audit.json
+lunar-assistant-bot-2022-03-26-10.log
+lunar-assistant-bot-2022-03-27-09.log
+lunar-assistant-bot-2022-03-27-10.log
+lunar-assistant-bot-2022-03-27-13.log
+lunar-assistant-bot-2022-03-27-17.log
+lunar-assistant-bot-2022-03-27.log
+lunar-assistant-bot-2022-03-30.log
+tests/utils/temp.test.ts

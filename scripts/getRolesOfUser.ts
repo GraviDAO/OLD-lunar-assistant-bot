@@ -35,7 +35,8 @@ const getRolesOfUser = async () => {
 
   const roles = await testGetAddedPersistedRemovedRoleIds(
     walletAddress,
-    guildConfigsSnapshot
+    guildConfigsSnapshot,
+    db,
   );
 
   console.log(roles);
