@@ -16,6 +16,7 @@ export const getWalletContents = async (
 ): Promise<WalletContents> => {
   const userTokensCache: WalletContents = { nft: {}, cw20: {}, stakedNFT: {} };
 
+  console.log(`Getting wallet contents for ${walletAddress}`);
   const start = Date.now();
 
   const benchmarking = {
@@ -192,6 +193,11 @@ export const getWalletContents = async (
     );
   }
 
+  console.log(
+    `Got wallet contents for: ${walletAddress}. Total time: ${
+      Date.now() - start
+    }`
+  );
   console.log(benchmarking);
 
   return userTokensCache;
