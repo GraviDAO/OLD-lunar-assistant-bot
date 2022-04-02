@@ -107,11 +107,13 @@ export const getAddedPersistedRemovedRoleIds = async (
   // Mapping from discord server id to a list of removed role ids
   const removedRoles: { [guildId: string]: string[] } = {};
 
-  for (const guildConfigDoc of guildConfigsSnapshot.docs) {
+  const updateActivePersistedRemovedRolesForGuildConfigDoc = async (
+    guildConfigDoc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>
+  ) => {
     // If lunar is null than we want to query across all guilds
     // Get the guild from the discord client
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
-    if (!guild) continue;
+    if (!guild) return;
 
     const prefetch = Date.now();
 
@@ -119,10 +121,10 @@ export const getAddedPersistedRemovedRoleIds = async (
     let member: GuildMember;
     try {
       member = await guild.members.fetch(userID);
-      if (!member) continue;
+      if (!member) return;
     } catch (e) {
       // Member doesn't exist in guild
-      continue;
+      return;
     }
 
     // console.log(`Time to fetch member: ${Date.now() - prefetch}`);
@@ -166,7 +168,16 @@ export const getAddedPersistedRemovedRoleIds = async (
         removedRoles
       );
     }
-  }
+  };
+
+  // Process all guild configs
+  await Promise.all(
+    guildConfigsSnapshot.docs.map(
+      updateActivePersistedRemovedRolesForGuildConfigDoc
+    )
+  );
+
+  // Return role diffs
   return { addedRoles, persistedRoles, removedRoles };
 };
 
@@ -187,20 +198,22 @@ export const propogateRoleUpdates = async (
   // Mapping from discord server name to a list of removed roles names
   const removedRoleNames: { [guildId: string]: string[] } = {};
 
-  for (const guildConfigDoc of guildConfigsSnapshot.docs) {
+  const propogateRoleUpdatesForGuildConfigDoc = async (
+    guildConfigDoc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>
+  ) => {
     // Get the guild from the discord client
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
-    if (!guild) continue;
+    if (!guild) return;
 
     // Get the member from the guild
     let member: GuildMember;
 
     try {
       member = await guild.members.fetch(userID);
-      if (!member) continue;
+      if (!member) return;
     } catch (e) {
       // Member doesn't exist in guild
-      continue;
+      return;
     }
 
     const guildId = guildConfigDoc.id;
@@ -250,7 +263,12 @@ export const propogateRoleUpdates = async (
         );
       }
     }
-  }
+  };
+
+  // Propogate role updates for all guild config docs
+  await Promise.all(
+    guildConfigsSnapshot.docs.map(propogateRoleUpdatesForGuildConfigDoc)
+  );
 
   // Return the list of the users active roles and removed roles
   return {
