@@ -111,9 +111,6 @@ export const getActiveInactiveRoleIds = async (
     if (!guild) return;
     const guildId = guild.id;
 
-    activeRoles[guildId] = [];
-    inactiveRoles[guildId] = [];
-
     // Get the member from the guild
     let member: GuildMember;
 
@@ -124,6 +121,9 @@ export const getActiveInactiveRoleIds = async (
       // Member doesn't exist in guild
       return;
     }
+
+    activeRoles[guildId] = [];
+    inactiveRoles[guildId] = [];
 
     // Get the guild rules
     const guildRules = (guildConfigDoc.data() as GuildConfig).rules;
@@ -206,10 +206,6 @@ export const propogateRoleUpdates = async (
     if (!guild) return;
     const guildId = guildConfigDoc.id;
 
-    addedRoles[guildId] = [];
-    persistedRoles[guildId] = [];
-    removedRoles[guildId] = [];
-
     // Get the member from the guild
     let member: GuildMember;
 
@@ -220,6 +216,10 @@ export const propogateRoleUpdates = async (
       // Member doesn't exist in guild
       return;
     }
+
+    addedRoles[guildId] = [];
+    persistedRoles[guildId] = [];
+    removedRoles[guildId] = [];
 
     updateAddedPersistedRemovedRoles(
       guildId,
