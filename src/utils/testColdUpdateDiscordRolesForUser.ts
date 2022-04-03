@@ -2,7 +2,7 @@ import { GuildConfig } from "../shared/firestoreTypes";
 import { checkRulesQualifies } from "./checkRuleQualifies";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
-import { updateActivePersistedRemovedRoles } from "./updateActiveRemovedRoles";
+import { updateAddedPersistedRemovedRoles } from "./updateActiveRemovedRoles";
 
 export const testGetAddedPersistedRemovedRoleIds = async (
   walletAddress: string,
@@ -46,7 +46,7 @@ export const testGetAddedPersistedRemovedRoleIds = async (
       const hasRole = false;
 
       // Propogate the information to addedRoles, persistedRoles, and removedRoles
-      updateActivePersistedRemovedRoles(
+      updateAddedPersistedRemovedRoles(
         guildConfigDoc.id,
         guildRule.roleId,
         ruleQualifies,

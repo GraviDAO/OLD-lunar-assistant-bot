@@ -1,3 +1,5 @@
+import { Role } from "discord.js";
+
 export function isValidHttpUrl(urlString: string) {
   let url;
   try {
@@ -13,4 +15,23 @@ export const sequentialAsyncMap = async (list: any[], asyncFunction: any) => {
   list.reduce((p, guildRule) => {
     return p.then(() => asyncFunction(guildRule));
   }, new Promise((resolve) => resolve(null)));
+};
+
+export const uniqueRoleFilter = (uniqueRoleIds: Role[], item: Role) =>
+  uniqueRoleIds.some((i) => i.id == item.id)
+    ? uniqueRoleIds
+    : [...uniqueRoleIds, item];
+
+export const guildRoleDictToGuildRoleNameDict = (guildRoleDict: {
+  [guildId: string]: Role[];
+}) => {
+  const guildRoleNameDict: { [guildId: string]: string[] } = {};
+
+  for (const guildId of Object.keys(guildRoleDict)) {
+    guildRoleNameDict[guildId] = guildRoleDict[guildId].map(
+      (role) => role.name
+    );
+  }
+
+  return guildRoleNameDict;
 };
