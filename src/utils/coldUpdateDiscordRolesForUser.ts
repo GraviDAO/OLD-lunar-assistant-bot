@@ -165,7 +165,7 @@ export const getActiveInactiveRoleIds = async (
     // active roles take priority over inactive roles
     inactiveRoles[guildId] = inactiveRoles[guildId]
       .reduce(uniqueRoleFilter, [] as Role[])
-      .filter((x) => activeRoles[guildId].some((i) => i.id == x.id));
+      .filter((x) => !activeRoles[guildId].some((i) => i.id == x.id));
   };
 
   // Process all guild configs
