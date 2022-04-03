@@ -35,3 +35,13 @@ export const guildRoleDictToGuildRoleNameDict = (guildRoleDict: {
 
   return guildRoleNameDict;
 };
+
+export const defaultGuildDict = (
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
+) => {
+  const guildDict: { [guildId: string]: any[] } = {};
+  guildConfigsSnapshot.docs.forEach((doc) => {
+    guildDict[doc.id] = [];
+  });
+  return guildDict;
+};

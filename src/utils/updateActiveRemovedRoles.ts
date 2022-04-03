@@ -14,17 +14,9 @@ export const updateAddedPersistedRemovedRoles = (
       member.roles.cache.some((role) => role.id === role.id);
 
     if (hasRole) {
-      if (persistedRoles[guildId]) {
-        persistedRoles[guildId].push(role);
-      } else {
-        persistedRoles[guildId] = [role];
-      }
+      persistedRoles[guildId].push(role);
     } else {
-      if (addedRoles[guildId]) {
-        addedRoles[guildId].push(role);
-      } else {
-        addedRoles[guildId] = [role];
-      }
+      addedRoles[guildId].push(role);
     }
   }
 
@@ -33,11 +25,7 @@ export const updateAddedPersistedRemovedRoles = (
       member.roles.cache.some((role) => role.id === role.id);
 
     if (hasRole) {
-      if (removedRoles[guildId]) {
-        removedRoles[guildId].push(role);
-      } else {
-        removedRoles[guildId] = [role];
-      }
+      removedRoles[guildId].push(role);
     }
   }
 };
