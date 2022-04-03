@@ -220,6 +220,7 @@ export const propogateRoleUpdates = async (
     addedRoles[guildId] = [];
     persistedRoles[guildId] = [];
     removedRoles[guildId] = [];
+    console.log("test");
 
     updateAddedPersistedRemovedRoles(
       guildId,
