@@ -7,7 +7,10 @@ import {
   getActiveInactiveRoleIds,
   propogateRoleUpdates,
 } from "../utils/coldUpdateDiscordRolesForUser";
-import { guildRoleDictToGuildRoleNameDict } from "../utils/helper";
+import {
+  guildIdDictToGuildNameDict,
+  guildRoleDictToGuildRoleNameDict,
+} from "../utils/helper";
 
 const lunarVerify = {
   data: new SlashCommandBuilder()
@@ -66,11 +69,15 @@ const lunarVerify = {
 
       const { activeRoles, inactiveRoles } = await getActiveInactiveRoleIds(
         lunarAssistant,
+        interaction.user.id,
         walletAddress,
         guildConfigsSnapshot
       );
 
-      const activeRoleNames = guildRoleDictToGuildRoleNameDict(activeRoles);
+      const activeRoleNames = guildIdDictToGuildNameDict(
+        lunarAssistant,
+        guildRoleDictToGuildRoleNameDict(activeRoles)
+      );
 
       if (Object.keys(activeRoleNames).length > 0) {
         const activeRolesMessage = Object.keys(activeRoleNames)

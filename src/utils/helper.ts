@@ -1,4 +1,5 @@
 import { Role } from "discord.js";
+import { LunarAssistant } from "..";
 
 export function isValidHttpUrl(urlString: string) {
   let url;
@@ -34,6 +35,25 @@ export const guildRoleDictToGuildRoleNameDict = (guildRoleDict: {
   }
 
   return guildRoleNameDict;
+};
+
+export const guildIdDictToGuildNameDict = (
+  lunar: LunarAssistant,
+  guildIdDict: {
+    [guildId: string]: any;
+  }
+) => {
+  const guildNameDict: { [guildName: string]: any } = {};
+
+  for (const guildId of Object.keys(guildIdDict)) {
+    const guild = lunar.client.guilds.cache.get(guildId);
+
+    if (!guild) continue;
+
+    guildNameDict[guild.name] = guildIdDict[guildId];
+  }
+
+  return guildNameDict;
 };
 
 export const defaultGuildDict = (

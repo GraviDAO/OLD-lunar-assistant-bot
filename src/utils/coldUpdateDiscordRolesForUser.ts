@@ -40,6 +40,7 @@ export async function coldUpdateDiscordRolesForUser(
 
   const { activeRoles, inactiveRoles } = await getActiveInactiveRoleIds(
     this,
+    userID,
     walletAddress,
     guildConfigsSnapshot
   );
@@ -87,6 +88,7 @@ export async function coldUpdateDiscordRolesForUser(
 
 export const getActiveInactiveRoleIds = async (
   lunar: LunarAssistant,
+  userID: string,
   walletAddress: string,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ) => {
@@ -113,6 +115,17 @@ export const getActiveInactiveRoleIds = async (
     // Get the guild from the discord client
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
     if (!guild) return;
+
+    // Get the member from the guild
+    let member: GuildMember;
+
+    try {
+      member = await guild.members.fetch(userID);
+      if (!member) return;
+    } catch (e) {
+      // Member doesn't exist in guild
+      return;
+    }
 
     const guildId = guild.id;
 
