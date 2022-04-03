@@ -88,12 +88,12 @@ const lunarVerify = {
           )
           .join("\n");
 
-        const message = `Hello ser! You have been granted the following roles on the following servers. Updating them now :)\n\n${activeRolesMessage}`;
+        const message = `Hello ser! You have been granted the following roles on the following servers, updating them now.\n\n${activeRolesMessage}`;
 
         if (message.length > 2000) {
           await interaction.editReply({
             content:
-              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats! Updating them now :)",
+              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats! Updating them now.",
             files: [
               new MessageAttachment(Buffer.from(message), `your-roles.txt`),
             ],
