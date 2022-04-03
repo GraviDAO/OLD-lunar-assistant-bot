@@ -116,6 +116,7 @@ const lunarVerify = {
 
         await interaction.followUp({
           content: "Roles update completed successfully!",
+          ephemeral: privateResponse,
         });
 
         const addedRoleNames = guildRoleDictToGuildRoleNameDict(addedRoles);
