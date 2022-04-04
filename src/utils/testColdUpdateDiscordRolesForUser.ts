@@ -2,7 +2,6 @@ import { GuildConfig } from "../shared/firestoreTypes";
 import { checkRulesQualifies } from "./checkRuleQualifies";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
-import { updateActivePersistedRemovedRoles } from "./updateActiveRemovedRoles";
 
 export const testGetAddedPersistedRemovedRoleIds = async (
   walletAddress: string,
@@ -18,18 +17,19 @@ export const testGetAddedPersistedRemovedRoleIds = async (
     db,
   );
 
-  // Mapping from discord server id to a list of added role ids
-  const addedRoles: { [guildId: string]: string[] } = {};
+  // Mapping from discord server id to a list of active role ids
+  const activeRoles: { [guildId: string]: string[] } = {};
 
-  // Mapping from discord server id to a list of persisted role ids
-  const persistedRoles: { [guildId: string]: string[] } = {};
+  // Mapping from discord server id to a list of inactive role ids
+  const inactiveRoles: { [guildId: string]: string[] } = {};
 
-  // Mapping from discord server id to a list of removed role ids
-  const removedRoles: { [guildId: string]: string[] } = {};
-
-  for (const guildConfigDoc of guildConfigsSnapshot.docs) {
+  const updateActivePersistedRemovedRolesForGuildConfigDoc = async (
+    guildConfigDoc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>
+  ) => {
     // If lunar is null than we want to query across all guilds
     // Get the guild from the discord client
+
+    const guildId = guildConfigDoc.id;
 
     // Get the guild rules
     const guildRules = (guildConfigDoc.data() as GuildConfig).rules;
@@ -39,25 +39,32 @@ export const testGetAddedPersistedRemovedRoleIds = async (
       // Get the role corresponding to the guildRule
 
       // Get ruleQualifies and hasRole
-      let ruleQualifies: boolean = await checkRulesQualifies(
+      let roleActive: boolean = await checkRulesQualifies(
         guildRule,
         userTokensCache,
         walletAddress
       );
 
-      const hasRole = false;
-
-      // Propogate the information to addedRoles, persistedRoles, and removedRoles
-      updateActivePersistedRemovedRoles(
-        guildConfigDoc.id,
-        guildRule.roleId,
-        ruleQualifies,
-        hasRole,
-        addedRoles,
-        persistedRoles,
-        removedRoles
-      );
+      if (roleActive) {
+        if (activeRoles[guildId]) {
+          activeRoles[guildId].push(guildRule.roleId);
+        } else {
+          activeRoles[guildId] = [guildRule.roleId];
+        }
+      } else {
+        if (inactiveRoles[guildId]) {
+          inactiveRoles[guildId].push(guildRule.roleId);
+        } else {
+          inactiveRoles[guildId] = [guildRule.roleId];
+        }
+      }
     }
-  }
-  return { addedRoles, persistedRoles, removedRoles };
+  };
+
+  // Process all guild configs
+  await Promise.all(
+    guildConfigsSnapshot.docs.map(
+      updateActivePersistedRemovedRolesForGuildConfigDoc
+    )
+  );
 };

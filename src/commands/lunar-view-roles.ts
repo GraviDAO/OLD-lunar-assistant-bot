@@ -1,7 +1,16 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageAttachment } from "discord.js";
 import { LunarAssistant } from "..";
+import { User } from "../shared/firestoreTypes";
 import { APICallError, UserDocMissingError } from "../types/errors";
+import {
+  getActiveInactiveRoleIds,
+  propogateRoleUpdates,
+} from "../utils/coldUpdateDiscordRolesForUser";
+import {
+  guildIdDictToGuildNameDict,
+  guildRoleDictToGuildRoleNameDict,
+} from "../utils/helper";
 
 const lunarVerify = {
   data: new SlashCommandBuilder()
@@ -32,50 +41,59 @@ const lunarVerify = {
     await interaction.deferReply({ ephemeral: privateResponse });
 
     try {
-      const updateRolesResponse =
-        await lunarAssistant.updateDiscordRolesForUser(interaction.user.id);
+      // get the user document
+      const userDoc = await lunarAssistant.db
+        .collection("users")
+        .doc(interaction.user.id)
+        .get();
 
-      const userActiveRoles: { [guildName: string]: string[] } = {};
+      // check that the user document exists
+      if (!userDoc.exists)
+        throw new UserDocMissingError("Couldn't find user document");
 
-      for (const guildId of Object.keys(updateRolesResponse.addedRoleNames)) {
-        if (userActiveRoles[guildId]) {
-          userActiveRoles[guildId].push(
-            ...updateRolesResponse.addedRoleNames[guildId]
-          );
-        } else {
-          userActiveRoles[guildId] =
-            updateRolesResponse.addedRoleNames[guildId];
-        }
-      }
+      // Get the users wallet address
+      const walletAddress = (userDoc.data() as User).wallet;
 
-      for (const guildId of Object.keys(
-        updateRolesResponse.persistedRoleNames
-      )) {
-        if (userActiveRoles[guildId]) {
-          userActiveRoles[guildId].push(
-            ...updateRolesResponse.persistedRoleNames[guildId]
-          );
-        } else {
-          userActiveRoles[guildId] =
-            updateRolesResponse.persistedRoleNames[guildId];
-        }
-      }
+      // get guilds from db
+      // later store this in memory for performance reasons
+      const guildConfigsSnapshot = await lunarAssistant.db
+        .collection("guildConfigs")
+        .get();
 
-      if (Object.keys(userActiveRoles).length > 0) {
-        const activeRolesMessage = Object.keys(userActiveRoles)
-          .filter((guildName) => (userActiveRoles[guildName] || []).length > 0)
+      if (guildConfigsSnapshot.empty)
+        return {
+          addedRoleNames: {},
+          persistedRoleNames: {},
+          removedRoleNames: {},
+        };
+
+      const { activeRoles, inactiveRoles } = await getActiveInactiveRoleIds(
+        lunarAssistant,
+        interaction.user.id,
+        walletAddress,
+        guildConfigsSnapshot
+      );
+
+      const activeRoleNames = guildIdDictToGuildNameDict(
+        lunarAssistant,
+        guildRoleDictToGuildRoleNameDict(activeRoles)
+      );
+
+      if (Object.keys(activeRoleNames).length > 0) {
+        const activeRolesMessage = Object.keys(activeRoleNames)
+          .filter((guildName) => (activeRoleNames[guildName] || []).length > 0)
           .map(
             (guildName) =>
-              `${guildName}: ${userActiveRoles[guildName].join(", ")}`
+              `${guildName}: ${activeRoleNames[guildName].join(", ")}`
           )
           .join("\n");
 
-        const message = `Hello ser! You have been granted the following roles on the following servers: \n${activeRolesMessage}`;
+        const message = `Hello ser! You have been granted the following roles on the following servers, updating them now.\n\n${activeRolesMessage}`;
 
         if (message.length > 2000) {
           await interaction.editReply({
             content:
-              "Your rules are attached! They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats! :)",
+              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats! Updating them now.",
             files: [
               new MessageAttachment(Buffer.from(message), `your-roles.txt`),
             ],
@@ -85,10 +103,35 @@ const lunarVerify = {
             content: message,
           });
         }
+
+        // Propogate the role updates
+        const { addedRoles, persistedRoles, removedRoles } =
+          await propogateRoleUpdates(
+            lunarAssistant,
+            interaction.user.id,
+            guildConfigsSnapshot,
+            activeRoles,
+            inactiveRoles
+          );
+
+        await interaction.followUp({
+          content: "Roles update completed successfully!",
+          ephemeral: privateResponse,
+        });
+
+        const addedRoleNames = guildRoleDictToGuildRoleNameDict(addedRoles);
+        const persistedRoleNames =
+          guildRoleDictToGuildRoleNameDict(persistedRoles);
+        const removedRoleNames = guildRoleDictToGuildRoleNameDict(removedRoles);
+
+        console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
+          addedRoles: addedRoleNames,
+          persistedRoles: persistedRoleNames,
+          removedRoles: removedRoleNames,
+        });
       } else {
         await interaction.editReply({
           content: `You have not been granted any roles.`,
-          // ephemeral: privateResponse,
         });
       }
     } catch (e) {
@@ -96,13 +139,11 @@ const lunarVerify = {
         await interaction.editReply({
           content:
             "Cannot check for roles because you haven't linked a wallet yet. Please link a wallet with /lunar-link and try again.",
-          // ephemeral: true,
         });
       } else if (e instanceof APICallError) {
         await interaction.editReply({
           content:
             "The bot is having trouble reading the nft listings, please try again later. Roles will be frozen until the bot can read listings again.",
-          // ephemeral: true,
         });
       } else {
         console.error("Unknown error when running /lunar-view-roles:");
@@ -110,7 +151,6 @@ const lunarVerify = {
 
         await interaction.editReply({
           content: "There was an unknown error while executing this command!",
-          // ephemeral: true,
         });
       }
     } finally {

@@ -1,11 +1,12 @@
-import { GuildMember } from "discord.js";
+import { GuildMember, Role } from "discord.js";
 import { LunarAssistant } from "../index";
 import { GuildConfig, User } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { checkRulesQualifies } from "./checkRuleQualifies";
 import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
-import { updateActivePersistedRemovedRoles } from "./updateActiveRemovedRoles";
+import { guildRoleDictToGuildRoleNameDict, uniqueRoleFilter } from "./helper";
+import { updateAddedPersistedRemovedRoles } from "./updateActiveRemovedRoles";
 
 export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
@@ -33,13 +34,12 @@ export async function coldUpdateDiscordRolesForUser(
 
   benchmark.functions.getAddedPersistedRemovedRoleIds.start = Date.now();
 
-  const { addedRoles, persistedRoles, removedRoles } =
-    await getAddedPersistedRemovedRoleIds(
-      this,
-      userID,
-      userDoc,
-      guildConfigsSnapshot
-    );
+  const { activeRoles, inactiveRoles } = await getActiveInactiveRoleIds(
+    this,
+    userID,
+    walletAddress,
+    guildConfigsSnapshot
+  );
 
   benchmark.functions.getAddedPersistedRemovedRoleIds.end = Date.now();
   benchmark.functions.getAddedPersistedRemovedRoleIds.diff =
@@ -48,14 +48,13 @@ export async function coldUpdateDiscordRolesForUser(
 
   benchmark.functions.propogateRoleUpdates.start = Date.now();
 
-  const { addedRoleNames, persistedRoleNames, removedRoleNames } =
+  const { addedRoles, persistedRoles, removedRoles } =
     await propogateRoleUpdates(
       this,
       userID,
       guildConfigsSnapshot,
-      addedRoles,
-      persistedRoles,
-      removedRoles
+      activeRoles,
+      inactiveRoles
     );
 
   benchmark.functions.propogateRoleUpdates.end = Date.now();
@@ -65,6 +64,10 @@ export async function coldUpdateDiscordRolesForUser(
 
   console.log(benchmark);
 
+  const addedRoleNames = guildRoleDictToGuildRoleNameDict(addedRoles);
+  const persistedRoleNames = guildRoleDictToGuildRoleNameDict(persistedRoles);
+  const removedRoleNames = guildRoleDictToGuildRoleNameDict(removedRoles);
+
   console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
     addedRoles: addedRoleNames,
     persistedRoles: persistedRoleNames,
@@ -73,60 +76,55 @@ export async function coldUpdateDiscordRolesForUser(
 
   // Return the list of the users active roles and removed roles
   return {
-    addedRoleNames: addedRoleNames,
-    persistedRoleNames: persistedRoleNames,
-    removedRoleNames: removedRoleNames,
+    addedRoleNames,
+    persistedRoleNames,
+    removedRoleNames,
   };
 }
 
-export const getAddedPersistedRemovedRoleIds = async (
+export const getActiveInactiveRoleIds = async (
   lunar: LunarAssistant,
   userID: string,
-  userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
+  walletAddress: string,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ) => {
-  // Get the users wallet address
-  const walletAddress = (userDoc.data() as User).wallet;
-
   const relevantContractAddresses =
     getRelevantContractAddresses(guildConfigsSnapshot);
 
-  const prefetchWallet = Date.now();
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses,
     lunar.db,
   );
-  // console.log(`Time to get wallet contents: ${Date.now() - prefetchWallet}`);
 
-  // Mapping from discord server id to a list of added role ids
-  const addedRoles: { [guildId: string]: string[] } = {};
+  // Mapping from discord server id to a list of active role ids
+  const activeRoles: { [guildId: string]: Role[] } = {};
 
-  // Mapping from discord server id to a list of persisted role ids
-  const persistedRoles: { [guildId: string]: string[] } = {};
+  // Mapping from discord server id to a list of inactive role ids
+  const inactiveRoles: { [guildId: string]: Role[] } = {};
 
-  // Mapping from discord server id to a list of removed role ids
-  const removedRoles: { [guildId: string]: string[] } = {};
-
-  for (const guildConfigDoc of guildConfigsSnapshot.docs) {
+  const updateActivePersistedRemovedRolesForGuildConfigDoc = async (
+    guildConfigDoc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>
+  ) => {
     // If lunar is null than we want to query across all guilds
     // Get the guild from the discord client
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
-    if (!guild) continue;
-
-    const prefetch = Date.now();
+    if (!guild) return;
+    const guildId = guild.id;
 
     // Get the member from the guild
     let member: GuildMember;
+
     try {
       member = await guild.members.fetch(userID);
-      if (!member) continue;
+      if (!member) return;
     } catch (e) {
       // Member doesn't exist in guild
-      continue;
+      return;
     }
 
-    // console.log(`Time to fetch member: ${Date.now() - prefetch}`);
+    activeRoles[guildId] = [];
+    inactiveRoles[guildId] = [];
 
     // Get the guild rules
     const guildRules = (guildConfigDoc.data() as GuildConfig).rules;
@@ -145,118 +143,130 @@ export const getAddedPersistedRemovedRoleIds = async (
       }
 
       // Get ruleQualifies and hasRole
-      let ruleQualifies: boolean = await checkRulesQualifies(
+      let roleActive: boolean = await checkRulesQualifies(
         guildRule,
         userTokensCache,
         walletAddress
       );
 
-      const hasRole = // Check if member exists and has the role
-        // TODO member should always exist
-        (member && member.roles.cache.some((role) => role.id === newRole.id)) ||
-        false;
-
-      // Propogate the information to addedRoles, persistedRoles, and removedRoles
-      updateActivePersistedRemovedRoles(
-        guild.id,
-        newRole.id,
-        ruleQualifies,
-        hasRole,
-        addedRoles,
-        persistedRoles,
-        removedRoles
-      );
+      if (roleActive) {
+        activeRoles[guildId].push(newRole);
+      } else {
+        inactiveRoles[guildId].push(newRole);
+      }
     }
-  }
-  return { addedRoles, persistedRoles, removedRoles };
+
+    // Get unique active role ids
+    activeRoles[guildId] = activeRoles[guildId].reduce(
+      uniqueRoleFilter,
+      [] as Role[]
+    );
+
+    // Get unique inactive roles
+    // active roles take priority over inactive roles
+    inactiveRoles[guildId] = inactiveRoles[guildId]
+      .reduce(uniqueRoleFilter, [] as Role[])
+      .filter((x) => !activeRoles[guildId].some((i) => i.id == x.id));
+  };
+
+  // Process all guild configs
+  await Promise.all(
+    guildConfigsSnapshot.docs.map(
+      updateActivePersistedRemovedRolesForGuildConfigDoc
+    )
+  );
+
+  // Return role states
+  return {
+    activeRoles,
+    inactiveRoles,
+  };
 };
 
 export const propogateRoleUpdates = async (
   lunar: LunarAssistant,
   userID: string,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
-  addedRoles: { [guildId: string]: string[] },
-  persistedRoles: { [guildId: string]: string[] },
-  removedRoles: { [guildId: string]: string[] }
+  activeRoles: { [guildId: string]: Role[] },
+  inactiveRoles: { [guildId: string]: Role[] }
 ) => {
   // Mapping from discord server name to a list of added role names
-  const addedRoleNames: { [guildId: string]: string[] } = {};
+  const addedRoles: { [guildId: string]: Role[] } = {};
 
   // Mapping from discord server name to a list of persisted role names
-  const persistedRoleNames: { [guildId: string]: string[] } = {};
+  const persistedRoles: { [guildId: string]: Role[] } = {};
 
   // Mapping from discord server name to a list of removed roles names
-  const removedRoleNames: { [guildId: string]: string[] } = {};
+  const removedRoles: { [guildId: string]: Role[] } = {};
 
-  for (const guildConfigDoc of guildConfigsSnapshot.docs) {
+  const propogateRoleUpdatesForGuildConfigDoc = async (
+    guildConfigDoc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>
+  ) => {
     // Get the guild from the discord client
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
-    if (!guild) continue;
+    if (!guild) return;
+    const guildId = guildConfigDoc.id;
 
     // Get the member from the guild
     let member: GuildMember;
 
     try {
       member = await guild.members.fetch(userID);
-      if (!member) continue;
+      if (!member) return;
     } catch (e) {
       // Member doesn't exist in guild
-      continue;
+      return;
     }
 
-    const guildId = guildConfigDoc.id;
+    addedRoles[guildId] = [];
+    persistedRoles[guildId] = [];
+    removedRoles[guildId] = [];
+    console.log("test");
 
-    const uniqueAddedRoles = [...new Set(addedRoles[guildId])];
-    const uniquePersistedRoles = [...new Set(persistedRoles[guildId])];
-    const uniqueRemovedRoles = [...new Set(removedRoles[guildId])].filter((x) =>
-      uniquePersistedRoles.includes(x)
+    updateAddedPersistedRemovedRoles(
+      guildId,
+      member,
+      activeRoles,
+      inactiveRoles,
+      addedRoles,
+      persistedRoles,
+      removedRoles
     );
 
-    const roleIdToRoleName = (roleId: string) => {
-      const newRole = guild.roles.cache.find((role) => role.id == roleId);
-
-      if (!newRole) {
-        console.error("This shouldn't happen. Role missing to add.");
-      }
-
-      return newRole?.name || "Undefined";
-    };
-
-    addedRoleNames[guild.name] = uniqueAddedRoles.map(roleIdToRoleName);
-    persistedRoleNames[guild.name] = uniquePersistedRoles.map(roleIdToRoleName);
-    removedRoleNames[guild.name] = uniqueRemovedRoles.map(roleIdToRoleName);
-
-    if (uniqueAddedRoles.length > 0) {
+    if (addedRoles[guildId].length > 0) {
       try {
-        await member.roles.add(uniqueAddedRoles);
+        await member.roles.add(addedRoles[guildId]);
       } catch (e) {
         console.error(
           "Couldn't add role, probably because of role hierarchy.",
           guild.name,
-          uniqueAddedRoles,
-          addedRoleNames[guild.name]
+          addedRoles[guildId]
         );
       }
     }
 
-    if (uniqueRemovedRoles.length > 0) {
+    if (removedRoles[guildId].length > 0) {
       try {
-        await member.roles.remove(uniqueRemovedRoles);
+        await member.roles.remove(removedRoles[guildId]);
       } catch (e) {
         console.error(
           "Couldn't remove role, probably because of role hierarchy.",
           guild.name,
-          uniqueRemovedRoles,
-          removedRoleNames[guild.name]
+          removedRoles[guildId]
         );
       }
     }
-  }
+  };
+
+  // Propogate role updates for all guild config docs
+  await Promise.all(
+    guildConfigsSnapshot.docs.map(propogateRoleUpdatesForGuildConfigDoc)
+  );
 
   // Return the list of the users active roles and removed roles
   return {
-    addedRoleNames: addedRoleNames,
-    persistedRoleNames: persistedRoleNames,
-    removedRoleNames: removedRoleNames,
+    addedRoles,
+    persistedRoles,
+    removedRoles,
   };
 };
