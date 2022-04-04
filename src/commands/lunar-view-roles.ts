@@ -104,31 +104,44 @@ const lunarVerify = {
           });
         }
 
-        // Propogate the role updates
-        const { addedRoles, persistedRoles, removedRoles } =
-          await propogateRoleUpdates(
-            lunarAssistant,
-            interaction.user.id,
-            guildConfigsSnapshot,
-            activeRoles,
-            inactiveRoles
+        try {
+          // Propogate the role updates
+          const { addedRoles, persistedRoles, removedRoles } =
+            await propogateRoleUpdates(
+              lunarAssistant,
+              interaction.user.id,
+              guildConfigsSnapshot,
+              activeRoles,
+              inactiveRoles
+            );
+
+          await interaction.followUp({
+            content: "Role updates completed successfully!",
+            ephemeral: privateResponse,
+          });
+
+          const addedRoleNames = guildRoleDictToGuildRoleNameDict(addedRoles);
+          const persistedRoleNames =
+            guildRoleDictToGuildRoleNameDict(persistedRoles);
+          const removedRoleNames =
+            guildRoleDictToGuildRoleNameDict(removedRoles);
+
+          console.log(
+            `Got all tokens and updated roles for ${walletAddress}:`,
+            {
+              addedRoles: addedRoleNames,
+              persistedRoles: persistedRoleNames,
+              removedRoles: removedRoleNames,
+            }
           );
-
-        await interaction.followUp({
-          content: "Roles update completed successfully!",
-          ephemeral: privateResponse,
-        });
-
-        const addedRoleNames = guildRoleDictToGuildRoleNameDict(addedRoles);
-        const persistedRoleNames =
-          guildRoleDictToGuildRoleNameDict(persistedRoles);
-        const removedRoleNames = guildRoleDictToGuildRoleNameDict(removedRoles);
-
-        console.log(`Got all tokens and updated roles for ${walletAddress}:`, {
-          addedRoles: addedRoleNames,
-          persistedRoles: persistedRoleNames,
-          removedRoles: removedRoleNames,
-        });
+        } catch (error) {
+          console.error("Propogate role updates error.");
+          console.error(error);
+          await interaction.followUp({
+            content: "There was an error when updating your roles.",
+            ephemeral: privateResponse,
+          });
+        }
       } else {
         await interaction.editReply({
           content: `You have not been granted any roles.`,
