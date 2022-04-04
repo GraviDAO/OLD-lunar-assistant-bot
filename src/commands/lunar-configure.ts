@@ -192,7 +192,7 @@ export default {
       } catch {
         await interaction.reply({
           content:
-            'Could not parse token ids, please pass token ids in the following format: ["1", "2", "4"]',
+          'Could not parse token ids, please pass token ids in the following format: ["1", "2", "4"] and if it is a single entry write ["#"] and make sure to use the "-sign and not the similar looking “-sign!!! Write ["#"] not [“#“].',
           ephemeral: true,
         });
         return;
@@ -284,7 +284,7 @@ export default {
       } catch {
         await interaction.reply({
           content:
-            'Could not parse token ids, please pass token ids in the following format: ["1", "2", "4"]',
+            'Could not parse token ids, please pass token ids in the following format: ["1", "2", "4"] and if it is a single entry write ["#"] and make sure to use the "-sign and not the similar looking “-sign!!! Write ["#"] not [“#“].',
           ephemeral: true,
         });
         return;
