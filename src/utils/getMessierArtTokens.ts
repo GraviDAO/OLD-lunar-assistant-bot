@@ -26,6 +26,9 @@ export const getMessierArtTokens = async (
           `https://api.messier.art/api/user/${walletAddress}/nfts?page_no=${page}`
         )
       ).data as MessierArtUserItems;
+
+      await new Promise((r) => setTimeout(r, 2000));
+      
       userTokensItems.push(...userTokensRes.data);
     }
 

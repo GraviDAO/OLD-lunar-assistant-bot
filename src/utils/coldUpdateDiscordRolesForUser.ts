@@ -93,7 +93,8 @@ export const getActiveInactiveRoleIds = async (
 
   const userTokensCache = await getWalletContents(
     walletAddress,
-    relevantContractAddresses
+    relevantContractAddresses,
+    lunar.db,
   );
 
   // Mapping from discord server id to a list of active role ids

@@ -63,7 +63,7 @@ const initDatabase = async () => {
   const nftRule: GuildRule = {
     version: "1.0",
     nft: {
-      ["terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k"]: {
+      ["terra1snlvfux3c0yug5f60txwd3penvnvmlfdx2lcq8"]: {
         ...(tokenIds && { tokenIds }),
         quantity,
       },
@@ -72,7 +72,7 @@ const initDatabase = async () => {
     cw20: {},
     api: {},
     nativeToken: {},
-    roleId: "950858244631437332",
+    roleId: "957694973300572200",
   };
 
   const cw20Rule: GuildRule = {

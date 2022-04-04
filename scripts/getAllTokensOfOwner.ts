@@ -28,7 +28,8 @@ db.collection("guildConfigs")
 
     const allTokensOfOwner = await getWalletContents(
       walletAddress,
-      relevantContractAddresses
+      relevantContractAddresses,
+      db
     );
 
     console.log(allTokensOfOwner);

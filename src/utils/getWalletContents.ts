@@ -1,6 +1,7 @@
 import { environment } from "../../config.json";
 import { ContractAddresses, WalletContents } from "../types";
 import { APICallError, TokenFetchingError } from "../types/errors";
+import { Configs } from "../shared/firestoreTypes";
 import { getKnowhereTokens } from "./getKnowhereTokens";
 import { getMessierArtTokens } from "./getMessierArtTokens";
 import { getRandomEarthTokens } from "./getRandomEarthTokens";
@@ -12,7 +13,8 @@ import {
 
 export const getWalletContents = async (
   walletAddress: string,
-  contractAddresses: ContractAddresses
+  contractAddresses: ContractAddresses,
+  db: FirebaseFirestore.Firestore,
 ): Promise<WalletContents> => {
   const userTokensCache: WalletContents = { nft: {}, cw20: {}, stakedNFT: {} };
 
@@ -40,6 +42,11 @@ export const getWalletContents = async (
       },
     },
   };
+
+  const configsDoc = await db.collection("root").doc("configs").get();
+  let configs: Configs = configsDoc.exists
+  ? (configsDoc.data() as Configs)
+  : { marketplaceContracts: [] };
 
   const unionIntoNftCache = (contractAddress: string, tokenIds: string[]) => {
     if (userTokensCache.nft[contractAddress]) {
@@ -82,9 +89,10 @@ export const getWalletContents = async (
       getRandomEarthTokens(walletAddress)
         .then((randomEarthUserTokens) => {
           Object.entries(randomEarthUserTokens.nft).forEach(
-            ([contractAddress, nftHoldingInfo]) =>
+            ([contractAddress, nftHoldingInfo]) => {
               unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-          );
+              configs.marketplaceContracts.push(contractAddress);
+            });
           benchmarking.calls.re.end = Date.now();
           benchmarking.calls.re.diff =
             benchmarking.calls.re.end - benchmarking.start;
@@ -100,9 +108,10 @@ export const getWalletContents = async (
       getKnowhereTokens(walletAddress)
         .then((knowhereTokens) => {
           Object.entries(knowhereTokens.nft).forEach(
-            ([contractAddress, nftHoldingInfo]) =>
+            ([contractAddress, nftHoldingInfo]) => {
               unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-          );
+              configs.marketplaceContracts.push(contractAddress);
+            });
 
           benchmarking.calls.knowhere.end = Date.now();
           benchmarking.calls.knowhere.diff =
@@ -118,9 +127,10 @@ export const getWalletContents = async (
       getMessierArtTokens(walletAddress)
         .then((messierTokens) => {
           Object.entries(messierTokens.nft).forEach(
-            ([contractAddress, nftHoldingInfo]) =>
+            ([contractAddress, nftHoldingInfo]) => {
               unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-          );
+              configs.marketplaceContracts.push(contractAddress);
+            });
 
           benchmarking.calls.messier.end = Date.now();
 
@@ -130,6 +140,26 @@ export const getWalletContents = async (
         .catch((err) => {
           throw new APICallError("Failed to request the Messier Art api.");
         })
+    );
+    
+    //filter out contracts covered by marketplaces
+    const filteredAddresses = contractAddresses.nft.filter(
+         item => !configs.marketplaceContracts.includes(item)
+    );
+    console.log("contractAddresses: " + contractAddresses.nft);
+    console.log("marketplaceAdresses: " + configs.marketplaceContracts);
+    console.log("filteredAddresses: " + filteredAddresses);
+    //Query smart contract for the remaining contracts not on marketplaces
+    pendingRequests.push(
+      ...filteredAddresses.map(async (nftAddress) => {
+        const walletTokensOfOwner = await getWalletTokensOfOwner(
+          walletAddress,
+          nftAddress
+        );
+
+        // Update userTokensCache
+        unionIntoNftCache(nftAddress, walletTokensOfOwner.tokens);
+      })
     );
   } else {
     // Only request nfts at the contract level in dev
@@ -193,11 +223,23 @@ export const getWalletContents = async (
     );
   }
 
+
   console.log(
     `Got wallet contents for: ${walletAddress}. Total time: ${
       Date.now() - start
     }`
   );
+
+  //update the list of contracts covered by marketplaces in the db
+  const newConfigs = {
+    marketplaceContracts: Array.from(
+      new Set([
+        ...configs.marketplaceContracts,
+      ])
+    )
+  };
+  await db.collection("root").doc("configs").set(newConfigs);
+
   console.log(benchmarking);
 
   return userTokensCache;

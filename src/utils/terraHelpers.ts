@@ -10,6 +10,10 @@ interface TalisResponse {
   tokens: { token_id: string }[];
 }
 
+interface TalisNonStandardResponse {
+  ids: string [];
+}
+
 export const getWalletTokensOfOwner = async (
   owner: string,
   contractAddress: string
@@ -29,22 +33,35 @@ export const getWalletTokensOfOwner = async (
       const queryResponse = (await terra.wasm.contractQuery(
         contractAddress,
         query
-      )) as GetTokensResponse | TalisResponse;
+      )) as GetTokensResponse | TalisResponse | TalisNonStandardResponse;
 
-      if (queryResponse.tokens.length > 0) {
-        if (typeof queryResponse.tokens[0] == "string") {
-          tokens = queryResponse as GetTokensResponse;
-        } else {
-          tokens = {
-            tokens: (queryResponse as TalisResponse).tokens.map(
-              (obj) => obj.token_id
-            ),
-          };
+      if(queryResponse.hasOwnProperty("tokens"))
+      {
+        const standardResponse = queryResponse as GetTokensResponse | TalisResponse;
+        if (standardResponse.tokens.length > 0) {
+          if (typeof standardResponse.tokens[0] == "string") {
+            tokens = standardResponse as GetTokensResponse;
+          } else {
+            tokens = {
+              tokens: (standardResponse as TalisResponse).tokens.map(
+                (obj) => obj.token_id
+              ),
+            };
+          }
+        }
+        else {
+          tokens = { tokens: [] };
         }
       } else {
-        tokens = { tokens: [] };
+        const nonStandardResponse = queryResponse as TalisNonStandardResponse;
+        if (nonStandardResponse.ids.length > 0) {
+            tokens = {
+              tokens: nonStandardResponse.ids
+            };
+        } else {
+          tokens = { tokens: [] };
+        }
       }
-
       res.tokens.push(...tokens.tokens);
     } while (tokens.tokens.length == 30);
   } catch (e: any) {
