@@ -4,8 +4,8 @@ import { LunarAssistant } from "..";
 import { User } from "../shared/firestoreTypes";
 import { APICallError, UserDocMissingError } from "../types/errors";
 import {
-  getActiveInactiveRoleIds,
-  propogateRoleUpdates,
+  getActiveInactiveRoleIdsForGuildConfigDoc,
+  propogateRoleUpdatesForGuildConfigDoc,
 } from "../utils/coldUpdateDiscordRolesForUser";
 import {
   guildIdDictToGuildNameDict,
@@ -41,45 +41,46 @@ const lunarVerify = {
     await interaction.deferReply({ ephemeral: privateResponse });
 
     try {
-      // get the user document
+      // Get the user document
       const userDoc = await lunarAssistant.db
         .collection("users")
         .doc(interaction.user.id)
         .get();
 
-      // check that the user document exists
+      // Check that the user document exists
       if (!userDoc.exists)
         throw new UserDocMissingError("Couldn't find user document");
 
       // Get the users wallet address
       const walletAddress = (userDoc.data() as User).wallet;
 
-      // get guilds from db
-      // later store this in memory for performance reasons
-      const guildConfigsSnapshot = await lunarAssistant.db
+      // Get guild doc from db
+      const guildConfigDoc = await lunarAssistant.db
         .collection("guildConfigs")
+        .doc(interaction.guildId)
         .get();
 
-      if (guildConfigsSnapshot.empty)
+      if (!guildConfigDoc.exists)
         return {
           addedRoleNames: {},
           persistedRoleNames: {},
           removedRoleNames: {},
         };
 
-      const { activeRoles, inactiveRoles } = await getActiveInactiveRoleIds(
-        lunarAssistant,
-        interaction.user.id,
-        walletAddress,
-        guildConfigsSnapshot
-      );
+      const { activeRoles, inactiveRoles } =
+        await getActiveInactiveRoleIdsForGuildConfigDoc(
+          lunarAssistant,
+          interaction.user.id,
+          walletAddress,
+          guildConfigDoc
+        );
 
       const activeRoleNames = guildIdDictToGuildNameDict(
         lunarAssistant,
         guildRoleDictToGuildRoleNameDict(activeRoles)
       );
 
-      if (Object.keys(activeRoleNames).length > 0) {
+      if (Object.keys(activeRoleNames[interaction.guild.name]).length > 0) {
         const activeRolesMessage = Object.keys(activeRoleNames)
           .filter((guildName) => (activeRoleNames[guildName] || []).length > 0)
           .map(
@@ -88,12 +89,12 @@ const lunarVerify = {
           )
           .join("\n");
 
-        const message = `Hello ser! You have been granted the following roles on the following servers, updating them now.\n\n${activeRolesMessage}`;
+        const message = `Hello ser! You have been granted the following roles on this discord server:\n\n${activeRolesMessage}\n\nTemporary Note: Previously Lunar Assistant would list roles across all your discord servers, but now it only lists roles for the discord server from which you run the command :)`;
 
         if (message.length > 2000) {
           await interaction.editReply({
             content:
-              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats! Updating them now.",
+              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats!\n\nTemporary Note: Previously Lunar Assistant would list roles across all your discord servers, but now it only lists roles for the discord server from which you run the command :)",
             files: [
               new MessageAttachment(Buffer.from(message), `your-roles.txt`),
             ],
@@ -107,18 +108,18 @@ const lunarVerify = {
         try {
           // Propogate the role updates
           const { addedRoles, persistedRoles, removedRoles } =
-            await propogateRoleUpdates(
+            await propogateRoleUpdatesForGuildConfigDoc(
               lunarAssistant,
               interaction.user.id,
-              guildConfigsSnapshot,
+              guildConfigDoc,
               activeRoles,
               inactiveRoles
             );
 
-          await interaction.followUp({
-            content: "Role updates completed successfully!",
-            ephemeral: privateResponse,
-          });
+          // await interaction.followUp({
+          //   content: "Role updates completed successfully!",
+          //   ephemeral: privateResponse,
+          // });
 
           const addedRoleNames = guildRoleDictToGuildRoleNameDict(addedRoles);
           const persistedRoleNames =
@@ -144,7 +145,7 @@ const lunarVerify = {
         }
       } else {
         await interaction.editReply({
-          content: `You have not been granted any roles.`,
+          content: `You have not been granted any roles on this discord server.\n\nTemporary Note: Previously Lunar Assistant would list roles across all your discord servers, but now it only lists roles for the discord server from which you run the command :)`,
         });
       }
     } catch (e) {
