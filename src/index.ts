@@ -72,6 +72,11 @@ export class LunarAssistant {
       );
     }
 
+    this.client.on("rateLimit", (data) => {
+      console.log("Getting rate limited.");
+      console.log(JSON.stringify(data));
+    });
+
     // start the discord bot
     this.client.login(token);
   }
