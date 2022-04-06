@@ -4,8 +4,8 @@ import { LunarAssistant } from "..";
 import { User } from "../shared/firestoreTypes";
 import { APICallError, UserDocMissingError } from "../types/errors";
 import {
-  getActiveInactiveRoleIds,
-  propogateRoleUpdates,
+  getActiveInactiveRoleIdsForGuildConfigDoc,
+  propogateRoleUpdatesForGuildConfigDoc,
 } from "../utils/coldUpdateDiscordRolesForUser";
 import {
   guildIdDictToGuildNameDict,
@@ -54,25 +54,26 @@ const lunarVerify = {
       // Get the users wallet address
       const walletAddress = (userDoc.data() as User).wallet;
 
-      // get guilds from db
-      // later store this in memory for performance reasons
-      const guildConfigsSnapshot = await lunarAssistant.db
+      // Get guild doc from db
+      const guildConfigDoc = await lunarAssistant.db
         .collection("guildConfigs")
+        .doc(interaction.guildId)
         .get();
 
-      if (guildConfigsSnapshot.empty)
+      if (!guildConfigDoc.exists)
         return {
           addedRoleNames: {},
           persistedRoleNames: {},
           removedRoleNames: {},
         };
 
-      const { activeRoles, inactiveRoles } = await getActiveInactiveRoleIds(
-        lunarAssistant,
-        interaction.user.id,
-        walletAddress,
-        guildConfigsSnapshot
-      );
+      const { activeRoles, inactiveRoles } =
+        await getActiveInactiveRoleIdsForGuildConfigDoc(
+          lunarAssistant,
+          interaction.user.id,
+          walletAddress,
+          guildConfigDoc
+        );
 
       const activeRoleNames = guildIdDictToGuildNameDict(
         lunarAssistant,
@@ -88,12 +89,12 @@ const lunarVerify = {
           )
           .join("\n");
 
-        const message = `Hello ser! You have been granted the following roles on the following servers, updating them now.\n\n${activeRolesMessage}`;
+        const message = `Hello ser! You have been granted the following roles on this server.\n\n${activeRolesMessage}`;
 
         if (message.length > 2000) {
           await interaction.editReply({
             content:
-              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats! Updating them now.",
+              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats!",
             files: [
               new MessageAttachment(Buffer.from(message), `your-roles.txt`),
             ],
@@ -107,18 +108,18 @@ const lunarVerify = {
         try {
           // Propogate the role updates
           const { addedRoles, persistedRoles, removedRoles } =
-            await propogateRoleUpdates(
+            await propogateRoleUpdatesForGuildConfigDoc(
               lunarAssistant,
               interaction.user.id,
-              guildConfigsSnapshot,
+              guildConfigDoc,
               activeRoles,
               inactiveRoles
             );
 
-          await interaction.followUp({
-            content: "Role updates completed successfully!",
-            ephemeral: privateResponse,
-          });
+          // await interaction.followUp({
+          //   content: "Role updates completed successfully!",
+          //   ephemeral: privateResponse,
+          // });
 
           const addedRoleNames = guildRoleDictToGuildRoleNameDict(addedRoles);
           const persistedRoleNames =
