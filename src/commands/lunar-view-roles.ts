@@ -41,13 +41,13 @@ const lunarVerify = {
     await interaction.deferReply({ ephemeral: privateResponse });
 
     try {
-      // get the user document
+      // Get the user document
       const userDoc = await lunarAssistant.db
         .collection("users")
         .doc(interaction.user.id)
         .get();
 
-      // check that the user document exists
+      // Check that the user document exists
       if (!userDoc.exists)
         throw new UserDocMissingError("Couldn't find user document");
 
