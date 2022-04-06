@@ -80,7 +80,7 @@ const lunarVerify = {
         guildRoleDictToGuildRoleNameDict(activeRoles)
       );
 
-      if (Object.keys(activeRoleNames).length > 0) {
+      if (Object.keys(activeRoleNames[interaction.guildId]).length > 0) {
         const activeRolesMessage = Object.keys(activeRoleNames)
           .filter((guildName) => (activeRoleNames[guildName] || []).length > 0)
           .map(
@@ -89,7 +89,7 @@ const lunarVerify = {
           )
           .join("\n");
 
-        const message = `Hello ser! You have been granted the following roles on this server.\n\n${activeRolesMessage}`;
+        const message = `Hello ser! You have been granted the following roles on this discord server:\n\n${activeRolesMessage}`;
 
         if (message.length > 2000) {
           await interaction.editReply({
