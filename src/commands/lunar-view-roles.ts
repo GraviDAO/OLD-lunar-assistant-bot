@@ -89,12 +89,12 @@ const lunarVerify = {
           )
           .join("\n");
 
-        const message = `Hello ser! You have been granted the following roles on this discord server:\n\n${activeRolesMessage}`;
+        const message = `Hello ser! You have been granted the following roles on this discord server:\n\n${activeRolesMessage}\n\nTemporary Note: Previously Lunar Assistant would list roles across all your discord servers, but now it only lists roles for the discord server from which you run the command :)`;
 
         if (message.length > 2000) {
           await interaction.editReply({
             content:
-              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats!",
+              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats!\n\nTemporary Note: Previously Lunar Assistant would list roles across all your discord servers, but now it only lists roles for the discord server from which you run the command :)",
             files: [
               new MessageAttachment(Buffer.from(message), `your-roles.txt`),
             ],
@@ -145,7 +145,7 @@ const lunarVerify = {
         }
       } else {
         await interaction.editReply({
-          content: `You have not been granted any roles on this discord server.`,
+          content: `You have not been granted any roles on this discord server.\n\nTemporary Note: Previously Lunar Assistant would list roles across all your discord servers, but now it only lists roles for the discord server from which you run the command :)`,
         });
       }
     } catch (e) {
