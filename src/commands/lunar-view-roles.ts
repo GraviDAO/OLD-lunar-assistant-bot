@@ -145,7 +145,7 @@ const lunarVerify = {
         }
       } else {
         await interaction.editReply({
-          content: `You have not been granted any roles.`,
+          content: `You have not been granted any roles on this discord server.`,
         });
       }
     } catch (e) {
