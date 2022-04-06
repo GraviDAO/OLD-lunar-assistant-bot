@@ -80,7 +80,7 @@ const lunarVerify = {
         guildRoleDictToGuildRoleNameDict(activeRoles)
       );
 
-      if (Object.keys(activeRoleNames[interaction.guildId]).length > 0) {
+      if (Object.keys(activeRoleNames[interaction.guild.name]).length > 0) {
         const activeRolesMessage = Object.keys(activeRoleNames)
           .filter((guildName) => (activeRoleNames[guildName] || []).length > 0)
           .map(
