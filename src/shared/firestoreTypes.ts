@@ -124,5 +124,5 @@ export interface OldGuildConfig {
 }
 
 export interface Configs {
-  marketplaceContracts: string[];
+  unlistedContracts: string[];
 }

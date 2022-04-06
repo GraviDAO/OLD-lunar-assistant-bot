@@ -46,7 +46,7 @@ export const getWalletContents = async (
   const configsDoc = await db.collection("root").doc("configs").get();
   let configs: Configs = configsDoc.exists
   ? (configsDoc.data() as Configs)
-  : { marketplaceContracts: [] };
+  : { unlistedContracts: [] };
 
   const unionIntoNftCache = (contractAddress: string, tokenIds: string[]) => {
     if (userTokensCache.nft[contractAddress]) {
@@ -91,7 +91,6 @@ export const getWalletContents = async (
           Object.entries(randomEarthUserTokens.nft).forEach(
             ([contractAddress, nftHoldingInfo]) => {
               unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-              configs.marketplaceContracts.push(contractAddress);
             });
           benchmarking.calls.re.end = Date.now();
           benchmarking.calls.re.diff =
@@ -110,7 +109,6 @@ export const getWalletContents = async (
           Object.entries(knowhereTokens.nft).forEach(
             ([contractAddress, nftHoldingInfo]) => {
               unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-              configs.marketplaceContracts.push(contractAddress);
             });
 
           benchmarking.calls.knowhere.end = Date.now();
@@ -129,7 +127,6 @@ export const getWalletContents = async (
           Object.entries(messierTokens.nft).forEach(
             ([contractAddress, nftHoldingInfo]) => {
               unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-              configs.marketplaceContracts.push(contractAddress);
             });
 
           benchmarking.calls.messier.end = Date.now();
@@ -142,16 +139,9 @@ export const getWalletContents = async (
         })
     );
     
-    //filter out contracts covered by marketplaces
-    const filteredAddresses = contractAddresses.nft.filter(
-         item => !configs.marketplaceContracts.includes(item)
-    );
-    console.log("contractAddresses: " + contractAddresses.nft);
-    console.log("marketplaceAdresses: " + configs.marketplaceContracts);
-    console.log("filteredAddresses: " + filteredAddresses);
-    //Query smart contract for the remaining contracts not on marketplaces
+    //Query smart contract for nft contracts not on marketplaces
     pendingRequests.push(
-      ...filteredAddresses.map(async (nftAddress) => {
+      ...configs.unlistedContracts.map(async (nftAddress) => {
         const walletTokensOfOwner = await getWalletTokensOfOwner(
           walletAddress,
           nftAddress
@@ -230,17 +220,8 @@ export const getWalletContents = async (
     }`
   );
 
-  //update the list of contracts covered by marketplaces in the db
-  const newConfigs = {
-    marketplaceContracts: Array.from(
-      new Set([
-        ...configs.marketplaceContracts,
-      ])
-    )
-  };
-  await db.collection("root").doc("configs").set(newConfigs);
-
   console.log(benchmarking);
+  //console.log("userTokensCache: " + JSON.stringify(userTokensCache));
 
   return userTokensCache;
 };
