@@ -54,7 +54,7 @@ export const checkRulesQualifies = async (
     const stakedNFTRule = rule as StakedNFTRule;
     const quantity = stakedNFTRule.quantity;
     const tokens =
-      userTokensCache.nft[stakedNFTRule.stakedNFTAddress]?.tokenIds || [];
+      userTokensCache.stakedNFT[stakedNFTRule.stakedNFTAddress]?.tokenIds || [];
 
     // get the number of matching tokens
     const numMatchingTokens = (
