@@ -19,6 +19,7 @@ export interface UpdateUserDiscordRolesResponse {
 export interface RandomEarthUserItem {
   collection_addr: string;
   token_id: string;
+  in_settlement: boolean;
 }
 
 export interface RandomEarthUserItems {
