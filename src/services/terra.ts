@@ -1,7 +1,8 @@
 import { LCDClient } from "@terra-money/terra.js";
+import { LCDCClient_URL } from "../../config.json";
 
 const LCDCClientConfig = {
-  URL: `https://fcd.terra.dev`,
+  URL: LCDCClient_URL,
   chainID: `columbus-5`,
 };
 

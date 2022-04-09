@@ -1,4 +1,3 @@
-import { environment } from "../../config.json";
 import { ContractAddresses, WalletContents } from "../types";
 import { APICallError, TokenFetchingError } from "../types/errors";
 import { Configs } from "../shared/firestoreTypes";
@@ -83,99 +82,78 @@ export const getWalletContents = async (
 
   const pendingRequests = [];
 
-  if (environment === "production") {
-    // Update user tokens cache with random earth in settlement tokens
-    pendingRequests.push(
-      getRandomEarthTokens(walletAddress)
-        .then((randomEarthUserTokens) => {
-          Object.entries(randomEarthUserTokens.nft).forEach(
-            ([contractAddress, nftHoldingInfo]) => {
-              unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-              configs.marketplaceContracts.push(contractAddress);
-            });
-          benchmarking.calls.re.end = Date.now();
-          benchmarking.calls.re.diff =
-            benchmarking.calls.re.end - benchmarking.start;
-        })
-        .catch((err) => {
-          console.error(err);
-          throw new APICallError("Failed to request the randomearth api.");
-        })
-    );
+  // Update user tokens cache with random earth in settlement tokens (filter is done in getRandomEarthTokens)
+  pendingRequests.push(
+    getRandomEarthTokens(walletAddress)
+      .then((randomEarthUserTokens) => {
+        Object.entries(randomEarthUserTokens.nft).forEach(
+          ([contractAddress, nftHoldingInfo]) => {
+            unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
+            configs.marketplaceContracts.push(contractAddress);
+          });
+        benchmarking.calls.re.end = Date.now();
+        benchmarking.calls.re.diff =
+          benchmarking.calls.re.end - benchmarking.start;
+      })
+      .catch((err) => {
+        console.error(err);
+        throw new APICallError("Failed to request the randomearth api.");
+      })
+  );
 
-    // Update user tokens cache with knowhere art in settlement tokens
-    pendingRequests.push(
-      getKnowhereTokens(walletAddress)
-        .then((knowhereTokens) => {
-          Object.entries(knowhereTokens.nft).forEach(
-            ([contractAddress, nftHoldingInfo]) => {
-              unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-              configs.marketplaceContracts.push(contractAddress);
-            });
+  // Update user tokens cache with knowhere art in settlement tokens
+  pendingRequests.push(
+    getKnowhereTokens(walletAddress)
+      .then((knowhereTokens) => {
+        Object.entries(knowhereTokens.nft).forEach(
+          ([contractAddress, nftHoldingInfo]) => {
+            unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
+            configs.marketplaceContracts.push(contractAddress);
+          });
 
-          benchmarking.calls.knowhere.end = Date.now();
-          benchmarking.calls.knowhere.diff =
-            benchmarking.calls.knowhere.end - benchmarking.start;
-        })
-        .catch((err) => {
-          throw new APICallError("Failed to request the knowhere api.");
-        })
-    );
+        benchmarking.calls.knowhere.end = Date.now();
+        benchmarking.calls.knowhere.diff =
+          benchmarking.calls.knowhere.end - benchmarking.start;
+      })
+      .catch((err) => {
+        throw new APICallError("Failed to request the knowhere api.");
+      })
+  );
 
-    // Update user tokens cache with Messier Art in settlement tokens
-    pendingRequests.push(
-      getMessierArtTokens(walletAddress)
-        .then((messierTokens) => {
-          Object.entries(messierTokens.nft).forEach(
-            ([contractAddress, nftHoldingInfo]) => {
-              unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-              configs.marketplaceContracts.push(contractAddress);
-            });
+  // Update user tokens cache with Messier Art in settlement tokens
+  pendingRequests.push(
+    getMessierArtTokens(walletAddress)
+      .then((messierTokens) => {
+        Object.entries(messierTokens.nft).forEach(
+          ([contractAddress, nftHoldingInfo]) => {
+            unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
+            configs.marketplaceContracts.push(contractAddress);
+          });
 
-          benchmarking.calls.messier.end = Date.now();
+        benchmarking.calls.messier.end = Date.now();
 
-          benchmarking.calls.messier.diff =
-            benchmarking.calls.messier.end - benchmarking.start;
-        })
-        .catch((err) => {
-          throw new APICallError("Failed to request the Messier Art api.");
-        })
-    );
+        benchmarking.calls.messier.diff =
+          benchmarking.calls.messier.end - benchmarking.start;
+      })
+      .catch((err) => {
+        throw new APICallError("Failed to request the Messier Art api.");
+      })
+  );
     
-    //filter out contracts covered by marketplaces
-    const filteredAddresses = contractAddresses.nft.filter(
-         item => !configs.marketplaceContracts.includes(item)
-    );
-    console.log("contractAddresses: " + contractAddresses.nft);
-    console.log("marketplaceAdresses: " + configs.marketplaceContracts);
-    console.log("filteredAddresses: " + filteredAddresses);
-    //Query smart contract for the remaining contracts not on marketplaces
-    pendingRequests.push(
-      ...filteredAddresses.map(async (nftAddress) => {
-        const walletTokensOfOwner = await getWalletTokensOfOwner(
-          walletAddress,
-          nftAddress
-        );
 
-        // Update userTokensCache
-        unionIntoNftCache(nftAddress, walletTokensOfOwner.tokens);
-      })
-    );
-  } else {
-    // Only request nfts at the contract level in dev
-    // in order to avoid 429 errors from the number of nft contracts
-    pendingRequests.push(
-      ...contractAddresses.nft.map(async (nftAddress) => {
-        const walletTokensOfOwner = await getWalletTokensOfOwner(
-          walletAddress,
-          nftAddress
-        );
+  //We now want to query smart contract in prod
+  pendingRequests.push(
+    ...contractAddresses.nft.map(async (nftAddress) => {
+      const walletTokensOfOwner = await getWalletTokensOfOwner(
+        walletAddress,
+        nftAddress
+      );
 
-        // Update userTokensCache
-        unionIntoNftCache(nftAddress, walletTokensOfOwner.tokens);
-      })
-    );
-  }
+      // Update userTokensCache
+      unionIntoNftCache(nftAddress, walletTokensOfOwner.tokens);
+    })
+  );
+
 
   // Get the cw20 tokens
   pendingRequests.push(
@@ -204,7 +182,7 @@ export const getWalletContents = async (
         walletAddress,
         stakedNFTAddress
       );
-
+        console.log("StakedNFT address: " + stakedNFTAddress + " token ids: " + stakedTokenIds.tokens);
       // Update userTokensCache
       unionIntoStakedNftCache(stakedNFTAddress, stakedTokenIds.tokens);
     })

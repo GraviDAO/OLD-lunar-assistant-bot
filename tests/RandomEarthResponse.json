@@ -1,0 +1,1897 @@
+{
+    "items": [
+        {
+            "type": "Item",
+            "created_at": "2021-12-23 04:17:16+00:00",
+            "updated_at": "2022-03-24 22:49:39+00:00",
+            "token_id": "906",
+            "collection_addr": "terra1uv9w7aaq6lu2kn0asnvknlcgg2xd5ts57ss7qt",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/QmPZP224eGkrVHa36kBv1kCZLb7U1LEpWmsjpXxD56giqS",
+            "image_data": null,
+            "external_url": null,
+            "description": "HellCats are 2500 randomly generated NFTs on the Terra blockchain",
+            "name": "HellCat #906",
+            "traits": {
+                "fur": "Snow White",
+                "hat": "Earphones",
+                "eyes": "Closed",
+                "mouth": "Spliff",
+                "clothes": "Overshirt",
+                "background": "Blue"
+            },
+            "raw_traits": [
+                {
+                    "value": "Blue",
+                    "trait_type": "background"
+                },
+                {
+                    "value": "Snow White",
+                    "trait_type": "fur"
+                },
+                {
+                    "value": "Overshirt",
+                    "trait_type": "clothes"
+                },
+                {
+                    "value": "Spliff",
+                    "trait_type": "mouth"
+                },
+                {
+                    "value": "Closed",
+                    "trait_type": "eyes"
+                },
+                {
+                    "value": "Earphones",
+                    "trait_type": "hat"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 45000000.0,
+            "bid": null,
+            "accepting_counters": false,
+            "listing_time": 1649433080,
+            "slug": "terra1uv9w7aaq6lu2kn0asnvknlcgg2xd5ts57ss7qt_906",
+            "burned": false,
+            "rarity": 151.51874353012437
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:25:12+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "9514",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeifnelcf37qp7iv5yg4obetrfm5vj5vgkuxcib35rqyc5pscyybcqm/9514.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #9514",
+            "traits": {
+                "EYES": "Brown",
+                "HATS": "BlueCap",
+                "HEAD": "Pink Meka",
+                "NOSE": "Green",
+                "TOPS": "Sergeant",
+                "HORNS": "Grey Checked",
+                "PANTS": "Black Shorts",
+                "SHOES": "Black Checked",
+                "GLASSES": "Wise Old Man",
+                "NOSERINGS": "No Ring",
+                "BACKGROUND": "Grey"
+            },
+            "raw_traits": [
+                {
+                    "value": "Grey",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Black Checked",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Black Shorts",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Pink Meka",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Sergeant",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Brown",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "No Ring",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Grey Checked",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Wise Old Man",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "BlueCap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 4990000.0,
+            "bid": 350000.0,
+            "accepting_counters": true,
+            "listing_time": 1649186655,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_9514",
+            "burned": false,
+            "rarity": 278.8575941371727
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:30:31+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "1222",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeigmmgfgnlzujki5me2pbn4vibuah44ygjzsyedgytpts67gag3dhe/1222.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #1222",
+            "traits": {
+                "EYES": "Aqua",
+                "HATS": "Orange Copter Cap",
+                "HEAD": "Light Brown",
+                "NOSE": "Light Brown",
+                "TOPS": "Camo Bomber Chain",
+                "HORNS": "Blue Glow",
+                "PANTS": "Baggy Red",
+                "SHOES": "Blue Checked",
+                "GLASSES": "Harrison",
+                "NOSERINGS": "Gold",
+                "BACKGROUND": "Light Green"
+            },
+            "raw_traits": [
+                {
+                    "value": "Light Green",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Blue Checked",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Baggy Red",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Light Brown",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Camo Bomber Chain",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Aqua",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Light Brown",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Gold",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Blue Glow",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Harrison",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Orange Copter Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 4990000.0,
+            "bid": 361000.0,
+            "accepting_counters": true,
+            "listing_time": 1649186597,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_1222",
+            "burned": false,
+            "rarity": 273.89065715002255
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:20:57+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "1751",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeigtfl3475nlb62hm2ztxxl3zj6sntb7runndw5ttrrod7r3bytt34/1751.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #1751",
+            "traits": {
+                "EYES": "Black",
+                "HATS": "Teal Cap",
+                "HEAD": "Brown",
+                "NOSE": "White",
+                "TOPS": "Red Devil",
+                "HORNS": "Grey",
+                "PANTS": "Kilt",
+                "SHOES": "Yellow",
+                "GLASSES": "Purple Square",
+                "NOSERINGS": "Green",
+                "BACKGROUND": "Blue White"
+            },
+            "raw_traits": [
+                {
+                    "value": "Blue White",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Yellow",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Kilt",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Brown",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Red Devil",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Black",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "White",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Grey",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Purple Square",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Teal Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 4990000.0,
+            "bid": null,
+            "accepting_counters": true,
+            "listing_time": 1649186569,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_1751",
+            "burned": false,
+            "rarity": 326.4758093151699
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:23:02+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "6024",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeidvzr3prcxqov4lwuylz6s6f75k5id5nc4lbevaspkylzoxnrdr2y/6024.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #6024",
+            "traits": {
+                "EYES": "Brown",
+                "HATS": "Blue Copter Cap",
+                "HEAD": "Green",
+                "NOSE": "Light Brown",
+                "TOPS": "Orange Space Suit",
+                "HORNS": "Light Blue Glow",
+                "PANTS": "Baggy Blue",
+                "SHOES": "Gold Checked",
+                "GLASSES": "Blue Aviators",
+                "NOSERINGS": "Red Bar",
+                "BACKGROUND": "Grey"
+            },
+            "raw_traits": [
+                {
+                    "value": "Grey",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Gold Checked",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Baggy Blue",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Orange Space Suit",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Brown",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Light Brown",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Red Bar",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Light Blue Glow",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Blue Aviators",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Blue Copter Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 4990000.0,
+            "bid": 361000.0,
+            "accepting_counters": true,
+            "listing_time": 1649186487,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_6024",
+            "burned": false,
+            "rarity": 295.43472188804157
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:34:55+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "2626",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeih3iuqce7y2wxfrb5jn2q7z4vg2mn4isqj3fp7ixrkoz5ybyt2ppy/2626.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #2626",
+            "traits": {
+                "EYES": "Yellow",
+                "HATS": "BlueCap",
+                "HEAD": "Pink",
+                "NOSE": "Brown",
+                "TOPS": "Red Skull Hoodie",
+                "HORNS": "Brown",
+                "PANTS": "Baggy Grey",
+                "SHOES": "Gold Checked",
+                "GLASSES": "Pink Square",
+                "NOSERINGS": "Red Bar",
+                "BACKGROUND": "Pink"
+            },
+            "raw_traits": [
+                {
+                    "value": "Pink",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Gold Checked",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Baggy Grey",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Pink",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Red Skull Hoodie",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Yellow",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Brown",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Red Bar",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Brown",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Pink Square",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "BlueCap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 4990000.0,
+            "bid": null,
+            "accepting_counters": true,
+            "listing_time": 1649186455,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_2626",
+            "burned": false,
+            "rarity": 226.95848463309028
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:36:43+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "5393",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeicej4t22lfi5cnupvt3hmd4qcxvacygoh7bhh7nhjhz5k3rhpzx5e/5393.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #5393",
+            "traits": {
+                "EYES": "Yellow",
+                "HATS": "Blue Copter Cap",
+                "HEAD": "Yoda",
+                "NOSE": "Pink",
+                "TOPS": "KadoMan",
+                "HORNS": "Teal",
+                "PANTS": "Red Shorts",
+                "SHOES": "Blue",
+                "GLASSES": "Purple Aviators",
+                "NOSERINGS": "Green",
+                "BACKGROUND": "Orange"
+            },
+            "raw_traits": [
+                {
+                    "value": "Orange",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Blue",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Red Shorts",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Yoda",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "KadoMan",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Yellow",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Pink",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Teal",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Purple Aviators",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Blue Copter Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 7990000.0,
+            "bid": 361000.0,
+            "accepting_counters": true,
+            "listing_time": 1649186398,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_5393",
+            "burned": false,
+            "rarity": 290.5556771588869
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-04 22:16:26+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "4197",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeifikmwh3mmqndqwiurkwewarxagj75gpywrfhqj34ktt7onr7tytq/4197.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #4197",
+            "traits": {
+                "EYES": "Brown",
+                "HATS": "Red Cap",
+                "HEAD": "Light Brown",
+                "NOSE": "Brown",
+                "TOPS": "TerraMan",
+                "HORNS": "Blue Flame",
+                "PANTS": "Black Shorts",
+                "SHOES": "Black Checked",
+                "GLASSES": "Ringo",
+                "NOSERINGS": "White",
+                "BACKGROUND": "Light Orange"
+            },
+            "raw_traits": [
+                {
+                    "value": "Light Orange",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Black Checked",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Black Shorts",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Light Brown",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "TerraMan",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Brown",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Brown",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "White",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Blue Flame",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Ringo",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Red Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 7990000.0,
+            "bid": 361000.0,
+            "accepting_counters": true,
+            "listing_time": 1649186346,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_4197",
+            "burned": false,
+            "rarity": 282.54903884781515
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:36:43+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "8593",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeidy7v7iubzpz2dbp6btxknwhnkcmrzl7nqiachhbghzrf7vjhe7ci/8593.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #8593",
+            "traits": {
+                "EYES": "Red",
+                "HATS": "White Cafe Hat",
+                "HEAD": "Brown",
+                "NOSE": "Pink",
+                "TOPS": "Future Armour Grey",
+                "HORNS": "Orange",
+                "PANTS": "OrangePants",
+                "SHOES": "Blue Slippers",
+                "GLASSES": "Green Shades",
+                "NOSERINGS": "Gold",
+                "BACKGROUND": "Green"
+            },
+            "raw_traits": [
+                {
+                    "value": "Green",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Blue Slippers",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "OrangePants",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Brown",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Future Armour Grey",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Red",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Pink",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Gold",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Orange",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Green Shades",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "White Cafe Hat",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 7990000.0,
+            "bid": 311000.0,
+            "accepting_counters": true,
+            "listing_time": 1649186275,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_8593",
+            "burned": false,
+            "rarity": 274.86289174944886
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:20:39+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "8627",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeifesfy5sdtkgepb65djvy2wme72vuadd4bai4cxs2l2a72ucyqdsi/8627.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #8627",
+            "traits": {
+                "EYES": "Yellow",
+                "HATS": "BlueCap",
+                "HEAD": "Orange",
+                "NOSE": "Green",
+                "TOPS": "Yellow Man",
+                "HORNS": "Purple Flame",
+                "PANTS": "PurplePants",
+                "SHOES": "Orange",
+                "GLASSES": "Harrison",
+                "NOSERINGS": "Blue",
+                "BACKGROUND": "Red"
+            },
+            "raw_traits": [
+                {
+                    "value": "Red",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Orange",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "PurplePants",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Orange",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Yellow Man",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Yellow",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Blue",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Purple Flame",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Harrison",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "BlueCap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 7990000.0,
+            "bid": 350000.0,
+            "accepting_counters": true,
+            "listing_time": 1649186234,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_8627",
+            "burned": false,
+            "rarity": 303.65317134313364
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:34:55+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "5836",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": true,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeibzmpfb2yv4a27m4245ihjqv6ey2zn3lnxvbqdsxpaqvxljwzpbne/5836.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #5836",
+            "traits": {
+                "EYES": "Orange",
+                "HATS": "Red Cap",
+                "HEAD": "Green",
+                "NOSE": "Red",
+                "TOPS": "Wizard Red",
+                "HORNS": "Green",
+                "PANTS": "Green Shorts",
+                "SHOES": "Dark Green",
+                "GLASSES": "3D Glasses",
+                "NOSERINGS": "Light Green",
+                "BACKGROUND": "Purple"
+            },
+            "raw_traits": [
+                {
+                    "value": "Purple",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Dark Green",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Green Shorts",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Wizard Red",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Orange",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Red",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Light Green",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "3D Glasses",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Red Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": 7990000.0,
+            "bid": 361000.0,
+            "accepting_counters": true,
+            "listing_time": 1649186126,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_5836",
+            "burned": false,
+            "rarity": 325.1984760158525
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:34:55+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "2252",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeiamwu7kxy4bkuu3teemxk7zwwhju4gynuq7nv7o7nd532kmep63xi/2252.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #2252",
+            "traits": {
+                "EYES": "Brown",
+                "HATS": "Blue Copter Cap",
+                "HEAD": "Light Brown",
+                "NOSE": "Gold",
+                "TOPS": "Navy Captian",
+                "HORNS": "Pink Glow",
+                "PANTS": "Baggy Grey",
+                "SHOES": "Blue Slippers",
+                "GLASSES": "Teal Vipers",
+                "NOSERINGS": "Gold",
+                "BACKGROUND": "Yellow"
+            },
+            "raw_traits": [
+                {
+                    "value": "Yellow",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Blue Slippers",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Baggy Grey",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Light Brown",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Navy Captian",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Brown",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Gold",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Gold",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Pink Glow",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Teal Vipers",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Blue Copter Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": 1641514526,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_2252",
+            "burned": false,
+            "rarity": 255.98194365294893
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:36:43+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "6387",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeidi4ppetmudugg3qmrhhwcit3xic2l7hgexstpdvwuytiyysmtcj4/6387.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #6387",
+            "traits": {
+                "EYES": "Aqua",
+                "HATS": "Orange Copter Cap",
+                "HEAD": "Yoda",
+                "NOSE": "White",
+                "TOPS": "Red Button Up",
+                "HORNS": "Pink Glow",
+                "PANTS": "Bear Market Uniform",
+                "SHOES": "White",
+                "GLASSES": "Yellow Vipers",
+                "NOSERINGS": "Green Bar",
+                "BACKGROUND": "Purple"
+            },
+            "raw_traits": [
+                {
+                    "value": "Purple",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "White",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Bear Market Uniform",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Yoda",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Red Button Up",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Aqua",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "White",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Green Bar",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Pink Glow",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Yellow Vipers",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Orange Copter Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": 1641514349,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_6387",
+            "burned": false,
+            "rarity": 260.67288266335817
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:25:12+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "4162",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeiafglinix7sjsyb6r62dehvq23iddhd2fwzr76fk633xdtcgz6dyu/4162.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #4162",
+            "traits": {
+                "EYES": "Green",
+                "HATS": "Black Cap",
+                "HEAD": "Red Meka",
+                "NOSE": "Gold",
+                "TOPS": "Red Button Up",
+                "HORNS": "Grey",
+                "PANTS": "Grey Space Pants",
+                "SHOES": "Blue Slippers",
+                "GLASSES": "Red Vans",
+                "NOSERINGS": "Pink",
+                "BACKGROUND": "Purple"
+            },
+            "raw_traits": [
+                {
+                    "value": "Purple",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Blue Slippers",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Grey Space Pants",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Red Meka",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Red Button Up",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Gold",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Pink",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Grey",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Red Vans",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Black Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": 1641513670,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_4162",
+            "burned": false,
+            "rarity": 236.56280104654553
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:28:09+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "9973",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeig6sfb5yjqo324n6patdobopphktdtdidkenfy25ccuapmb5owqti/9973.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #9973",
+            "traits": {
+                "EYES": "Aqua",
+                "HATS": "Police Hat",
+                "HEAD": "Cream",
+                "NOSE": "Light Brown",
+                "TOPS": "Sergeant",
+                "HORNS": "Light Blue Glow",
+                "PANTS": "Baggy Green",
+                "SHOES": "Black Checked",
+                "GLASSES": "Harrison",
+                "NOSERINGS": "Grey Bar",
+                "BACKGROUND": "Purple"
+            },
+            "raw_traits": [
+                {
+                    "value": "Purple",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Black Checked",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Baggy Green",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Cream",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Sergeant",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Aqua",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Light Brown",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Grey Bar",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Light Blue Glow",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Harrison",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Police Hat",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_9973",
+            "burned": false,
+            "rarity": 272.9852080108832
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:25:12+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "7827",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeibl4czunl2ijlcd5ghz3g3kzut32ecuybtiuu4smzfpp7g4l62lcu/7827.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #7827",
+            "traits": {
+                "EYES": "Purple",
+                "HATS": "Red Bandana",
+                "HEAD": "Light Grey",
+                "NOSE": "Green",
+                "TOPS": "Luna Tee",
+                "HORNS": "Light Blue Glow",
+                "PANTS": "Gold Red Suit",
+                "SHOES": "Blue Slippers",
+                "GLASSES": "Black Shades",
+                "NOSERINGS": "Pink",
+                "BACKGROUND": "Brown"
+            },
+            "raw_traits": [
+                {
+                    "value": "Brown",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Blue Slippers",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Gold Red Suit",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Light Grey",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Luna Tee",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Purple",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Pink",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Light Blue Glow",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Black Shades",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Red Bandana",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_7827",
+            "burned": false,
+            "rarity": 265.17995251877045
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:23:02+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "566",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeiadb5tarx5xg2ewtkn4n4qjocjib5ebrr2t4rz4fphvtcfrmnqr74/566.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #566",
+            "traits": {
+                "EYES": "Green",
+                "HATS": "Orange Copter Cap",
+                "HEAD": "Navy",
+                "NOSE": "Blue",
+                "TOPS": "ATH Hoodie",
+                "HORNS": "Green Glow",
+                "PANTS": "Baggy Green",
+                "SHOES": "Purple",
+                "GLASSES": "Black Aviators",
+                "NOSERINGS": "Pink",
+                "BACKGROUND": "Brown"
+            },
+            "raw_traits": [
+                {
+                    "value": "Brown",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "Purple",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Baggy Green",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Navy",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "ATH Hoodie",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Green",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "Blue",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Pink",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Green Glow",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Black Aviators",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "Orange Copter Cap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_566",
+            "burned": false,
+            "rarity": 201.75224799920218
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-05 22:34:55+00:00",
+            "updated_at": "2022-01-06 23:04:22+00:00",
+            "token_id": "3228",
+            "collection_addr": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafybeiabmjxgjvmojfdrt3b3vvyrebc6nspok2pxzsz7vxj2eldii5jdkq/3228.png",
+            "image_data": null,
+            "external_url": null,
+            "description": "The next generation of Terraverse explorers - made by the LunaBulls",
+            "name": "BabyBull #3228",
+            "traits": {
+                "EYES": "Black",
+                "HATS": "BlueCap",
+                "HEAD": "Grey",
+                "NOSE": "White",
+                "TOPS": "Blue Party Shirt",
+                "HORNS": "Green Glow",
+                "PANTS": "Gold Blue Suit",
+                "SHOES": "White",
+                "GLASSES": "Red Shades",
+                "NOSERINGS": "Dark Green",
+                "BACKGROUND": "Yellow"
+            },
+            "raw_traits": [
+                {
+                    "value": "Yellow",
+                    "trait_type": "BACKGROUND"
+                },
+                {
+                    "value": "White",
+                    "trait_type": "SHOES"
+                },
+                {
+                    "value": "Gold Blue Suit",
+                    "trait_type": "PANTS"
+                },
+                {
+                    "value": "Grey",
+                    "trait_type": "HEAD"
+                },
+                {
+                    "value": "Blue Party Shirt",
+                    "trait_type": "TOPS"
+                },
+                {
+                    "value": "Black",
+                    "trait_type": "EYES"
+                },
+                {
+                    "value": "White",
+                    "trait_type": "NOSE"
+                },
+                {
+                    "value": "Dark Green",
+                    "trait_type": "NOSERINGS"
+                },
+                {
+                    "value": "Green Glow",
+                    "trait_type": "HORNS"
+                },
+                {
+                    "value": "Red Shades",
+                    "trait_type": "GLASSES"
+                },
+                {
+                    "value": "BlueCap",
+                    "trait_type": "HATS"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3_3228",
+            "burned": false,
+            "rarity": 218.08585489674337
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-02-05 18:07:15+00:00",
+            "updated_at": "2022-02-09 00:59:36+00:00",
+            "token_id": "the.nft.guild",
+            "collection_addr": "terra1ygy58urzh826al6ktlskh4z6hnd2aunhcn0cvm",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafkreibxir5kwynjq2alzojvmbms7k2cieaezqemnea4r7mhfd7ris6dvu",
+            "image_data": null,
+            "external_url": null,
+            "description": "Galactic Gridz x Colonies Genesis Collection. Galactic Gridz is a mint-your-own combination of 3 words that represent not only a NFT pseudonym, but your unique stake on a volume of customizable space within the Terraverse.",
+            "name": "the.nft.guild",
+            "traits": {
+                "first_word": "the",
+                "mint_phase": "genesis",
+                "third_word": "guild",
+                "second_word": "nft"
+            },
+            "raw_traits": [
+                {
+                    "value": "the",
+                    "trait_type": "first_word"
+                },
+                {
+                    "value": "nft",
+                    "trait_type": "second_word"
+                },
+                {
+                    "value": "guild",
+                    "trait_type": "third_word"
+                },
+                {
+                    "value": "genesis",
+                    "trait_type": "mint_phase"
+                }
+            ],
+            "background_color": null,
+            "animation_url": "https://cloudflare-ipfs.com/ipfs/bafybeiamjgjccmr5dzalszgo3b2rmhns66wtolpdioql2kcpdkj5yhyexu/galactic_gridz.mp4",
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1ygy58urzh826al6ktlskh4z6hnd2aunhcn0cvm_the.nft.guild",
+            "burned": false,
+            "rarity": 124.57118576512764
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-02-05 18:04:13+00:00",
+            "updated_at": "2022-02-09 00:59:36+00:00",
+            "token_id": "alpha.nft.club",
+            "collection_addr": "terra1ygy58urzh826al6ktlskh4z6hnd2aunhcn0cvm",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/bafkreicyy5p7fl2ggp53lm2cqjavcerkqkjluzcdhpatguxspcgq33vu2q",
+            "image_data": null,
+            "external_url": null,
+            "description": "Galactic Gridz x Colonies Genesis Collection. Galactic Gridz is a mint-your-own combination of 3 words that represent not only a NFT pseudonym, but your unique stake on a volume of customizable space within the Terraverse.",
+            "name": "alpha.nft.club",
+            "traits": {
+                "first_word": "alpha",
+                "mint_phase": "genesis",
+                "third_word": "club",
+                "second_word": "nft"
+            },
+            "raw_traits": [
+                {
+                    "value": "alpha",
+                    "trait_type": "first_word"
+                },
+                {
+                    "value": "nft",
+                    "trait_type": "second_word"
+                },
+                {
+                    "value": "club",
+                    "trait_type": "third_word"
+                },
+                {
+                    "value": "genesis",
+                    "trait_type": "mint_phase"
+                }
+            ],
+            "background_color": null,
+            "animation_url": "https://cloudflare-ipfs.com/ipfs/bafybeiamjgjccmr5dzalszgo3b2rmhns66wtolpdioql2kcpdkj5yhyexu/galactic_gridz.mp4",
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1ygy58urzh826al6ktlskh4z6hnd2aunhcn0cvm_alpha.nft.club",
+            "burned": false,
+            "rarity": 121.25464976553934
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-12 05:53:35+00:00",
+            "updated_at": "2022-01-12 05:53:35+00:00",
+            "token_id": "1205",
+            "collection_addr": "terra1vklj0lyk4cw70nugercau7ampu86m8lhjf6jez",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/QmSf4pRiG6sdSV1LrjvaNgtDhnokKZVgx7wJ1xGLzZ6HBe",
+            "image_data": null,
+            "external_url": null,
+            "description": "A Tabula NFT project. Tier 1 Rewards.",
+            "name": "Tabula Tier 1 - 1205",
+            "traits": {},
+            "raw_traits": [],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1vklj0lyk4cw70nugercau7ampu86m8lhjf6jez_1205",
+            "burned": false,
+            "rarity": null
+        },
+        {
+            "type": "Item",
+            "created_at": "2021-12-27 22:45:42+00:00",
+            "updated_at": "2021-12-27 22:45:42+00:00",
+            "token_id": "54754",
+            "collection_addr": "terra1snja2twmwx656qp6juq8jpah4h80pxvwsgsvev",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/QmQgxdhJ3w71ShU2JvrvLq7VjK2XjZETji7HS26e9K45DU",
+            "image_data": null,
+            "external_url": null,
+            "description": "Just a fun NFT sent to everyone that bought LUNA in the past 30 days.",
+            "name": "Congratulations on $100 LUNA",
+            "traits": {
+                "Date": "24/12/2021",
+                "Price": "100"
+            },
+            "raw_traits": [
+                {
+                    "value": "100",
+                    "trait_type": "Price"
+                },
+                {
+                    "value": "24/12/2021",
+                    "trait_type": "Date"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1snja2twmwx656qp6juq8jpah4h80pxvwsgsvev_54754",
+            "burned": false,
+            "rarity": null
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-25 00:25:25+00:00",
+            "updated_at": "2022-01-25 00:25:25+00:00",
+            "token_id": "242",
+            "collection_addr": "terra1qpu42s4hrrnvxsxr428scd5st9zd4fmn5me38t",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/QmQ678H1gBxnPzpdB4CmHVyVzVw6UZdupoKwTSLoKZYMpY",
+            "image_data": null,
+            "external_url": null,
+            "description": "LunaShields are 1000 unique 3D NFTs on Terra",
+            "name": "Luna Shield 242",
+            "traits": {
+                "Eye": "None",
+                "Ray": "None",
+                "Halo": "Halo Black",
+                "Wing": "None",
+                "Patch": "None",
+                "Tooth": "None",
+                "Tattoo": "Hand",
+                "Weapon": "Battle Axe",
+                "Accessory": "Chain Neck",
+                "Character": "Red Bandana",
+                "Background": "BackGround (14)"
+            },
+            "raw_traits": [
+                {
+                    "value": "BackGround (14)",
+                    "trait_type": "Background"
+                },
+                {
+                    "value": "None",
+                    "trait_type": "Ray"
+                },
+                {
+                    "value": "Battle Axe",
+                    "trait_type": "Weapon"
+                },
+                {
+                    "value": "None",
+                    "trait_type": "Wing"
+                },
+                {
+                    "value": "Red Bandana",
+                    "trait_type": "Character"
+                },
+                {
+                    "value": "None",
+                    "trait_type": "Eye"
+                },
+                {
+                    "value": "Hand",
+                    "trait_type": "Tattoo"
+                },
+                {
+                    "value": "None",
+                    "trait_type": "Patch"
+                },
+                {
+                    "value": "None",
+                    "trait_type": "Tooth"
+                },
+                {
+                    "value": "Chain Neck",
+                    "trait_type": "Accessory"
+                },
+                {
+                    "value": "Halo Black",
+                    "trait_type": "Halo"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1qpu42s4hrrnvxsxr428scd5st9zd4fmn5me38t_242",
+            "burned": false,
+            "rarity": null
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-04-04 14:06:18+00:00",
+            "updated_at": "2022-04-04 14:06:18+00:00",
+            "token_id": "TESS_8572",
+            "collection_addr": "terra1k5pa7htlznr7hskhr9dx8qlk65emhktrgmuknd",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/QmdJQub8TRScEKp2VbRaPyLLDHDMCMEtnczKq2t5eahyzP",
+            "image_data": null,
+            "external_url": null,
+            "description": "The Tesseracts are cubes from another dimension that entered the 2D TerraVerse through a rupture in space-time. Use them on your 2D LunaBull to unlock its full potential.",
+            "name": "Tesseract",
+            "traits": {},
+            "raw_traits": [],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1k5pa7htlznr7hskhr9dx8qlk65emhktrgmuknd_TESS_8572",
+            "burned": false,
+            "rarity": null
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-01-13 15:38:18+00:00",
+            "updated_at": "2022-01-13 15:38:18+00:00",
+            "token_id": "c383ee38c6e5dd505e352fe6a9bf026f46624252d1b662116050f6398ae6daff",
+            "collection_addr": "terra1fsfnnv08cgwcyfyh3p89rf44tfy4tlgnsapyda",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "data:image/svg+xml;base64,CiAgICAgICAgPHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDUwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik01MDAgMEgwVjUwMEg1MDBWMFoiIGZpbGw9IiNBMUEzQTUiIC8+CiAgICAgICAgICAgIDxtYXNrIGlkPSJtMCIgc3R5bGU9Im1hc2stdHlwZTphbHBoYSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSI1MDAiPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTUwMCAwSDBWNTAwSDUwMFYwWiIgZmlsbD0iI0Y1QTRDNyIgLz4KICAgICAgICAgICAgPC9tYXNrPgogICAgICAgICAgICA8ZyBtYXNrPSJ1cmwoI20wKSI+CiAgICAgICAgICAgICAgICA8Y2lyY2xlIGN4PSI2NTguOTk4IiBjeT0iMzcuOTk5MyIgcj0iMzQxLjQ3NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMyIgc3Ryb2tlLXdpZHRoPSIxLjA1MDU3IiAvPgogICAgICAgICAgICAgICAgPGNpcmNsZSBjeD0iMTIzIiBjeT0iMjgxLjk5NSIgcj0iMzQxLjQ3NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjA1MDU3IiAvPgogICAgICAgICAgICAgICAgPGNpcmNsZSBjeD0iMzgzLjk5OCIgY3k9Ii0yMzMuMDAzIiByPSIzNDEuNDc1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utb3BhY2l0eT0iMC4zIiBzdHJva2Utd2lkdGg9IjEuMDUwNTciIC8+CiAgICAgICAgICAgICAgICA8Y2lyY2xlIGN4PSIxMDEuOTk5IiBjeT0iLTMxMy4wMDIiIHI9IjM0MS40NzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjMiIHN0cm9rZS13aWR0aD0iMS4wNTA1NyIgLz4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik00MTYuMTM4IDExMS4yODJDNDE4LjQyNCAxMTEuMjgyIDQyMC4yNzggMTA5LjQyOCA0MjAuMjc4IDEwNy4xNDJDNDIwLjI3OCAxMDQuODU1IDQxOC40MjQgMTAzLjAwMiA0MTYuMTM4IDEwMy4wMDJDNDEzLjg1MSAxMDMuMDAyIDQxMS45OTggMTA0Ljg1NSA0MTEuOTk4IDEwNy4xNDJDNDExLjk5OCAxMDkuNDI4IDQxMy44NTEgMTExLjI4MiA0MTYuMTM4IDExMS4yODJaIiBmaWxsPSJ3aGl0ZSIgLz4KICAgICAgICAgICAgPC9nPgogICAgICAgICAgICA8ZyBmaWx0ZXI9InVybCgjZjApIj4KICAgICAgICAgICAgICAgIDxjaXJjbGUgY3g9IjI1MC41MDEiIGN5PSIyNDkuNDk2IiByPSIxMjcuNSIgZmlsbD0iIzYzNjQ2NiIgLz4KICAgICAgICAgICAgPC9nPgogICAgICAgICAgICA8cGF0aCBkPSJNNTMuODcxOSA3NS45Njk4SDU2LjAwNDJWNTkuMjEyM0g2Mi4zMTlWNTcuMTg5M0g0Ny41NTcxVjU5LjIxMjNINTMuODcxOVY3NS45Njk4Wk03OS4xODI3IDU5LjIxMjNWNTcuMTg5M0g2NS43MDU2Vjc1Ljk2OThINzkuMTgyN1Y3My45NDY5SDY3Ljg2NTJWNjcuNDEzM0g3OC4wNjE4VjY1LjM5MDRINjcuODY1MlY1OS4yMTIzSDc5LjE4MjdaTTk3LjM4NzggNjMuMjAzNUM5Ny4zODc4IDU5LjY3NyA5NC4zNTM0IDU3LjE4OTMgOTAuNDcxNSA1Ny4xODkzSDgyLjg0NDVWNzUuOTY5OEg4NC45NzY4VjY5LjIxNzZIODkuOTUyMUw5NC43MDg3IDc1Ljk2OThIOTcuMTQxN0w5Mi4yNzU4IDY5LjAyNjJDOTUuMjU1NSA2OC4zOTc1IDk3LjM4NzggNjYuMTU1OCA5Ny4zODc4IDYzLjIwMzVaTTg0Ljk3NjggNTkuMjEyM0g5MC4wODg4QzkzLjE1MDUgNTkuMjEyMyA5NS4yMjgxIDYwLjY4ODUgOTUuMjI4MSA2My4yMDM1Qzk1LjIyODEgNjUuNzE4NCA5My4xNTA1IDY3LjE5NDYgOTAuMDg4OCA2Ny4xOTQ2SDg0Ljk3NjhWNTkuMjEyM1pNMTE1LjE2NyA2My4yMDM1QzExNS4xNjcgNTkuNjc3IDExMi4xMzMgNTcuMTg5MyAxMDguMjUxIDU3LjE4OTNIMTAwLjYyNFY3NS45Njk4SDEwMi43NTZWNjkuMjE3NkgxMDcuNzMyTDExMi40ODggNzUuOTY5OEgxMTQuOTIxTDExMC4wNTUgNjkuMDI2MkMxMTMuMDM1IDY4LjM5NzUgMTE1LjE2NyA2Ni4xNTU4IDExNS4xNjcgNjMuMjAzNVpNMTAyLjc1NiA1OS4yMTIzSDEwNy44NjhDMTEwLjkzIDU5LjIxMjMgMTEzLjAwOCA2MC42ODg1IDExMy4wMDggNjMuMjAzNUMxMTMuMDA4IDY1LjcxODQgMTEwLjkzIDY3LjE5NDYgMTA3Ljg2OCA2Ny4xOTQ2SDEwMi43NTZWNTkuMjEyM1pNMTMzLjY4NSA3NS45Njk4SDEzNi4wMDlMMTI3LjcyNiA1Ny4xODkzSDEyNS40MDJMMTE3LjExOSA3NS45Njk4SDExOS40NDNMMTIxLjMyOSA3MS43MDUySDEzMS43OTlMMTMzLjY4NSA3NS45Njk4Wk0xMjIuMjA0IDY5LjY4MjNMMTI2LjU3OCA1OS44MTM3TDEzMC45MjQgNjkuNjgyM0gxMjIuMjA0Wk00OC44OTY2IDEwMi45N0g1MS4wMjg5Vjg3LjY4ODVMNjIuNjc0NCAxMDIuOTdINjQuODA2N1Y4NC4xODkzSDYyLjY3NDRWOTkuNDcwN0w1MS4wMjg5IDg0LjE4OTNINDguODk2NlYxMDIuOTdaTTg0LjgwNDQgMTAyLjk3SDg3LjEyODFMNzguODQ1IDg0LjE4OTNINzYuNTIxNEw2OC4yMzgzIDEwMi45N0g3MC41NjE5TDcyLjQ0ODIgOTguNzA1Mkg4Mi45MTgyTDg0LjgwNDQgMTAyLjk3Wk03My4zMjI5IDk2LjY4MjNMNzcuNjk2OSA4Ni44MTM3TDgyLjA0MzQgOTYuNjgyM0g3My4zMjI5Wk05MC41NjkzIDEwMi45N0g5Mi43MDE2Vjg4Ljc4MTlMOTkuNjcyNSAxMDEuODc2TDEwNi42NDMgODguNzgxOVYxMDIuOTdIMTA4Ljc3NlY4NC4xODkzSDEwNi42NDNMOTkuNjcyNSA5Ny4yODM3TDkyLjcwMTYgODQuMTg5M0g5MC41NjkzVjEwMi45N1pNMTI2Ljk2OSA4Ni4yMTIzVjg0LjE4OTNIMTEzLjQ5MlYxMDIuOTdIMTI2Ljk2OVYxMDAuOTQ3SDExNS42NTFWOTQuNDEzM0gxMjUuODQ4VjkyLjM5MDRIMTE1LjY1MVY4Ni4yMTIzSDEyNi45NjlaTTU0Ljk5MjcgMTMwLjI3QzU5LjM2NjYgMTMwLjI3IDYxLjYwODIgMTI3LjgzOCA2MS42MDgyIDEyNC44NThDNjEuNjA4MiAxMjEuNTUgNTkuMDM4NiAxMjAuMjY1IDU1LjQ1NzQgMTE5LjQxOEM1Mi4yNTkgMTE4LjY1MiA1MC40MDAxIDExNy45NjkgNTAuNDAwMSAxMTYuMDI4QzUwLjQwMDEgMTE0LjMwNiA1Mi4wOTUgMTEyLjc3NSA1NC40MTg2IDExMi43NzVDNTYuMzg2OSAxMTIuNzc1IDU4LjI0NTggMTEzLjY3NyA1OS44MDQgMTE1LjE4MUw2MS4xMTYyIDExMy41MTNDNTkuMzkzOSAxMTEuOTI3IDU3LjMxNjMgMTEwLjgzNCA1NC41MjggMTEwLjgzNEM1MC45MTk1IDExMC44MzQgNDguMjQwNSAxMTMuMTg1IDQ4LjI0MDUgMTE2LjE5MkM0OC4yNDA1IDExOS40NDUgNTAuNjE4OCAxMjAuNjIxIDU0LjM5MTMgMTIxLjQ5NUM1Ny42NzE3IDEyMi4yNjEgNTkuNDQ4NiAxMjMuMDU0IDU5LjQ0ODYgMTI1LjA0OUM1OS40NDg2IDEyNi43NDQgNTcuOTcyNCAxMjguMzMgNTUuMDc0NyAxMjguMzNDNTIuNDUwNCAxMjguMzMgNTAuNTA5NSAxMjcuMjA5IDQ4LjkyMzkgMTI1LjYyM0w0Ny41ODQ0IDEyNy4yOTFDNDkuNDcwNiAxMjkuMTUgNTEuOTAzNiAxMzAuMjcgNTQuOTkyNyAxMzAuMjdaTTc4LjcyODggMTEzLjIxMlYxMTEuMTg5SDY1LjI1MTdWMTI5Ljk3SDc4LjcyODhWMTI3Ljk0N0g2Ny40MTEzVjEyMS40MTNINzcuNjA4VjExOS4zOUg2Ny40MTEzVjExMy4yMTJINzguNzI4OFpNOTYuOTMzOSAxMTcuMjAzQzk2LjkzMzkgMTEzLjY3NyA5My44OTk1IDExMS4xODkgOTAuMDE3NyAxMTEuMTg5SDgyLjM5MDdWMTI5Ljk3SDg0LjUyM1YxMjMuMjE4SDg5LjQ5ODNMOTQuMjU0OSAxMjkuOTdIOTYuNjg3OUw5MS44MjE5IDEyMy4wMjZDOTQuODAxNiAxMjIuMzk3IDk2LjkzMzkgMTIwLjE1NiA5Ni45MzM5IDExNy4yMDNaTTg0LjUyMyAxMTMuMjEySDg5LjYzNUM5Mi42OTY3IDExMy4yMTIgOTQuNzc0MyAxMTQuNjg4IDk0Ljc3NDMgMTE3LjIwM0M5NC43NzQzIDExOS43MTggOTIuNjk2NyAxMjEuMTk1IDg5LjYzNSAxMjEuMTk1SDg0LjUyM1YxMTMuMjEyWk0xMTUuNDUyIDExMS4xODlMMTA4LjM0NCAxMjcuMzQ1TDEwMS4yMDkgMTExLjE4OUg5OC44ODU1TDEwNy4xNjkgMTI5Ljk3SDEwOS40OTJMMTE3Ljc3NSAxMTEuMTg5SDExNS40NTJaTTEyMC44MDcgMTI5Ljk3SDEyMi45MzlWMTExLjE4OUgxMjAuODA3VjEyOS45N1pNMTM2LjE1MSAxMzAuMjk4QzEzOC43NDggMTMwLjI5OCAxNDEuMTU0IDEyOS4xNzcgMTQyLjkwNCAxMjcuNDI3TDE0MS40NTUgMTI1Ljk1MUMxNDAuMDg4IDEyNy40IDEzOC4yMDIgMTI4LjMzIDEzNi4xNTEgMTI4LjMzQzEzMi4xMDYgMTI4LjMzIDEyOC42ODkgMTI0Ljc3NiAxMjguNjg5IDEyMC41NjZDMTI4LjY4OSAxMTYuMzgzIDEzMi4xMDYgMTEyLjgzIDEzNi4xNTEgMTEyLjgzQzEzOC4yMDIgMTEyLjgzIDE0MC4wODggMTEzLjc1OSAxNDEuNDU1IDExNS4yMDhMMTQyLjkwNCAxMTMuNzMyQzE0MS4xNTQgMTExLjk1NSAxMzguNzQ4IDExMC44NjEgMTM2LjE1MSAxMTAuODYxQzEzMC45NTcgMTEwLjg2MSAxMjYuNTI5IDExNS4yOSAxMjYuNTI5IDEyMC41NjZDMTI2LjUyOSAxMjUuODQyIDEzMC45NTcgMTMwLjI5OCAxMzYuMTUxIDEzMC4yOThaTTE1OS4zMjUgMTEzLjIxMlYxMTEuMTg5SDE0NS44NDhWMTI5Ljk3SDE1OS4zMjVWMTI3Ljk0N0gxNDguMDA3VjEyMS40MTNIMTU4LjIwNFYxMTkuMzlIMTQ4LjAwN1YxMTMuMjEySDE1OS4zMjVaIiBmaWxsPSJ3aGl0ZSIgLz4KICAgICAgICAgICAgPHRleHQgeT0iNDQzIiB4PSI0NyIgdGV4dC1yZW5kZXJpbmc9Im9wdGltaXplU3BlZWQiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iJ0NvdXJpZXIgTmV3JywgbW9ub3NwYWNlIiBmb250LXNpemU9IjI4cHgiIGZvbnQtd2VpZ2h0PSI0MDAiPgogICAgICAgICAgICAgICAgMTMuMDEuMjAyMgogICAgICAgICAgICA8L3RleHQ+CiAgICAgICAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ3KSI+CiAgICAgICAgICAgICAgICAKICAgICAgICAgICAgPHRleHQgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgeT0iMjQ1IiB0cmFuc2Zvcm0tb3JpZ2luPSJsZWZ0IGNlbnRlciIgdGV4dC1yZW5kZXJpbmc9Im9wdGltaXplU3BlZWQiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iJ0NvdXJpZXIgTmV3JywgbW9ub3NwYWNlIiBmb250LXNpemU9IjQ4cHgiIGZvbnQtd2VpZ2h0PSJib2xkZXIiPgogICAgICAgICAgICAgICAgc2lybHVuYS51c3QKICAgICAgICAgICAgPC90ZXh0PgogICAgICAgICAgICAKICAgICAgICAgICAgPC9nPgogICAgICAgICAgICA8ZGVmcz4KICAgICAgICAgICAgICAgIDxmaWx0ZXIgaWQ9ImYwIiB4PSI0NC4yMDg0IiB5PSI0My4yMDM1IiB3aWR0aD0iNDEyLjU4NiIgaGVpZ2h0PSI0MTIuNTg2IiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+CiAgICAgICAgICAgICAgICAgICAgPGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIC8+CiAgICAgICAgICAgICAgICAgICAgPGZlQmxlbmQgbW9kZT0ibm9ybWFsIiBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHJlc3VsdD0ic2hhcGUiIC8+CiAgICAgICAgICAgICAgICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMzkuMzk2NCIgcmVzdWx0PSJlZmZlY3QxX2ZvcmVncm91bmRCbHVyXzY3Mjo5MjUiIC8+CiAgICAgICAgICAgICAgICA8L2ZpbHRlcj4KICAgICAgICAgICAgPC9kZWZzPgogICAgICAgIDwvc3ZnPgogICAg",
+            "image_data": null,
+            "external_url": null,
+            "description": "",
+            "name": "sirluna.ust",
+            "traits": null,
+            "raw_traits": null,
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra1fsfnnv08cgwcyfyh3p89rf44tfy4tlgnsapyda_c383ee38c6e5dd505e352fe6a9bf026f46624252d1b662116050f6398ae6daff",
+            "burned": false,
+            "rarity": null
+        },
+        {
+            "type": "Item",
+            "created_at": "2022-02-21 14:11:35+00:00",
+            "updated_at": "2022-02-21 14:11:35+00:00",
+            "token_id": "33940",
+            "collection_addr": "terra14gfnxnwl0yz6njzet4n33erq5n70wt79nm24el",
+            "user_addr": "terra14frq4cq7797e8xlh4hq7c94ahsly6dp4vx8f0d",
+            "in_settlement": false,
+            "src": "https://cloudflare-ipfs.com/ipfs/QmWokrfdcgD1o9ErHfJSPmAneMjSd3WGpxBhDJzURE5fCo",
+            "image_data": null,
+            "external_url": null,
+            "description": "Terrans Faction Talisman of the Levana Dragons adventure, Bull Role.",
+            "name": "Talisman: Terrans Faction - Bull Role",
+            "traits": {
+                "Role": "Bull",
+                "Type": "Faction Talisman",
+                "Faction": "Terrans",
+                "Issue Date": "2472-02-21"
+            },
+            "raw_traits": [
+                {
+                    "value": "Faction Talisman",
+                    "trait_type": "Type"
+                },
+                {
+                    "value": "Terrans",
+                    "trait_type": "Faction"
+                },
+                {
+                    "value": "Bull",
+                    "trait_type": "Role"
+                },
+                {
+                    "value": "2472-02-21",
+                    "trait_type": "Issue Date"
+                }
+            ],
+            "background_color": null,
+            "animation_url": null,
+            "youtube_url": null,
+            "kind": "image",
+            "last_trade_price": null,
+            "likes_count": null,
+            "price": null,
+            "bid": null,
+            "accepting_counters": null,
+            "listing_time": null,
+            "slug": "terra14gfnxnwl0yz6njzet4n33erq5n70wt79nm24el_33940",
+            "burned": false,
+            "rarity": null
+        }
+    ],
+    "total": 26,
+    "page": 1,
+    "pages": 1
+}
