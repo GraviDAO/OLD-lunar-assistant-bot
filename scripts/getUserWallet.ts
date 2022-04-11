@@ -15,7 +15,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 const coleID = "619663424812613662";
-const discordID = "791301617269866507";
+const discordID = "164855485831446530";
 db.collection("users")
   .doc(discordID)
   .get()

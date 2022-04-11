@@ -46,7 +46,11 @@ export class LunarAssistant {
     }
   }
 
-  start(onReady: () => void) {
+  start(
+    onReady: (lunarAssistantBot: LunarAssistant) => void,
+    runSyncProcesses: boolean,
+    handleInteractions: boolean
+  ) {
     // Setup listeners
 
     // When the client is ready, run this code (only once)
@@ -55,14 +59,14 @@ export class LunarAssistant {
       this.registerGuildCommands();
 
       // only add listeners when not in maintenance mode
-      if (run_sync_processes) {
+      if (runSyncProcesses) {
         this.runSyncProcesses();
       }
       // Call the passed onReady function
-      onReady();
+      onReady(this);
     });
 
-    if (handle_interactions) {
+    if (handleInteractions) {
       // When the bot is added to a server, configure the slash commands
       this.client.on("guildCreate", registerCommands);
 
@@ -86,6 +90,10 @@ export class LunarAssistant {
 const lunarAssistantBot = new LunarAssistant();
 
 // start the lunar assistant bot
-lunarAssistantBot.start(() => {
-  console.log("Ready!");
-});
+lunarAssistantBot.start(
+  () => {
+    console.log("Ready!");
+  },
+  run_sync_processes,
+  handle_interactions
+);
