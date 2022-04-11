@@ -1,20 +1,22 @@
 import { GuildConfig } from "../shared/firestoreTypes";
 import { checkRulesQualifies } from "./checkRuleQualifies";
-import { getRelevantContractAddresses } from "./getRelevantContractAddresses";
+import { getContractAddressesRelevantToGuildConfig } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
 
-export const testGetAddedPersistedRemovedRoleIds = async (
+export const testGetActiveInactiveRoleIdsForGuildConfigDoc = async (
   walletAddress: string,
-  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+  // guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
   db: FirebaseFirestore.Firestore,
+  guildConfigDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
 ) => {
+  const guildConfig = guildConfigDoc.data() as GuildConfig;
   const relevantContractAddresses =
-    getRelevantContractAddresses(guildConfigsSnapshot);
+    getContractAddressesRelevantToGuildConfig(guildConfig);
 
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses,
-    db,
+    db
   );
 
   // Mapping from discord server id to a list of active role ids
@@ -24,7 +26,7 @@ export const testGetAddedPersistedRemovedRoleIds = async (
   const inactiveRoles: { [guildId: string]: string[] } = {};
 
   const updateActivePersistedRemovedRolesForGuildConfigDoc = async (
-    guildConfigDoc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>
+    guildConfigDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
   ) => {
     // If lunar is null than we want to query across all guilds
     // Get the guild from the discord client
@@ -61,10 +63,7 @@ export const testGetAddedPersistedRemovedRoleIds = async (
     }
   };
 
-  // Process all guild configs
-  await Promise.all(
-    guildConfigsSnapshot.docs.map(
-      updateActivePersistedRemovedRolesForGuildConfigDoc
-    )
-  );
+  await updateActivePersistedRemovedRolesForGuildConfigDoc(guildConfigDoc);
+
+  return { activeRoles, inactiveRoles };
 };
