@@ -4,6 +4,8 @@
 "environment": "",
 "run_sync_processes": false,
 "handle_interactions": true,
+"mock_mode": false,
+"LCDCClient_URL": "",
 "DISCORD_VERIFICATION_SECRET": "",
 "FIREBASE_ADMIN_SERVICE_ACCOUNT": {}
 }

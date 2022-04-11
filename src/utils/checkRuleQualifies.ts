@@ -54,7 +54,7 @@ export const checkRulesQualifies = async (
     const stakedNFTRule = rule as StakedNFTRule;
     const quantity = stakedNFTRule.quantity;
     const tokens =
-      userTokensCache.nft[stakedNFTRule.stakedNFTAddress]?.tokenIds || [];
+      userTokensCache.stakedNFT[stakedNFTRule.stakedNFTAddress]?.tokenIds || [];
 
     // get the number of matching tokens
     const numMatchingTokens = (
@@ -91,6 +91,6 @@ export const checkRulesQualifies = async (
   } else {
     console.error("DO NOT ENTER. Rule type didn't match. checkRuleQualifies");
   }
-
+  console.log("checkRulesQualifies Rule: " + JSON.stringify(rule) + " ruleQualifies: " + ruleQualifies);
   return ruleQualifies;
 };
