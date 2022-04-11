@@ -335,7 +335,8 @@ export const propogateRoleUpdates = async (
 
     if (addedRoles[guildId].length > 0) {
       try {
-        await member.roles.add(addedRoles[guildId]);
+        member = await member.roles.add(addedRoles[guildId]);
+        console.log("Roles added for userId: " + userID + " guildId: " + guildId + " roles: " + addedRoles[guildId]);
       } catch (e) {
         console.error(
           "Couldn't add role, probably because of role hierarchy.",
@@ -347,7 +348,8 @@ export const propogateRoleUpdates = async (
 
     if (removedRoles[guildId].length > 0) {
       try {
-        await member.roles.remove(removedRoles[guildId]);
+        member = await member.roles.remove(removedRoles[guildId]);
+        console.log("Roles removed for userId: " + userID + " guildId: " + guildId + " roles: " + removedRoles[guildId]);
       } catch (e) {
         console.error(
           "Couldn't remove role, probably because of role hierarchy.",
@@ -422,7 +424,8 @@ export const propogateRoleUpdatesForGuildConfigDoc = async (
 
     if (addedRoles[guildId].length > 0) {
       try {
-        await member.roles.add(addedRoles[guildId]);
+        member = await member.roles.add(addedRoles[guildId]);
+        console.log("Roles added for userId: " + userID + " guildId: " + guildId + " roles: " + addedRoles[guildId]);
       } catch (e) {
         console.error(
           "Couldn't add role, probably because of role hierarchy.",
@@ -434,7 +437,8 @@ export const propogateRoleUpdatesForGuildConfigDoc = async (
 
     if (removedRoles[guildId].length > 0) {
       try {
-        await member.roles.remove(removedRoles[guildId]);
+        member = await member.roles.remove(removedRoles[guildId]);
+        console.log("Roles removed for userId: " + userID + " guildId: " + guildId + " roles: " + removedRoles[guildId]);
       } catch (e) {
         console.error(
           "Couldn't remove role, probably because of role hierarchy.",
