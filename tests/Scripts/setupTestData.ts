@@ -75,6 +75,36 @@ const initDatabase = async () => {
     roleId: "957694973300572200",
   };
 
+  const nftRuleGP: GuildRule = {
+    version: "1.0",
+    nft: {
+      ["terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k"]: {
+        tokenIds: [],
+        quantity,
+      },
+    },
+    stakedNFT: {},
+    cw20: {},
+    api: {},
+    nativeToken: {},
+    roleId: "950858244631437332",
+  };
+
+  const stakedNftRuleGP: GuildRule = {
+    version: "1.0",
+    nft: {},
+    stakedNFT: {
+      ["terra10t4pgfs6s3qeykqgfq9r74s89jmu7zx5gfkga5"]: {
+        tokenIds: [],
+        quantity,
+      },
+    },
+    cw20: {},
+    api: {},
+    nativeToken: {},
+    roleId: "961650118942158849",
+  };
+
   const cw20Rule: GuildRule = {
     version: "1.0",
     nft: {},
@@ -93,6 +123,8 @@ const initDatabase = async () => {
 
   guildConfig.rules.push(apiRule);
   guildConfig.rules.push(nftRule);
+  guildConfig.rules.push(nftRuleGP);
+  guildConfig.rules.push(stakedNftRuleGP);
   guildConfig.rules.push(cw20Rule);
 
   const guildBatch = db.batch();
