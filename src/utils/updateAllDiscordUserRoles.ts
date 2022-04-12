@@ -27,18 +27,30 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
     (p, userDoc, index) =>
       p
         .then(() => {
-          console.log(`Cronjob status: ${index} / ${numUsers}`);
+          console.log(
+            `Cronjob status: ${index} / ${numUsers}. ID: ${
+              userDoc.id
+            }. Wallet: ${(userDoc.data() as User).wallet}`
+          );
           // update the user's discord roles
           return this.coldUpdateDiscordRolesForUser(
             userDoc.id,
             userDoc,
             guildConfigsSnapshot
-          ).catch((error) => {
-            console.log(
-              `Failed to update roles for ${(userDoc.data() as User).wallet}`
-            );
-            console.error(error);
-          });
+          )
+            .then(() => {
+              console.log(
+                `Finished processing: ${index} / ${numUsers}. ID: ${
+                  userDoc.id
+                }. Wallet: ${(userDoc.data() as User).wallet}`
+              );
+            })
+            .catch((error) => {
+              console.log(
+                `Failed to update roles for ${(userDoc.data() as User).wallet}`
+              );
+              console.error(error);
+            });
         })
         .then(
           // delay for 5 seconds between processing each user
