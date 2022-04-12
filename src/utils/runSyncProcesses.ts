@@ -25,7 +25,7 @@ export async function runSyncProcesses(this: LunarAssistant) {
             .then(
               // delay for one second between processing each user
               () =>
-                new Promise((resolve) => setTimeout(() => resolve(null), 1000))
+                new Promise((resolve) => setTimeout(() => resolve(null), 3000))
             ),
         new Promise((resolve) => resolve(null))
       );
