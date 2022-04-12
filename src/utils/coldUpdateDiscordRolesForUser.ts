@@ -117,7 +117,7 @@ export const getActiveInactiveRoleIds = async (
     // Get the guild from the discord client
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
     if (!guild) return;
-    const guildId = guild.id;
+    const guildId = guildConfigDoc.id;
 
     // Get the member from the guild
     let member: GuildMember;
@@ -224,7 +224,7 @@ export const getActiveInactiveRoleIdsForGuildConfigDoc = async (
     // Get the guild from the discord client
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
     if (!guild) return;
-    const guildId = guild.id;
+    const guildId = guildConfigDoc.id;
 
     // Get the member from the guild
     let member: GuildMember;
@@ -332,15 +332,19 @@ export const propogateRoleUpdates = async (
     persistedRoles[guildId] = [];
     removedRoles[guildId] = [];
 
-    updateAddedPersistedRemovedRoles(
-      guildId,
-      member,
-      activeRoles,
-      inactiveRoles,
-      addedRoles,
-      persistedRoles,
-      removedRoles
-    );
+    try {
+      updateAddedPersistedRemovedRoles(
+        guildId,
+        member,
+        activeRoles,
+        inactiveRoles,
+        addedRoles,
+        persistedRoles,
+        removedRoles
+      );
+    } catch (e) {
+      console.log(guildConfigDoc.id, guild.id, activeRoles);
+    }
 
     if (addedRoles[guildId].length > 0) {
       try {
