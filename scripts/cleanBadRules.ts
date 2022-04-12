@@ -4,6 +4,7 @@ import { FIREBASE_ADMIN_SERVICE_ACCOUNT } from "../config.json";
 import { CW20Rule, GuildConfig, NFTRule } from "../src/shared/firestoreTypes";
 import {
   guildRuleToSimpleRule,
+  isCW20Rule,
   isNFTRule,
 } from "../src/utils/guildRuleHelpers";
 
@@ -72,7 +73,7 @@ const cleanBadRules = async () => {
           } else {
             return true;
           }
-        } else {
+        } else if (isCW20Rule(simpleRule)) {
           let cw20Rule = simpleRule as CW20Rule;
           if (badCW20Contracts.includes(cw20Rule.cw20Address)) {
             deleted.push(guildRule);
