@@ -8,7 +8,11 @@ import {
   getRelevantContractAddresses,
 } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
-import { guildRoleDictToGuildRoleNameDict, uniqueRoleFilter } from "./helper";
+import {
+  guildRoleDictToGuildRoleNameDict,
+  sequentialAsyncMap,
+  uniqueRoleFilter,
+} from "./helper";
 import { updateAddedPersistedRemovedRoles } from "./updateActiveRemovedRoles";
 
 export async function coldUpdateDiscordRolesForUser(
@@ -172,12 +176,17 @@ export const getActiveInactiveRoleIds = async (
       .filter((x) => !activeRoles[guildId].some((i) => i.id == x.id));
   };
 
-  // Process all guild configs
-  await Promise.all(
-    guildConfigsSnapshot.docs.map(
-      updateActivePersistedRemovedRolesForGuildConfigDoc
-    )
+  await sequentialAsyncMap(
+    guildConfigsSnapshot.docs,
+    updateActivePersistedRemovedRolesForGuildConfigDoc
   );
+
+  // // Process all guild configs
+  // await Promise.all(
+  //   guildConfigsSnapshot.docs.map(
+  //     updateActivePersistedRemovedRolesForGuildConfigDoc
+  //   )
+  // );
 
   // Return role states
   return {
@@ -336,7 +345,14 @@ export const propogateRoleUpdates = async (
     if (addedRoles[guildId].length > 0) {
       try {
         member = await member.roles.add(addedRoles[guildId]);
-        console.log("Roles added for userId: " + userID + " guildId: " + guildId + " roles: " + addedRoles[guildId]);
+        console.log(
+          "Roles added for userId: " +
+            userID +
+            " guildId: " +
+            guildId +
+            " roles: " +
+            addedRoles[guildId]
+        );
       } catch (e) {
         console.error(
           "Couldn't add role, probably because of role hierarchy.",
@@ -349,7 +365,14 @@ export const propogateRoleUpdates = async (
     if (removedRoles[guildId].length > 0) {
       try {
         member = await member.roles.remove(removedRoles[guildId]);
-        console.log("Roles removed for userId: " + userID + " guildId: " + guildId + " roles: " + removedRoles[guildId]);
+        console.log(
+          "Roles removed for userId: " +
+            userID +
+            " guildId: " +
+            guildId +
+            " roles: " +
+            removedRoles[guildId]
+        );
       } catch (e) {
         console.error(
           "Couldn't remove role, probably because of role hierarchy.",
@@ -360,10 +383,15 @@ export const propogateRoleUpdates = async (
     }
   };
 
-  // Propogate role updates for all guild config docs
-  await Promise.all(
-    guildConfigsSnapshot.docs.map(propogateRoleUpdatesForGuildConfigDoc)
+  await sequentialAsyncMap(
+    guildConfigsSnapshot.docs,
+    propogateRoleUpdatesForGuildConfigDoc
   );
+
+  // // Propogate role updates for all guild config docs
+  // await Promise.all(
+  //   guildConfigsSnapshot.docs.map(propogateRoleUpdatesForGuildConfigDoc)
+  // );
 
   // Return the list of the users active roles and removed roles
   return {
@@ -425,7 +453,14 @@ export const propogateRoleUpdatesForGuildConfigDoc = async (
     if (addedRoles[guildId].length > 0) {
       try {
         member = await member.roles.add(addedRoles[guildId]);
-        console.log("Roles added for userId: " + userID + " guildId: " + guildId + " roles: " + addedRoles[guildId]);
+        console.log(
+          "Roles added for userId: " +
+            userID +
+            " guildId: " +
+            guildId +
+            " roles: " +
+            addedRoles[guildId]
+        );
       } catch (e) {
         console.error(
           "Couldn't add role, probably because of role hierarchy.",
@@ -438,7 +473,14 @@ export const propogateRoleUpdatesForGuildConfigDoc = async (
     if (removedRoles[guildId].length > 0) {
       try {
         member = await member.roles.remove(removedRoles[guildId]);
-        console.log("Roles removed for userId: " + userID + " guildId: " + guildId + " roles: " + removedRoles[guildId]);
+        console.log(
+          "Roles removed for userId: " +
+            userID +
+            " guildId: " +
+            guildId +
+            " roles: " +
+            removedRoles[guildId]
+        );
       } catch (e) {
         console.error(
           "Couldn't remove role, probably because of role hierarchy.",
