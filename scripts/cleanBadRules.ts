@@ -22,30 +22,25 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 const badNFTContracts = [
-  "terra1f7w2ry82nf2cmtgpksyeu020z6tpfgmmcpm0u3",
-  "terra1gel4vett3uety4xzr5dv4dzewup7knc6h3jmqu",
-  "terra1tven5ck3advmrzesy9d472chacvk7rmhv6c8jk",
-  "terra1tvcsk8udh4ef6qk9u6j8hfu47ptep0acpnyf94",
-  "61f4809bb123364b12d1865",
-  "terra1su3tlqcwa09y4800mpwktddmzl0yyqgf4wfg7p",
-  "terra1amrl8f5fqen2m478nuh2z7mz5ce096x4xqae9p",
-  "61cebf56ed955e48db17ad59",
-  "terra1uvy3sjdkxyzp2ypuvr3eqh0kpf2ztxecy9xh74",
-  "terra18n2pc9x6q9str9dz8sqpt7ulz5telutclkzaec",
-  "terra19wka0vfl493ajupk6dm0g8hsa0nfls0m4vq7zw",
-  "61cebf4ced955e48db1792f1",
+  "$fp terra1x8m8vju636xh7026dehq6g7ye66tn0yu4c7mq8",
+  "Terra1fuq5622pn2hwx3h6k2ucc06sthsvuvx5rvlkgq",
+  "terra1jml7selud3pmf7s4n0r4kv29jparztavx7upy0",
+  "terra1phx36yxnv6muf7frdreq8f85a4tyw4qzpc8ntf",
+  "rthrtxhrth",
+  "terra12w0u3jx702yc50zw0kuafg3fgxkv2h8cggryx0",
+  "terra1my4sy2gt5suu9fgt8wdkm7ywrd5jzg86692as2 role",
+  "terra1uv9w7aaq6lu2kn0asnvknlcgg2xd5ts57ss7qt_587",
+  "terra1uv9w7aaq6lu2kn0asnvknlcgg2xd5ts57ss7qt?traitFilters%5Bhat%5D=Luna%20Cap",
+  "terra1wktqmfd985n4y8us0wcmzhqygt629axrw9j4h4_96611878353654335916476848156990593173",
+  "terra15cm8n2uuxea4gkeqsnhr40kzh7z0v9wzmqfkjk",
+  "terra15ffta7sxkw2485d5nn07cjuga92wmx7avewc06",
+  "/terra1y076t8yrj0t4ag969w92ez9qfdj0c6dn7xhmkq",
+  "terra19v9hc9h4dusychswnffs8drhx0sjhhpcfmpmp8",
+  "terra12cfad5nyv78asc22h7nsddvm3krel9xdszwlrl",
 ];
 
 const badCW20Contracts = [
-  "terra1flwpxxfl8ldxhdgzxkwet2r37c45hutapgjwkg",
-  "terra10f6n78sx84937kcqrthf2gkfxgfjgmxpqrlug7",
-  "terra15ym9575des8tgut34enalls6h9m52hjpsw5vxe",
-  "terra1ggv86dkuzmky7ww20s2uvm6pl2jvl9mv0z6zyt",
-  "terra1y076t8yrj0t4ag969w92ez9qfdj0c6dn7xhmkq",
-  "terra1su3tlqcwa09y4800mpwktddmzl0yyqgf4wfg7p",
-  "terra1xv0as2esvwqcuaqtdhvrdhykrfe75qw42tgh6f",
-  "terra1hs0l9uhmwjyttvhrqnwrvx8qnj8xvtmfuklscl",
-  "terra18n2pc9x6q9str9dz8sqpt7ulz5telutclkzaec",
+  "placeholder",
 ];
 
 const cleanBadRules = async () => {
@@ -81,6 +76,8 @@ const cleanBadRules = async () => {
           } else {
             return true;
           }
+        } else { //dont touch api + staked contract rules + future rules
+          return true;
         }
       } catch (err) {
         console.log("ERROR reading rule");
@@ -95,6 +92,10 @@ const cleanBadRules = async () => {
         deleted: deleted.map(guildRuleToSimpleRule),
         new: newRules.map(guildRuleToSimpleRule),
       });
+      console.log("Number of old rules: " + guildConfig.rules.length);
+      console.log("Number of remaining rules: " + newRules.length);
+      console.log("Number of expected rules to delete (unless duplicate rules): " + badNFTContracts.length);
+      console.log("Number of deleted rules: " + deleted.length);
     }
 
     guildConfig.rules = newRules;
