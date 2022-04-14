@@ -54,12 +54,10 @@ export const getRelevantContractAddressesForUserID = (
   const contractAddressesSets = guildConfigsSnapshot.docs.reduce(
     (acc, guildConfigDoc) => {
       const server = lunar.client.guilds.cache.get(guildConfigDoc.id);
+      const member = server?.members.cache.find((member) => member.user.id == userID);
+
       //only fetch contract addresses for which the user is a member of
-      if(server && 
-          server.members.cache.find(
-            (user) => user.id == userID
-          )
-        )
+      if(member)
       {
         const guildConfigContractAddresses =
           getContractAddressesRelevantToGuildConfig(
@@ -93,6 +91,7 @@ export const getRelevantContractAddressesForUserID = (
     cw20: Array.from(contractAddressesSets.cw20),
     stakedNFT: Array.from(contractAddressesSets.stakedNFT),
   };
+  console.log("userID: " + userID + " number of relevantNFTContractAddresses: " + contractAddresses.nft.length);
   return contractAddresses;
 };
 
