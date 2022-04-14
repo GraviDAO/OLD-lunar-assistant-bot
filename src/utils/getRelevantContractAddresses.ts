@@ -1,3 +1,4 @@
+import { LunarAssistant } from "../index";
 import {
   CW20Rule,
   GuildConfig,
@@ -43,6 +44,57 @@ export const getContractAddressesRelevantToGuildConfig = (
     },
     { nft: [], cw20: [], stakedNFT: [] }
   );
+
+// compute the relevant contract addresses across all guilds where userID is a member of
+export const getRelevantContractAddressesForUserID = (
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+  userID: string,
+  lunar: LunarAssistant,
+): ContractAddresses => {
+  const contractAddressesSets = guildConfigsSnapshot.docs.reduce(
+    (acc, guildConfigDoc) => {
+      const server = lunar.client.guilds.cache.get(guildConfigDoc.id);
+      //only fetch contract addresses for which the user is a member of
+      if(server && 
+          server.members.cache.find(
+            (user) => user.id == userID
+          )
+        )
+      {
+        const guildConfigContractAddresses =
+          getContractAddressesRelevantToGuildConfig(
+            guildConfigDoc.data() as GuildConfig
+          );
+
+        // add to the set of nft addresses
+        guildConfigContractAddresses.nft.forEach((address) =>
+          acc.nft.add(address)
+        );
+
+        // add to the set of cw20 addresses
+        guildConfigContractAddresses.cw20.forEach((address) =>
+          acc.cw20.add(address)
+        );
+
+        guildConfigContractAddresses.stakedNFT.forEach((address) =>
+          acc.stakedNFT.add(address)
+        );
+      }
+      return acc;
+    },
+    {
+      nft: new Set<string>(),
+      cw20: new Set<string>(),
+      stakedNFT: new Set<string>(),
+    }
+  );
+  const contractAddresses: ContractAddresses = {
+    nft: Array.from(contractAddressesSets.nft),
+    cw20: Array.from(contractAddressesSets.cw20),
+    stakedNFT: Array.from(contractAddressesSets.stakedNFT),
+  };
+  return contractAddresses;
+};
 
 // compute the relevant contract addresses across all guilds
 export const getRelevantContractAddresses = (

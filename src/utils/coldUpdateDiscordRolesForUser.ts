@@ -5,7 +5,7 @@ import { UpdateUserDiscordRolesResponse } from "../types";
 import { checkRulesQualifies } from "./checkRuleQualifies";
 import {
   getContractAddressesRelevantToGuildConfig,
-  getRelevantContractAddresses,
+  getRelevantContractAddressesForUserID,
 } from "./getRelevantContractAddresses";
 import { getWalletContents } from "./getWalletContents";
 import {
@@ -96,7 +96,7 @@ export const getActiveInactiveRoleIds = async (
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ) => {
   const relevantContractAddresses =
-    getRelevantContractAddresses(guildConfigsSnapshot);
+  getRelevantContractAddressesForUserID(guildConfigsSnapshot, userID, lunar);
 
   const userTokensCache = await getWalletContents(
     walletAddress,

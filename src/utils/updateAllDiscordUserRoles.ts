@@ -53,8 +53,8 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
             });
         })
         .then(
-          // delay for 5 seconds between processing each user
-          () => new Promise((resolve) => setTimeout(() => resolve(null), 5000))
+          // delay for 0.5 seconds between processing each user
+          () => new Promise((resolve) => setTimeout(() => resolve(null), 500))
         ),
     new Promise((resolve, reject) => resolve(null))
   );

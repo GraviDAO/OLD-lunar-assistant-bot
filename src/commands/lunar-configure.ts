@@ -161,7 +161,7 @@ export default {
 
     if (interaction.options.getSubcommand() === "add-nft-rule") {
       // configure the server settings
-      const nftAddress = interaction.options.getString("nft-address");
+      const nftAddress = interaction.options.getString("nft-address")?.toLowerCase();
       const role = interaction.options.getRole("role");
       const rawQuantity = interaction.options.getNumber("quantity");
       const rawTokenIds = interaction.options.getString("token-ids");
@@ -174,6 +174,15 @@ export default {
         });
         return;
       }
+
+      if(nftAddress.length != 44 || !nftAddress.startsWith("terra",0)) {
+        await interaction.reply({
+          content: "Invalid terra address",
+          ephemeral: true,
+        });
+        return;
+      }
+
 
       // verify that we can parse tokenIds
       let tokenIds;
@@ -253,7 +262,7 @@ export default {
       });
     } else if (interaction.options.getSubcommand() === "add-staked-nft-rule") {
       // configure the server settings
-      const nftAddress = interaction.options.getString("staked-nft-address");
+      const nftAddress = interaction.options.getString("staked-nft-address")?.toLowerCase();
       const role = interaction.options.getRole("role");
       const rawQuantity = interaction.options.getNumber("quantity");
       const rawTokenIds = interaction.options.getString("token-ids");
@@ -262,6 +271,14 @@ export default {
       if (!nftAddress || !role) {
         await interaction.reply({
           content: "Could not get nftAddress or role",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      if(nftAddress.length != 44 || !nftAddress.startsWith("terra",0)) {
+        await interaction.reply({
+          content: "Invalid terra address",
           ephemeral: true,
         });
         return;
@@ -345,7 +362,7 @@ export default {
       });
     } else if (interaction.options.getSubcommand() === "add-cw20-rule") {
       // configure the server settings
-      const cw20Address = interaction.options.getString("cw20-address");
+      const cw20Address = interaction.options.getString("cw20-address")?.toLowerCase();
       const role = interaction.options.getRole("role");
       const rawQuantity = interaction.options.getNumber("quantity");
 
@@ -353,6 +370,14 @@ export default {
       if (!cw20Address || !role) {
         await interaction.reply({
           content: "Could not get cw20Address or role",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      if(cw20Address.length != 44 || !cw20Address.startsWith("terra",0)) {
+        await interaction.reply({
+          content: "Invalid terra address",
           ephemeral: true,
         });
         return;
