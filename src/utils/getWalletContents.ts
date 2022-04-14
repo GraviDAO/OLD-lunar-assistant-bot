@@ -42,11 +42,6 @@ export const getWalletContents = async (
     },
   };
 
-  const configsDoc = await db.collection("root").doc("configs").get();
-  let configs: Configs = configsDoc.exists
-  ? (configsDoc.data() as Configs)
-  : { marketplaceContracts: [] };
-
   const unionIntoNftCache = (contractAddress: string, tokenIds: string[]) => {
     if (userTokensCache.nft[contractAddress]) {
       userTokensCache.nft[contractAddress] = {
@@ -89,7 +84,6 @@ export const getWalletContents = async (
         Object.entries(randomEarthUserTokens.nft).forEach(
           ([contractAddress, nftHoldingInfo]) => {
             unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-            configs.marketplaceContracts.push(contractAddress);
           });
         benchmarking.calls.re.end = Date.now();
         benchmarking.calls.re.diff =
@@ -108,7 +102,6 @@ export const getWalletContents = async (
         Object.entries(knowhereTokens.nft).forEach(
           ([contractAddress, nftHoldingInfo]) => {
             unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-            configs.marketplaceContracts.push(contractAddress);
           });
 
         benchmarking.calls.knowhere.end = Date.now();
@@ -127,7 +120,6 @@ export const getWalletContents = async (
         Object.entries(messierTokens.nft).forEach(
           ([contractAddress, nftHoldingInfo]) => {
             unionIntoNftCache(contractAddress, nftHoldingInfo.tokenIds)
-            configs.marketplaceContracts.push(contractAddress);
           });
 
         benchmarking.calls.messier.end = Date.now();
@@ -207,16 +199,6 @@ export const getWalletContents = async (
       Date.now() - start
     }`
   );
-
-  //update the list of contracts covered by marketplaces in the db
-  const newConfigs = {
-    marketplaceContracts: Array.from(
-      new Set([
-        ...configs.marketplaceContracts,
-      ])
-    )
-  };
-  await db.collection("root").doc("configs").set(newConfigs);
 
   console.log(benchmarking);
 
