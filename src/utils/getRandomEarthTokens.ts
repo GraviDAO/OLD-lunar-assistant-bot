@@ -66,6 +66,6 @@ export const getRandomEarthTokens = async (
       `https://randomearth.io/api/items?user_addr=${walletAddress}`
     );
 
-    throw new Error("Failed to request the randomearth api");
+    return { nft: {}, cw20: {}, stakedNFT: {} };
   }
 };

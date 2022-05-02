@@ -37,6 +37,6 @@ export const getKnowhereTokens = async (
       `https://prod-backend-mainnet.knowhere.art/sales/on-sell/${walletAddress}`
     );
 
-    throw new Error("Failed to request the knowhere api");
+    return { nft: {}, cw20: {}, stakedNFT: {} };
   }
 };
