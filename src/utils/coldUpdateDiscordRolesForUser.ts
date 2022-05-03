@@ -1,7 +1,8 @@
 import { GuildMember, Role } from "discord.js";
 import { LunarAssistant } from "../index";
 import { GuildConfig, User } from "../shared/firestoreTypes";
-import { UpdateUserDiscordRolesResponse } from "../types";
+import { UpdateUserDiscordRolesResponse,
+        ContractAddresses } from "../types";
 import { checkRulesQualifies } from "./checkRuleQualifies";
 import {
   getContractAddressesRelevantToGuildConfig,
@@ -95,13 +96,12 @@ export const getActiveInactiveRoleIds = async (
   walletAddress: string,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ) => {
-  const relevantContractAddresses =
-  getRelevantContractAddressesForUserID(guildConfigsSnapshot, userID, lunar);
+  const relevantContractAddresses : ContractAddresses =
+  await getRelevantContractAddressesForUserID(guildConfigsSnapshot, userID, lunar);
 
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses,
-    lunar.db
   );
 
   // Mapping from discord server id to a list of active role ids
@@ -208,7 +208,6 @@ export const getActiveInactiveRoleIdsForGuildConfigDoc = async (
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses,
-    lunar.db
   );
 
   // Mapping from discord server id to a list of active role ids

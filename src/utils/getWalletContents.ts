@@ -13,7 +13,6 @@ import {
 export const getWalletContents = async (
   walletAddress: string,
   contractAddresses: ContractAddresses,
-  db: FirebaseFirestore.Firestore,
 ): Promise<WalletContents> => {
   const userTokensCache: WalletContents = { nft: {}, cw20: {}, stakedNFT: {} };
 
