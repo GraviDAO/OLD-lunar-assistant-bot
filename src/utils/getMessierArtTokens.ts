@@ -55,6 +55,6 @@ export const getMessierArtTokens = async (
       `https://api.messier.art/api/user/${walletAddress}/nfts?page_no=${page}`
     );
 
-    return { nft: {}, cw20: {}, stakedNFT: {} };
+    throw new Error("Failed to request the Messier Art api");
   }
 };
