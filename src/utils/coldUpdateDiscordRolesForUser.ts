@@ -11,7 +11,6 @@ import {
 import { getWalletContents } from "./getWalletContents";
 import {
   guildRoleDictToGuildRoleNameDict,
-  sequentialAsyncMap,
   uniqueRoleFilter,
 } from "./helper";
 import { updateAddedPersistedRemovedRoles } from "./updateActiveRemovedRoles";
@@ -158,8 +157,10 @@ export const getActiveInactiveRoleIds = async (
 
       if (roleActive) {
         activeRoles[guildId].push(newRole);
+        //console.log("Pushing activeRole: " + newRole);
       } else {
         inactiveRoles[guildId].push(newRole);
+        //console.log("Pushing InactiveRole: " + newRole);
       }
     }
 
@@ -176,17 +177,11 @@ export const getActiveInactiveRoleIds = async (
       .filter((x) => !activeRoles[guildId].some((i) => i.id == x.id));
   };
 
-  await sequentialAsyncMap(
-    guildConfigsSnapshot.docs,
-    updateActivePersistedRemovedRolesForGuildConfigDoc
-  );
-
-  // // Process all guild configs
-  // await Promise.all(
-  //   guildConfigsSnapshot.docs.map(
-  //     updateActivePersistedRemovedRolesForGuildConfigDoc
-  //   )
-  // );
+  for(let index = 0; index < guildConfigsSnapshot.docs.length; index++)
+  {
+    const guildDoc = guildConfigsSnapshot.docs[index];
+    await updateActivePersistedRemovedRolesForGuildConfigDoc(guildDoc);
+  }
 
   // Return role states
   return {
@@ -386,15 +381,11 @@ export const propogateRoleUpdates = async (
     }
   };
 
-  await sequentialAsyncMap(
-    guildConfigsSnapshot.docs,
-    propogateRoleUpdatesForGuildConfigDoc
-  );
-
-  // // Propogate role updates for all guild config docs
-  // await Promise.all(
-  //   guildConfigsSnapshot.docs.map(propogateRoleUpdatesForGuildConfigDoc)
-  // );
+  for(let index = 0; index < guildConfigsSnapshot.docs.length; index++)
+  {
+    const guildDoc = guildConfigsSnapshot.docs[index];
+    await propogateRoleUpdatesForGuildConfigDoc(guildDoc);
+  }
 
   // Return the list of the users active roles and removed roles
   return {
