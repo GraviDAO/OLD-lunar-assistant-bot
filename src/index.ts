@@ -1,4 +1,5 @@
-import { Client, Intents } from "discord.js";
+import { Client, Guild, Intents } from "discord.js";
+import discordModals from "discord-modals";
 import { handle_interactions, run_sync_processes, token } from "../config.json";
 import db from "./services/admin";
 import { coldUpdateDiscordRolesForUser } from "./utils/coldUpdateDiscordRolesForUser";
@@ -6,10 +7,13 @@ import { connectObserver } from "./utils/connectObserver";
 import { handleNewBlock } from "./utils/handleNewBlock";
 import { handleNFTMoveEvent } from "./utils/handleNFTMoveEvent";
 import { interactionHandler } from "./utils/interactionHandler";
+import { modalHandler } from "./utils/modalHandler";
 import { registerCommands } from "./utils/registerCommands";
 import { runSyncProcesses } from "./utils/runSyncProcesses";
 import { updateAllDiscordUserRoles } from "./utils/updateAllDiscordUserRoles";
 import { updateDiscordRolesForUser } from "./utils/updateDiscordRolesForUser";
+import { setupPollTimeout } from "./utils/setupPollTimeout";
+import { GuildPolls, Poll } from "./shared/firestoreTypes";
 
 export class LunarAssistant {
   client: Client;
@@ -23,6 +27,7 @@ export class LunarAssistant {
   public handleNewBlock = handleNewBlock;
   public connectObserver = connectObserver;
   public interactionHandler = interactionHandler;
+  public modalHandler = modalHandler;
   public runSyncProcesses = runSyncProcesses;
 
   constructor() {
@@ -31,6 +36,8 @@ export class LunarAssistant {
 
     // save the db instance
     this.db = db;
+
+    discordModals(this.client);
   }
 
   async registerGuildCommands() {
@@ -42,6 +49,31 @@ export class LunarAssistant {
         console.error(`Couldn't register commands for ${guild.name}`);
         console.error(e);
       }
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  }
+
+  async startPollTimeouts(){
+    const guildPolls = await db
+      .collection("guildPolls")
+      .get()
+    
+    for (const guildPoll of guildPolls.docs) {
+      let guild: Guild;
+      const polls = ((guildPoll.data() as GuildPolls).polls ?? []).filter((p: Poll) => p.active);
+      try {
+        guild = this.client.guilds.cache.get(guildPoll.id) ?? await this.client.guilds.fetch(guildPoll.id);
+        if(!guild) continue;
+      } catch (e) {
+        continue;
+      }
+      try {
+        await setupPollTimeout(this, guild, polls);
+      } catch (e) {
+        console.error(`Couldn't create poll timeouts commands for ${guild.name}`);
+        console.error(e);
+      }
+      
       await new Promise((r) => setTimeout(r, 1000));
     }
   }
@@ -58,6 +90,8 @@ export class LunarAssistant {
       // Reregister guild commands for all servers
       this.registerGuildCommands();
 
+      this.startPollTimeouts();
+
       // only add listeners when not in maintenance mode
       if (runSyncProcesses) {
         this.runSyncProcesses();
@@ -73,6 +107,11 @@ export class LunarAssistant {
       // Handle slash command interactions
       this.client.on("interactionCreate", (interaction) =>
         this.interactionHandler(interaction)
+      );
+
+      // Handle modal interactions
+      this.client.on("modalSubmit", (interaction) =>
+        this.modalHandler(interaction)
       );
     }
 

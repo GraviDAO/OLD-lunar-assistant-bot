@@ -130,3 +130,33 @@ export interface OldGuildConfig {
 export interface Configs {
   marketplaceContracts: string[];
 }
+
+export interface Poll {
+  title: string;
+  description: string;
+  uuid: string;
+  creator: string;
+  active: boolean;
+  quorum: number;
+  endsAt: number;
+  votes: {
+    yes: string[];
+    no: string[];
+    abstain: string[];
+  }
+  results?: PollResults | null,
+  nftAddress: string;
+  messageId?: string;
+  channelId?: string;
+}
+
+export interface PollResults {
+  yes: number;
+  no: number;
+  abstain: number;
+  total: number;
+}
+
+export interface GuildPolls {
+  polls: Poll[];
+}

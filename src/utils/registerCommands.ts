@@ -4,6 +4,7 @@ import { Guild } from "discord.js";
 import path from "path";
 import { clientId, token } from "../../config.json";
 import { commandFiles } from "./commandFiles";
+import { contextMenuFiles } from "./contextMenuFiles";
 
 export const registerCommands = async (guild: Guild) => {
   // Check if an existing lunar commander role exists in the server
@@ -27,11 +28,17 @@ export const registerCommands = async (guild: Guild) => {
     return command.data.toJSON();
   });
 
+  const newContextMenus = contextMenuFiles.map((file) => {
+    const contextMenuFilePath = path.resolve(__dirname, `../contextMenus/${file}`);
+    const contextMenu = require(contextMenuFilePath).default;
+    return contextMenu.data.toJSON();
+  });  
+
   // register the commands
   const rest = new REST({ version: "9" }).setToken(token);
 
   await rest.put(Routes.applicationGuildCommands(clientId, guild.id) as any, {
-    body: newCommands,
+    body: newCommands.concat(newContextMenus),
   });
 
   console.log(`Successfully registered application commands for ${guild.name}`);
