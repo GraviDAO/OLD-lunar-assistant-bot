@@ -1,6 +1,6 @@
 import { GuildMember, Role } from "discord.js";
 import { LunarAssistant } from "../index";
-import { GuildConfig, User } from "../shared/firestoreTypes";
+import { GuildConfig, User, Whitelist } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse,
         ContractAddresses } from "../types";
 import { checkRulesQualifies } from "./checkRuleQualifies";
@@ -19,7 +19,8 @@ export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
   userID: string,
   userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
-  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+  whitelist: Whitelist,
 ): Promise<UpdateUserDiscordRolesResponse> {
   // Get the users wallet address
   const walletAddress = (userDoc.data() as User).wallet;
@@ -45,7 +46,8 @@ export async function coldUpdateDiscordRolesForUser(
     this,
     userID,
     walletAddress,
-    guildConfigsSnapshot
+    guildConfigsSnapshot,
+    whitelist,
   );
 
   benchmark.functions.getAddedPersistedRemovedRoleIds.end = Date.now();
@@ -93,7 +95,8 @@ export const getActiveInactiveRoleIds = async (
   lunar: LunarAssistant,
   userID: string,
   walletAddress: string,
-  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+  whitelist: Whitelist
 ) => {
   const relevantContractAddresses : ContractAddresses =
   await getRelevantContractAddressesForUserID(guildConfigsSnapshot, userID, lunar);
@@ -180,7 +183,12 @@ export const getActiveInactiveRoleIds = async (
   for(let index = 0; index < guildConfigsSnapshot.docs.length; index++)
   {
     const guildDoc = guildConfigsSnapshot.docs[index];
-    await updateActivePersistedRemovedRolesForGuildConfigDoc(guildDoc);
+    const whitelisted = whitelist.serverIds.find((id) => id == guildDoc.id)
+    
+    //if request did not come from observer || server is whitelisted then update
+    if(whitelist.serverIds.length == 0 || whitelisted) {
+      await updateActivePersistedRemovedRolesForGuildConfigDoc(guildDoc);
+    }
   }
 
   // Return role states
@@ -380,7 +388,7 @@ export const propogateRoleUpdates = async (
       }
     }
   };
-
+  
   for(let index = 0; index < guildConfigsSnapshot.docs.length; index++)
   {
     const guildDoc = guildConfigsSnapshot.docs[index];
