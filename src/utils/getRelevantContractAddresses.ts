@@ -62,6 +62,7 @@ export const getRelevantContractAddressesForUserID = async (
     const guild = lunar.client.guilds.cache.get(guildDoc.id)
     try{
       const member = await guild?.members.fetch(userID);
+      
       //only fetch contract addresses for which the user is a member of
       if(member)
       {
