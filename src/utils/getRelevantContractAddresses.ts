@@ -58,6 +58,7 @@ export const getRelevantContractAddressesForUserID = async (
   {
     const guildDoc = guildConfigsSnapshot.docs[index];
     //always use fetch for guildMembers but for guilds cache works fine.
+
     const guild = lunar.client.guilds.cache.get(guildDoc.id)
     try{
       const member = await guild?.members.fetch(userID);
