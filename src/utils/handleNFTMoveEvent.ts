@@ -1,10 +1,13 @@
 import { LunarAssistant } from "..";
+import { Whitelist } from "../shared/firestoreTypes";
 
 export async function handleNFTMoveEvent(
   this: LunarAssistant,
   res: any,
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ) {
+  const whitelist = (await this.db.collection("root").doc("whitelist").get()).data() as Whitelist;
+  
   // get the wallets involved in the event
   const updatedWallets =
     res.action === `mint`
@@ -31,10 +34,12 @@ export async function handleNFTMoveEvent(
         );
 
         const userDoc = usersRegisteredWithWallet.docs[0];
+        
         await this.coldUpdateDiscordRolesForUser(
           userDoc.id,
           userDoc,
-          guildConfigsSnapshot
+          guildConfigsSnapshot,
+          whitelist
         );
       }
     })

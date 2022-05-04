@@ -1,7 +1,8 @@
 import { GuildMember, Role } from "discord.js";
 import { LunarAssistant } from "../index";
-import { GuildConfig, User } from "../shared/firestoreTypes";
-import { UpdateUserDiscordRolesResponse } from "../types";
+import { GuildConfig, User, Whitelist } from "../shared/firestoreTypes";
+import { UpdateUserDiscordRolesResponse,
+        ContractAddresses } from "../types";
 import { checkRulesQualifies } from "./checkRuleQualifies";
 import {
   getContractAddressesRelevantToGuildConfig,
@@ -10,7 +11,6 @@ import {
 import { getWalletContents } from "./getWalletContents";
 import {
   guildRoleDictToGuildRoleNameDict,
-  sequentialAsyncMap,
   uniqueRoleFilter,
 } from "./helper";
 import { updateAddedPersistedRemovedRoles } from "./updateActiveRemovedRoles";
@@ -19,7 +19,8 @@ export async function coldUpdateDiscordRolesForUser(
   this: LunarAssistant,
   userID: string,
   userDoc: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>,
-  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+  whitelist: Whitelist,
 ): Promise<UpdateUserDiscordRolesResponse> {
   // Get the users wallet address
   const walletAddress = (userDoc.data() as User).wallet;
@@ -45,7 +46,8 @@ export async function coldUpdateDiscordRolesForUser(
     this,
     userID,
     walletAddress,
-    guildConfigsSnapshot
+    guildConfigsSnapshot,
+    whitelist,
   );
 
   benchmark.functions.getAddedPersistedRemovedRoleIds.end = Date.now();
@@ -93,15 +95,15 @@ export const getActiveInactiveRoleIds = async (
   lunar: LunarAssistant,
   userID: string,
   walletAddress: string,
-  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
+  guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+  whitelist: Whitelist
 ) => {
-  const relevantContractAddresses =
-  getRelevantContractAddressesForUserID(guildConfigsSnapshot, userID, lunar);
+  const relevantContractAddresses : ContractAddresses =
+  await getRelevantContractAddressesForUserID(guildConfigsSnapshot, userID, lunar);
 
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses,
-    lunar.db
   );
 
   // Mapping from discord server id to a list of active role ids
@@ -158,8 +160,10 @@ export const getActiveInactiveRoleIds = async (
 
       if (roleActive) {
         activeRoles[guildId].push(newRole);
+        //console.log("Pushing activeRole: " + newRole);
       } else {
         inactiveRoles[guildId].push(newRole);
+        //console.log("Pushing InactiveRole: " + newRole);
       }
     }
 
@@ -176,17 +180,16 @@ export const getActiveInactiveRoleIds = async (
       .filter((x) => !activeRoles[guildId].some((i) => i.id == x.id));
   };
 
-  await sequentialAsyncMap(
-    guildConfigsSnapshot.docs,
-    updateActivePersistedRemovedRolesForGuildConfigDoc
-  );
-
-  // // Process all guild configs
-  // await Promise.all(
-  //   guildConfigsSnapshot.docs.map(
-  //     updateActivePersistedRemovedRolesForGuildConfigDoc
-  //   )
-  // );
+  for(let index = 0; index < guildConfigsSnapshot.docs.length; index++)
+  {
+    const guildDoc = guildConfigsSnapshot.docs[index];
+    const whitelisted = whitelist.serverIds.find((id) => id == guildDoc.id)
+    
+    //if request did not come from observer || server is whitelisted then update
+    if(whitelist.serverIds.length == 0 || whitelisted) {
+      await updateActivePersistedRemovedRolesForGuildConfigDoc(guildDoc);
+    }
+  }
 
   // Return role states
   return {
@@ -208,7 +211,6 @@ export const getActiveInactiveRoleIdsForGuildConfigDoc = async (
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses,
-    lunar.db
   );
 
   // Mapping from discord server id to a list of active role ids
@@ -386,16 +388,12 @@ export const propogateRoleUpdates = async (
       }
     }
   };
-
-  await sequentialAsyncMap(
-    guildConfigsSnapshot.docs,
-    propogateRoleUpdatesForGuildConfigDoc
-  );
-
-  // // Propogate role updates for all guild config docs
-  // await Promise.all(
-  //   guildConfigsSnapshot.docs.map(propogateRoleUpdatesForGuildConfigDoc)
-  // );
+  
+  for(let index = 0; index < guildConfigsSnapshot.docs.length; index++)
+  {
+    const guildDoc = guildConfigsSnapshot.docs[index];
+    await propogateRoleUpdatesForGuildConfigDoc(guildDoc);
+  }
 
   // Return the list of the users active roles and removed roles
   return {

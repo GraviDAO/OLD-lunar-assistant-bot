@@ -53,5 +53,7 @@ export const registerCommands = async (guild: Guild) => {
   });
 
   // add the lunar command permission
-  await configureCommand!.permissions.add({ permissions });
+  // As of 2022-04-28 after discord update the bot can no longer give lunar-configure command permission to the lunar commander role
+    //await configureCommand!.permissions.add({ permissions });
+
 };

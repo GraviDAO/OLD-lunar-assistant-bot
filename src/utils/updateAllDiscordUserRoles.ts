@@ -36,7 +36,8 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
           return this.coldUpdateDiscordRolesForUser(
             userDoc.id,
             userDoc,
-            guildConfigsSnapshot
+            guildConfigsSnapshot,
+            {serverIds:[]},
           )
             .then(() => {
               console.log(

@@ -16,7 +16,6 @@ export const testGetActiveInactiveRoleIdsForGuildConfigDoc = async (
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses,
-    db
   );
 
   // Mapping from discord server id to a list of active role ids

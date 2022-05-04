@@ -96,6 +96,10 @@ export interface GuildConfig {
   rules: GuildRule[];
 }
 
+export interface Whitelist {
+  serverIds: string[];
+}
+
 export type OldGuildRule = {
   version: string;
   nft: {

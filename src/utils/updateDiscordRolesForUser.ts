@@ -1,4 +1,5 @@
 import { LunarAssistant } from "../index";
+import { Whitelist } from "../shared/firestoreTypes";
 import { UpdateUserDiscordRolesResponse } from "../types";
 import { UserDocMissingError } from "../types/errors";
 
@@ -20,9 +21,10 @@ export async function updateDiscordRolesForUser(
   if (guildConfigsSnapshot.empty)
     return { addedRoleNames: {}, persistedRoleNames: {}, removedRoleNames: {} };
 
-  return this.coldUpdateDiscordRolesForUser(
+    return this.coldUpdateDiscordRolesForUser(
     userID,
     userDoc,
-    guildConfigsSnapshot
+    guildConfigsSnapshot,
+    {serverIds:[]},
   );
 }

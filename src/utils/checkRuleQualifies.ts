@@ -40,7 +40,7 @@ export const checkRulesQualifies = async (
 
     // get the number of matching tokens
     const numMatchingTokens = (
-      nftRule.tokenIds != undefined
+      (nftRule.tokenIds != undefined && nftRule.tokenIds.length > 0)
         ? tokens.filter(
             (token) => nftRule.tokenIds && nftRule.tokenIds.includes(token)
           )
@@ -58,7 +58,7 @@ export const checkRulesQualifies = async (
 
     // get the number of matching tokens
     const numMatchingTokens = (
-      stakedNFTRule.tokenIds != undefined
+      (stakedNFTRule.tokenIds != undefined && stakedNFTRule.tokenIds.length > 0)
         ? tokens.filter(
             (token) =>
               stakedNFTRule.tokenIds && stakedNFTRule.tokenIds.includes(token)
