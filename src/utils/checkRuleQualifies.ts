@@ -91,6 +91,6 @@ export const checkRulesQualifies = async (
   } else {
     console.error("DO NOT ENTER. Rule type didn't match. checkRuleQualifies");
   }
-  console.log("checkRulesQualifies Rule: " + JSON.stringify(rule) + " ruleQualifies: " + ruleQualifies);
+  //console.log("checkRulesQualifies Rule: " + JSON.stringify(rule) + " ruleQualifies: " + ruleQualifies);
   return ruleQualifies;
 };
