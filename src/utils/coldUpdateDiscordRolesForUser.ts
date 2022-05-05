@@ -345,7 +345,7 @@ export const propogateRoleUpdates = async (
         removedRoles
       );
     } catch (e) {
-      console.log(guildConfigDoc.id, guild.id, activeRoles);
+      console.log("exception in updateAddedPersistedRemovedRoles: " + e);
     }
 
     if (addedRoles[guildId].length > 0) {

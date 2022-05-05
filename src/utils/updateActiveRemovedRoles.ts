@@ -9,7 +9,7 @@ export const updateAddedPersistedRemovedRoles = (
   persistedRoles: { [guildId: string]: Role[] },
   removedRoles: { [guildId: string]: Role[] }
 ) => {
-  if(activeRoles != undefined) {
+  if(activeRoles[guildId] != undefined) {
     for (const newRole of activeRoles[guildId]) {
       const hasRole = // Check if member exists and has the role
         member.roles.cache.some((existingRole) => newRole.id === existingRole.id);
@@ -22,7 +22,7 @@ export const updateAddedPersistedRemovedRoles = (
     }
   }
 
-  if(inactiveRoles != undefined) {
+  if(inactiveRoles[guildId] != undefined) {
     for (const newRole of inactiveRoles[guildId]) {
       const hasRole = // Check if member exists and has the role
         member.roles.cache.some((existingRole) => newRole.id === existingRole.id);
