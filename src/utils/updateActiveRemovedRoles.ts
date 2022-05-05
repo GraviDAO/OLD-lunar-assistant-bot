@@ -9,23 +9,27 @@ export const updateAddedPersistedRemovedRoles = (
   persistedRoles: { [guildId: string]: Role[] },
   removedRoles: { [guildId: string]: Role[] }
 ) => {
-  for (const newRole of activeRoles[guildId]) {
-    const hasRole = // Check if member exists and has the role
-      member.roles.cache.some((existingRole) => newRole.id === existingRole.id);
+  if(activeRoles != undefined) {
+    for (const newRole of activeRoles[guildId]) {
+      const hasRole = // Check if member exists and has the role
+        member.roles.cache.some((existingRole) => newRole.id === existingRole.id);
 
-    if (hasRole) {
-      persistedRoles[guildId].push(newRole);
-    } else {
-      addedRoles[guildId].push(newRole);
+      if (hasRole) {
+        persistedRoles[guildId].push(newRole);
+      } else {
+        addedRoles[guildId].push(newRole);
+      }
     }
   }
 
-  for (const newRole of inactiveRoles[guildId]) {
-    const hasRole = // Check if member exists and has the role
-      member.roles.cache.some((existingRole) => newRole.id === existingRole.id);
+  if(inactiveRoles != undefined) {
+    for (const newRole of inactiveRoles[guildId]) {
+      const hasRole = // Check if member exists and has the role
+        member.roles.cache.some((existingRole) => newRole.id === existingRole.id);
 
-    if (hasRole) {
-      removedRoles[guildId].push(newRole);
+      if (hasRole) {
+        removedRoles[guildId].push(newRole);
+      }
     }
   }
 };
