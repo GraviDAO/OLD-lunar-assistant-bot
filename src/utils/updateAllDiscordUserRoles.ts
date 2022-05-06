@@ -26,6 +26,7 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant, startAtInd
 
   for(let index = startAtIndex; index < numUsers; index++)
   {
+    const startTime = Date.now();
     const userDoc = usersSnapshot.docs[index];
     console.log(
       `Cronjob status: ${index} / ${numUsers}. ID: ${
@@ -43,12 +44,12 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant, startAtInd
       console.log(
         `Finished processing: ${index} / ${numUsers}. ID: ${
           userDoc.id
-        }. Wallet: ${(userDoc.data() as User).wallet}`
+        }. Wallet: ${(userDoc.data() as User).wallet}. Processing Time: ${(Date.now()-startTime)}`
       );
     }
     catch(error) {
       console.log(
-        `Failed to update roles for ${(userDoc.data() as User).wallet}`
+        `Failed to update roles for ${(userDoc.data() as User).wallet}. Processing Time: ${(Date.now()-startTime)}`
       );
       console.error(error);
     };
