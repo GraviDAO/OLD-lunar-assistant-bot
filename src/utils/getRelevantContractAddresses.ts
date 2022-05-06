@@ -1,3 +1,4 @@
+import { GuildMember } from "discord.js";
 import { LunarAssistant } from "../index";
 import {
   CW20Rule,
@@ -60,37 +61,40 @@ export const getRelevantContractAddressesForUserID = async (
     //always use fetch for guildMembers but for guilds cache works fine.
 
     const guild = lunar.client.guilds.cache.get(guildDoc.id)
-    try{
-      const member = await guild?.members.fetch(userID);
 
-      //only fetch contract addresses for which the user is a member of
-      if(member)
-      {
-        const guildConfig = guildDoc.data() as GuildConfig;
-        //console.log("Member of guildId: " + guildDoc.id + " with " + guildConfig.rules.length + " rules");
-        const guildConfigContractAddresses =
-          getContractAddressesRelevantToGuildConfig(
-            guildDoc.data() as GuildConfig
-          );
-
-        // add to the set of nft addresses
-        guildConfigContractAddresses.nft.forEach((address) =>
-          nft.add(address)
-        );
-
-        // add to the set of cw20 addresses
-        guildConfigContractAddresses.cw20.forEach((address) =>
-          cw20.add(address)
-        );
-
-        guildConfigContractAddresses.stakedNFT.forEach((address) =>
-          stakedNFT.add(address)
-        );
-      }
+    if (!guild) continue;
+    
+    //const member = await guild?.members.fetch(userID);
+    // Get the member from the guild
+    let member: GuildMember;
+    try {
+      member = await guild.members.fetch(userID);
+      if (!member) continue;
+    } catch (e) {
+      // Member doesn't exist in guild
+      continue;
     }
-    catch(err){
-      //do nothing
-    }
+    
+    const guildConfig = guildDoc.data() as GuildConfig;
+    console.log("UserID: " + userID + " of guildId: " + guildDoc.id + " with " + guildConfig.rules.length + " rules");
+    const guildConfigContractAddresses =
+      getContractAddressesRelevantToGuildConfig(
+        guildDoc.data() as GuildConfig
+      );
+
+    // add to the set of nft addresses
+    guildConfigContractAddresses.nft.forEach((address) =>
+      nft.add(address)
+    );
+
+    // add to the set of cw20 addresses
+    guildConfigContractAddresses.cw20.forEach((address) =>
+      cw20.add(address)
+    );
+
+    guildConfigContractAddresses.stakedNFT.forEach((address) =>
+      stakedNFT.add(address)
+    );
   }
   const contractAddresses: ContractAddresses = {
     nft: Array.from(nft),

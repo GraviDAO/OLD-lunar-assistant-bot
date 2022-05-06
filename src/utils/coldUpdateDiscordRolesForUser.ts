@@ -98,9 +98,10 @@ export const getActiveInactiveRoleIds = async (
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
   whitelist: Whitelist
 ) => {
+  let start = Date.now();
   const relevantContractAddresses : ContractAddresses =
   await getRelevantContractAddressesForUserID(guildConfigsSnapshot, userID, lunar);
-
+  console.log("after getRelevantContractAddressesForUserID: " + (Date.now()-start));
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses,
@@ -115,6 +116,7 @@ export const getActiveInactiveRoleIds = async (
   const updateActivePersistedRemovedRolesForGuildConfigDoc = async (
     guildConfigDoc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>
   ) => {
+    start = Date.now();
     // If lunar is null than we want to query across all guilds
     // Get the guild from the discord client
     const guild = lunar.client.guilds.cache.get(guildConfigDoc.id);
@@ -126,18 +128,19 @@ export const getActiveInactiveRoleIds = async (
 
     try {
       member = await guild.members.fetch(userID);
+      console.log("after member fetch: " + (Date.now()-start));
       if (!member) return;
     } catch (e) {
       // Member doesn't exist in guild
       return;
     }
-
+    
     activeRoles[guildId] = [];
     inactiveRoles[guildId] = [];
 
     // Get the guild rules
     const guildRules = (guildConfigDoc.data() as GuildConfig).rules;
-
+    console.log("before looping guildRules: " + (Date.now()-start));
     // Iterate over the guild rules
     for (const guildRule of guildRules) {
       // Get the role corresponding to the guildRule
@@ -166,7 +169,7 @@ export const getActiveInactiveRoleIds = async (
         //console.log("Pushing InactiveRole: " + newRole);
       }
     }
-
+    console.log("after looping guildRules: " + (Date.now()-start));
     // Get unique active role ids
     activeRoles[guildId] = activeRoles[guildId].reduce(
       uniqueRoleFilter,
@@ -178,18 +181,22 @@ export const getActiveInactiveRoleIds = async (
     inactiveRoles[guildId] = inactiveRoles[guildId]
       .reduce(uniqueRoleFilter, [] as Role[])
       .filter((x) => !activeRoles[guildId].some((i) => i.id == x.id));
+      console.log("finished 1 guildDoc " + (Date.now()-start));
   };
-
+  
+  start = Date.now();
   for(let index = 0; index < guildConfigsSnapshot.docs.length; index++)
   {
     const guildDoc = guildConfigsSnapshot.docs[index];
     const whitelisted = whitelist.serverIds.find((id) => id == guildDoc.id)
     
     //if request did not come from observer || server is whitelisted then update
-    if(whitelist.serverIds.length == 0 || whitelisted) {
+    if(whitelist.serverIds.length == 0 || whitelisted != undefined) {
       await updateActivePersistedRemovedRolesForGuildConfigDoc(guildDoc);
     }
   }
+  const end = Date.now();
+  console.log("whitelist check takes: " + (end-start));
 
   // Return role states
   return {
@@ -230,7 +237,7 @@ export const getActiveInactiveRoleIdsForGuildConfigDoc = async (
 
     // Get the member from the guild
     let member: GuildMember;
-
+    
     try {
       member = await guild.members.fetch(userID);
       if (!member) return;

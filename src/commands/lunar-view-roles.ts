@@ -89,12 +89,12 @@ const lunarVerify = {
           )
           .join("\n");
 
-        const message = `Hello ser! You have been granted the following roles on this discord server:\n\n${activeRolesMessage}\n\n!!! Token-weighted voting coming soon !!!\n-- If you like Lunar Assistant and want to gift our community free NFTs or WL-spots, please contact @GraviCats on Twitter --`;
+        const message = `Hello ser! You have been granted the following roles on this discord server:\n\n${activeRolesMessage}\n\nBuilt by GraviDAO`;
 
         if (message.length > 2000) {
           await interaction.editReply({
             content:
-              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats!\n\n!!! Token-weighted voting coming soon !!!\n-- If you like Lunar Assistant and want to gift our community free NFTs or WL-spots, please contact @GraviCats on Twitter --",
+              "Hello ser! Your granted roles are attached. They are sent as a file instead of a message because you have so many roles that they can't fit into a single message, congrats!\n\nBuilt by GraviDAO",
             files: [
               new MessageAttachment(Buffer.from(message), `your-roles.txt`),
             ],
@@ -145,7 +145,7 @@ const lunarVerify = {
         }
       } else {
         await interaction.editReply({
-          content: `You have not been granted any roles on this discord server.\n\n!!! Token-weighted voting coming soon !!!\n-- If you like Lunar Assistant and want to gift our community free NFTs or WL-spots, please contact @GraviCats on Twitter --`,
+          content: `You have not been granted any roles on this discord server.\n\nBuilt by GraviDAO`,
         });
       }
     } catch (e) {

@@ -3,7 +3,7 @@ import { LunarAssistant } from "..";
 
 export async function runSyncProcesses(this: LunarAssistant) {
   // cronjob to update discord roles once a day
-  cron.schedule("0 0 * * *", () => this.updateAllDiscordUserRoles());
+  cron.schedule("1 9 * * *", () => this.updateAllDiscordUserRoles(0));
 
   // only start triggering updates after the initial snapshot
   let initialSnapshot = true;
@@ -35,5 +35,5 @@ export async function runSyncProcesses(this: LunarAssistant) {
   });
 
   // listen to nft transfer events
-  this.connectObserver();
+  //this.connectObserver();
 }

@@ -1,7 +1,8 @@
+import { Int } from "@terra-money/terra.js";
 import { LunarAssistant } from "..";
 import { User } from "../shared/firestoreTypes";
 
-export async function updateAllDiscordUserRoles(this: LunarAssistant) {
+export async function updateAllDiscordUserRoles(this: LunarAssistant, startAtIndex: number) {
   // read all users from firestore
   // read all serverConfigs from firestore
   // for each user in users (in memory)
@@ -23,12 +24,41 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
 
   const numUsers = usersSnapshot.docs.length;
 
-  await usersSnapshot.docs.reduce(
-    (p, userDoc, index) =>
+  for(let index = startAtIndex; index < numUsers; index++)
+  {
+    const userDoc = usersSnapshot.docs[index];
+    console.log(
+      `Cronjob status: ${index} / ${numUsers}. ID: ${
+        userDoc.id
+      }. Wallet: ${(userDoc.data() as User).wallet}`
+    );
+    try{
+      // update the user's discord roles
+      await this.coldUpdateDiscordRolesForUser(
+        userDoc.id,
+        userDoc,
+        guildConfigsSnapshot,
+        {serverIds:[]},
+      );
+      console.log(
+        `Finished processing: ${index} / ${numUsers}. ID: ${
+          userDoc.id
+        }. Wallet: ${(userDoc.data() as User).wallet}`
+      );
+    }
+    catch(error) {
+      console.log(
+        `Failed to update roles for ${(userDoc.data() as User).wallet}`
+      );
+      console.error(error);
+    };
+  }
+  /*await usersSnapshot.docs.reduce(
+    (p, userDoc, startAtIndex) =>
       p
         .then(() => {
           console.log(
-            `Cronjob status: ${index} / ${numUsers}. ID: ${
+            `Cronjob status: ${startAtIndex} / ${numUsers}. ID: ${
               userDoc.id
             }. Wallet: ${(userDoc.data() as User).wallet}`
           );
@@ -41,7 +71,7 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
           )
             .then(() => {
               console.log(
-                `Finished processing: ${index} / ${numUsers}. ID: ${
+                `Finished processing: ${startAtIndex} / ${numUsers}. ID: ${
                   userDoc.id
                 }. Wallet: ${(userDoc.data() as User).wallet}`
               );
@@ -58,7 +88,7 @@ export async function updateAllDiscordUserRoles(this: LunarAssistant) {
           () => new Promise((resolve) => setTimeout(() => resolve(null), 500))
         ),
     new Promise((resolve, reject) => resolve(null))
-  );
+  );*/
 
   const endTime = Date.now();
 
