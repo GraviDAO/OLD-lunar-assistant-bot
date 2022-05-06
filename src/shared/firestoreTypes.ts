@@ -141,7 +141,7 @@ export interface Poll {
     abstain: string[];
   }
   results?: PollResults | null,
-  nftAddress: string;
+  contractAddress: string;
   messageId?: string;
   channelId?: string;
 }

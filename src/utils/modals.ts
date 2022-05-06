@@ -31,10 +31,10 @@ export function pollCreateModal(){
         style: 'LONG',
     })).addComponents(new TextInputComponent({
         customId: 'quorum',
-        label: 'Quorum (0-100)',
+        label: 'Quorum (Number of votes needed)',
         minLength: 0,
         maxLength: 4000,
-        placeholder: 'e.g.: 40 for 40%',
+        placeholder: 'e.g.: 40',
         required: false,
         style: 'SHORT',
     })).addComponents(new TextInputComponent({

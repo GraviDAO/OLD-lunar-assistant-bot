@@ -21,10 +21,8 @@ export const archivePoll = async (
   : { polls: [] };
 
   const p = guildPolls.polls.find((p: Poll) => p.uuid === poll.uuid );
-  if (!p) return;
-
-  if (!poll.results) poll.results = await calculatePollResults(lunarAssistant, poll);
-
+  if (!p) return;  
+  if (!p.results) p.results = await calculatePollResults(lunarAssistant, p);
 
   console.log(`Archiving poll: ${poll.uuid}`)
   await message.edit({ components: [ castPollVoteButtons(false) ] });
@@ -36,7 +34,7 @@ export const archivePoll = async (
     }
   }
   try {
-    await message.reply({ embeds: [ pollResultsEmbed(poll) ] });
+    await message.reply({ embeds: [ pollResultsEmbed(p) ] });
   } catch (error) {
     console.log(error);
     

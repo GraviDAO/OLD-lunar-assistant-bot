@@ -1,6 +1,7 @@
 import { User } from "../shared/firestoreTypes";
 
 import { getWalletContents } from "./getWalletContents";
+import { countVotes } from "./countVotes";
 
 export const getValidVotes = async (
   userId: string,
@@ -22,10 +23,10 @@ export const getValidVotes = async (
     const walletAddress = (userDoc.data() as User).wallet;
 
     // Get the users wallet content
-    const walletContents = await getWalletContents(walletAddress, { nft: [nftAddress], cw20: [], stakedNFT: [nftAddress] }, db);
+    const walletContents = await getWalletContents(walletAddress, { nft: [nftAddress], cw20: [nftAddress], stakedNFT: [nftAddress] }, db);
 
     // Calculate how many votes the user has access to
-    return (walletContents.nft[nftAddress]?.tokenIds?.length ?? 0) + (walletContents.stakedNFT[nftAddress]?.tokenIds?.length ?? 0);
+    return countVotes(walletContents, nftAddress);
   } catch (e) {
     return 0;;
   }

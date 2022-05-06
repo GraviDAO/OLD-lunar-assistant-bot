@@ -11,7 +11,6 @@ export default {
         lunarAssistant: LunarAssistant,
         interaction: ButtonInteraction
     ) => {
-      const uuid = interaction.message.embeds.length > 0 ? interaction.message.embeds[0].footer?.text ?? undefined : undefined;
       const vote = interaction.customId.split(".")[1];
       let validVotes: number | undefined;
 
@@ -23,8 +22,8 @@ export default {
       const guildPolls: GuildPolls = guildPollsDoc.exists
       ? (guildPollsDoc.data() as GuildPolls)
       : { polls: [] };
-      
-      const poll = guildPolls.polls.find((p: Poll) => p.uuid === uuid );
+
+      const poll = guildPolls.polls.find((p: Poll) => p.messageId === interaction.message.id );
 
       if (!poll) {
           await interaction.deferUpdate()
@@ -36,9 +35,11 @@ export default {
           return;
       }
 
+      await interaction.deferReply({ ephemeral: true });
+
       if (vote === "yes") {
           if (poll.votes.yes.includes(interaction.user.id)) {
-              await interaction.reply({ embeds: [ primaryEmbed(undefined, "You already casted your vote as **Yes**") ], ephemeral: true });
+              await interaction.editReply({ embeds: [ primaryEmbed(undefined, "You already casted your vote as **Yes**") ] });
               return;
           }
 
@@ -59,13 +60,13 @@ export default {
             .doc(interaction.guildId!)
             .set(guildPolls)
             
-          validVotes = await getValidVotes(interaction.user.id, poll.nftAddress, db);
+          validVotes = await getValidVotes(interaction.user.id, poll.contractAddress, db);
 
-          await interaction.reply({ embeds: [ primaryEmbed(undefined, `${update ? "Changed your vote to **Yes**" : "You have casted your vote as **Yes**"}${validVotes === undefined ? "" : `\nYour vote is worth **${validVotes}** points.` }`) ], ephemeral: true });
+          await interaction.editReply({ embeds: [ primaryEmbed(undefined, `${update ? "Changed your vote to **Yes**" : "You have casted your vote as **Yes**"}${validVotes === undefined ? "" : `\nYour vote is worth **${validVotes}** points.` }`) ] });
 
         } else if (vote === "no") {
           if (poll.votes.no.includes(interaction.user.id)) {
-              await interaction.reply({ embeds: [ primaryEmbed(undefined, "You already casted your vote as **No**") ], ephemeral: true });
+              await interaction.editReply({ embeds: [ primaryEmbed(undefined, "You already casted your vote as **No**") ] });
               return;
           }
           let update = false;
@@ -85,13 +86,13 @@ export default {
             .doc(interaction.guildId!)
             .set(guildPolls)
             
-          validVotes = await getValidVotes(interaction.user.id, poll.nftAddress, db);
+          validVotes = await getValidVotes(interaction.user.id, poll.contractAddress, db);
 
-          await interaction.reply({ embeds: [ primaryEmbed(undefined, `${update ? "Changed your vote to **No**" : "You have casted your vote as **No**"}${validVotes === undefined ? "" : `\nYour vote is worth **${validVotes}** points.` }`) ], ephemeral: true });
+          await interaction.editReply({ embeds: [ primaryEmbed(undefined, `${update ? "Changed your vote to **No**" : "You have casted your vote as **No**"}${validVotes === undefined ? "" : `\nYour vote is worth **${validVotes}** points.` }`) ] });
 
         } else if (vote === "abstain") {
           if (poll.votes.abstain.includes(interaction.user.id)) {
-              await interaction.reply({ embeds: [ primaryEmbed(undefined, "You already casted your vote as **Abstain**") ], ephemeral: true });
+              await interaction.editReply({ embeds: [ primaryEmbed(undefined, "You already casted your vote as **Abstain**") ] });
               return;
           }
           let update = false;
@@ -111,12 +112,12 @@ export default {
             .doc(interaction.guildId!)
             .set(guildPolls)
             
-          validVotes = await getValidVotes(interaction.user.id, poll.nftAddress, db);
+          validVotes = await getValidVotes(interaction.user.id, poll.contractAddress, db);
 
-          await interaction.reply({ embeds: [ primaryEmbed(undefined, `${update ? "Changed your vote to **Abstain**" : "You have casted your vote as **Abstain**"}${validVotes === undefined ? "" : `\nYour vote is worth **${validVotes}** points.` }`) ], ephemeral: true });
+          await interaction.editReply({ embeds: [ primaryEmbed(undefined, `${update ? "Changed your vote to **Abstain**" : "You have casted your vote as **Abstain**"}${validVotes === undefined ? "" : `\nYour vote is worth **${validVotes}** points.` }`) ] });
       } else {
         if (!poll.votes.yes.includes(interaction.user.id) && !poll.votes.no.includes(interaction.user.id) && !poll.votes.abstain.includes(interaction.user.id)) {
-            await interaction.reply({ embeds: [ primaryEmbed(undefined, "You already have no vote on this poll") ], ephemeral: true });
+            await interaction.editReply({ embeds: [ primaryEmbed(undefined, "You already have no vote on this poll") ] });
             return;
         }
 
@@ -129,7 +130,7 @@ export default {
           .doc(interaction.guildId!)
           .set(guildPolls)
 
-        await interaction.reply({ embeds: [ primaryEmbed(undefined, "You have **removed** your vote from the poll") ], ephemeral: true });
+        await interaction.editReply({ embeds: [ primaryEmbed(undefined, "You have **removed** your vote from the poll") ] });
     }
 
     }
