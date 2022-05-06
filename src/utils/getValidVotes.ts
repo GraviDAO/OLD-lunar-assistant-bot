@@ -6,15 +6,11 @@ import { countVotes } from "./countVotes";
 export const getValidVotes = async (
   userId: string,
   nftAddress: string,
-  db: FirebaseFirestore.Firestore,
+  db: FirebaseFirestore.Firestore
 ): Promise<number> => {
-  
   try {
     // Get the user document
-    const userDoc = await db
-      .collection("users")
-      .doc(userId)
-      .get();
+    const userDoc = await db.collection("users").doc(userId).get();
 
     // Check that the user document exists
     if (!userDoc.exists) return 0;
@@ -23,12 +19,15 @@ export const getValidVotes = async (
     const walletAddress = (userDoc.data() as User).wallet;
 
     // Get the users wallet content
-    const walletContents = await getWalletContents(walletAddress, { nft: [nftAddress], cw20: [nftAddress], stakedNFT: [nftAddress] }, db);
+    const walletContents = await getWalletContents(walletAddress, {
+      nft: [nftAddress],
+      cw20: [nftAddress],
+      stakedNFT: [nftAddress],
+    });
 
     // Calculate how many votes the user has access to
     return countVotes(walletContents, nftAddress);
   } catch (e) {
-    return 0;;
+    return 0;
   }
-  
 };
