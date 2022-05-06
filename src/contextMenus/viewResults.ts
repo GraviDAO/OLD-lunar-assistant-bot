@@ -16,9 +16,8 @@ export default {
       interaction: MessageContextMenuInteraction
     ) => {
       const message = interaction.targetMessage;
-      const uuid = message.embeds.at(0)?.footer?.text;
 
-      if (message.author.id !== lunarAssistant.client.user?.id || !uuid) {
+      if (message.author.id !== lunarAssistant.client.user?.id) {
           await interaction.reply({ embeds: [ primaryEmbed(undefined, "Invalid poll message.") ], ephemeral: true })
           return;
       }
@@ -32,7 +31,7 @@ export default {
       ? (guildPollsDoc.data() as GuildPolls)
       : { polls: [] };
 
-      const poll = guildPolls.polls.find((p: Poll) => p.uuid === uuid );
+      const poll = guildPolls.polls.find((p: Poll) => p.messageId === message.id );
       
       if (!poll) {
           await interaction.reply({ embeds: [ primaryEmbed(undefined, "Invalid poll message.") ], ephemeral: true })

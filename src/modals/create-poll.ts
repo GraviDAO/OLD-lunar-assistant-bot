@@ -57,7 +57,7 @@ export default {
                 no: [],
                 abstain: [],
             },
-            nftAddress: nftAddress
+            contractAddress: nftAddress
         }
         
         try {

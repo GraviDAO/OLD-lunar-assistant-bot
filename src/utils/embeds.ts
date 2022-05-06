@@ -38,7 +38,7 @@ export function pollEmbed(data: Poll, author: User) {
             },
             {
                 name: "Quorum",
-                value: data.quorum ? `${data.quorum} %` : "Not Specified",
+                value: data.quorum ? `${data.quorum} Votes` : "Not Specified",
                 inline: true,
             }
         ]
@@ -49,12 +49,12 @@ export function pollResultsEmbed(data: Poll) {
     return new MessageEmbed({
         title: `Results for Poll #${data.uuid} | __${data.title}__`,
         footer: {
-            text: data.uuid,
+            text: "Built by GraviDAO",
         },
         fields: [
             {
                 name: "Total Valid votes",
-                value: `\`\`\`${data.results!.total.toString()}\`\`\``,
+                value: `\`\`\`${data.results!.total}\`\`\``,
                 inline: true,
             },
             {
@@ -64,22 +64,22 @@ export function pollResultsEmbed(data: Poll) {
             },
             {
                 name: data.quorum !== 0 ? "Status" : "󠀠",
-                value: data.quorum !== 0 ? (data.results!.yes * 100 / data.results!.total) > data.quorum ? `Approved (${data.results!.yes * 100 / data.results!.total} %)` : `Rejected (${data.results!.yes * 100 / data.results!.total} %)` : "󠀠",
+                value: data.quorum !== 0 ? data.results!.total >= data.quorum ? data.results!.yes > data.results!.no ? "✅ Passed" : "❌ Rejected" : "🚫 Not enough votes gathered" : "󠀠",
                 inline: true,
             },
             {
                 name: "✅ | Yes Votes",
-                value: `\`\`\`${data.results!.yes.toString()}\`\`\``,
+                value: `\`\`\`${data.results!.yes}\`\`\``,
                 inline: true,
             },
             {
                 name: "❌ | No Votes",
-                value: `\`\`\`${data.results!.no.toString()}\`\`\``,
+                value: `\`\`\`${data.results!.no}\`\`\``,
                 inline: true,
             },
             {
                 name: "🚫 | Abstain Votes",
-                value: `\`\`\`${data.results!.abstain.toString()}\`\`\``,
+                value: `\`\`\`${data.results!.abstain}\`\`\``,
                 inline: true,
             },
         ],
@@ -96,7 +96,7 @@ export function pollsEmbed(polls: Poll[]) {
         fields: polls.map((p: Poll) => {
             return {
                 name: p.title,
-                value: `__Creator:__ ${Formatters.userMention(p.creator)}(${p.creator})\n${(p.votes.yes.length + p.votes.no.length) ?? 0 } votes`,
+                value: `__Creator:__ ${Formatters.userMention(p.creator)}(${p.creator})\n${(p.votes.yes.length + p.votes.no.length + p.votes.abstain.length) ?? 0 } votes`,
             }
         })
     })

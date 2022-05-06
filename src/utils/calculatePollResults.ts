@@ -6,6 +6,7 @@ import {
 } from "../shared/firestoreTypes";
 import { getWalletContents } from "./getWalletContents";
 import db from "../services/admin";
+import { countVotes } from "./countVotes";
 
 export const calculatePollResults = async (
   lunarAssistant: LunarAssistant,
@@ -32,10 +33,10 @@ export const calculatePollResults = async (
       const walletAddress = (userDoc.data() as User).wallet;
 
       // Get the users wallet content
-      const walletContents = await getWalletContents(walletAddress, { nft: [poll.nftAddress], cw20: [], stakedNFT: [poll.nftAddress] }, db);
+      const walletContents = await getWalletContents(walletAddress, { nft: [poll.contractAddress], cw20: [poll.contractAddress], stakedNFT: [poll.contractAddress] }, db);
 
       // Calculate how many votes the user has access to
-      results.yes = results.yes + (walletContents.nft[poll.nftAddress]?.tokenIds?.length ?? 0) + (walletContents.stakedNFT[poll.nftAddress]?.tokenIds?.length ?? 0);
+      results.yes = results.yes + countVotes(walletContents, poll.contractAddress);
     } catch (e) {
       continue;
     }
@@ -55,10 +56,10 @@ export const calculatePollResults = async (
       const walletAddress = (userDoc.data() as User).wallet;
 
       // Get the users wallet content
-      const walletContents = await getWalletContents(walletAddress, { nft: [poll.nftAddress], cw20: [], stakedNFT: [poll.nftAddress] }, db);
+      const walletContents = await getWalletContents(walletAddress, { nft: [poll.contractAddress], cw20: [], stakedNFT: [poll.contractAddress] }, db);
 
       // Calculate how many votes the user has access to
-      results.no = results.no + (walletContents.nft[poll.nftAddress]?.tokenIds?.length ?? 0) + (walletContents.stakedNFT[poll.nftAddress]?.tokenIds?.length ?? 0);
+      results.no = results.no + countVotes(walletContents, poll.contractAddress);
     } catch (e) {
       continue;
     }
@@ -78,10 +79,10 @@ export const calculatePollResults = async (
       const walletAddress = (userDoc.data() as User).wallet;
 
       // Get the users wallet content
-      const walletContents = await getWalletContents(walletAddress, { nft: [poll.nftAddress], cw20: [], stakedNFT: [poll.nftAddress] }, db);
+      const walletContents = await getWalletContents(walletAddress, { nft: [poll.contractAddress], cw20: [], stakedNFT: [poll.contractAddress] }, db);
 
       // Calculate how many votes the user has access to
-      results.abstain = results.abstain + (walletContents.nft[poll.nftAddress]?.tokenIds?.length ?? 0) + (walletContents.stakedNFT[poll.nftAddress]?.tokenIds?.length ?? 0);
+      results.abstain = results.abstain + countVotes(walletContents, poll.contractAddress);
     } catch (e) {
       continue;
     }
