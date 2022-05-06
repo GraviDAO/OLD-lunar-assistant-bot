@@ -55,6 +55,7 @@ export const getRelevantContractAddressesForUserID = async (
   const nft = new Set<string>();
   const cw20 = new Set<string>();
   const stakedNFT = new Set<string>();
+  const start = Date.now();
   for(let index = 0; index < guildConfigsSnapshot.docs.length; index++)
   {
     const guildDoc = guildConfigsSnapshot.docs[index];
@@ -101,7 +102,7 @@ export const getRelevantContractAddressesForUserID = async (
     cw20: Array.from(cw20),
     stakedNFT: Array.from(stakedNFT),
   };
-  
+  console.log("after getRelevantContractAddressesForUserID: " + (Date.now()-start));
   console.log("userID: " + userID + " number of relevantNFTContractAddresses: " + contractAddresses.nft.length);
   console.log("userID: " + userID + " number of relevantCW20ContractAddresses: " + contractAddresses.cw20.length);
   console.log("userID: " + userID + " number of relevantStakedContractAddresses: " + contractAddresses.stakedNFT.length);
@@ -112,6 +113,7 @@ export const getRelevantContractAddressesForUserID = async (
 export const getRelevantContractAddresses = (
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ): ContractAddresses => {
+  const start = Date.now();
   const contractAddressesSets = guildConfigsSnapshot.docs.reduce(
     (acc, guildConfigDoc) => {
       const guildConfigContractAddresses =
@@ -146,5 +148,6 @@ export const getRelevantContractAddresses = (
     cw20: Array.from(contractAddressesSets.cw20),
     stakedNFT: Array.from(contractAddressesSets.stakedNFT),
   };
+  console.log("after getRelevantContractAddresses: " + (Date.now()-start));
   return contractAddresses;
 };

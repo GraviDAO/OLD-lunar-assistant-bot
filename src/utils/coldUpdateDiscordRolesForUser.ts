@@ -98,10 +98,10 @@ export const getActiveInactiveRoleIds = async (
   guildConfigsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
   whitelist: Whitelist
 ) => {
-  let start = Date.now();
+  let start;;
   const relevantContractAddresses : ContractAddresses =
   await getRelevantContractAddressesForUserID(guildConfigsSnapshot, userID, lunar);
-  console.log("after getRelevantContractAddressesForUserID: " + (Date.now()-start));
+  
   const userTokensCache = await getWalletContents(
     walletAddress,
     relevantContractAddresses,
