@@ -41,39 +41,40 @@ export class LunarAssistant {
   }
 
   async registerGuildCommands() {
-    for (const guild of this.client.guilds.cache.values()) {
-      console.log(`Registering commands for ${guild.name}`);
-      try {
-        await registerCommands(guild);
-      } catch (e) {
-        console.error(`Couldn't register commands for ${guild.name}`);
-        console.error(e);
-      }
-      await new Promise((r) => setTimeout(r, 1000));
+    try {
+      await registerCommands();
+    } catch (e) {
+      console.error(
+        `Couldn't register commands due to the following error: ${e}`
+      );
     }
   }
 
-  async startPollTimeouts(){
-    const guildPolls = await db
-      .collection("guildPolls")
-      .get()
-    
+  async startPollTimeouts() {
+    const guildPolls = await db.collection("guildPolls").get();
+
     for (const guildPoll of guildPolls.docs) {
       let guild: Guild;
-      const polls = ((guildPoll.data() as GuildPolls).polls ?? []).filter((p: Poll) => p.active);
+      const polls = ((guildPoll.data() as GuildPolls).polls ?? []).filter(
+        (p: Poll) => p.active
+      );
       try {
-        guild = this.client.guilds.cache.get(guildPoll.id) ?? await this.client.guilds.fetch(guildPoll.id);
-        if(!guild) continue;
+        guild =
+          this.client.guilds.cache.get(guildPoll.id) ??
+          (await this.client.guilds.fetch(guildPoll.id));
+        if (!guild) continue;
       } catch (e) {
         continue;
       }
       try {
         await setupPollTimeout(this, guild, polls);
       } catch (e) {
-        console.error(`Couldn't create poll timeouts commands for ${guild.name}`);
+        console.error(
+          `Couldn't create poll timeouts commands for ${guild.name}`
+        );
         console.error(e);
       }
-      
+
       await new Promise((r) => setTimeout(r, 1000));
     }
   }
