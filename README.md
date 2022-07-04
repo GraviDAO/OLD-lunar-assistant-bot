@@ -103,7 +103,7 @@ Disconnects the user's discord account from their wallet address.
 
 ## Adding Lunar Assistant To Your Discord Server
 
-You can follow this link to add the Lunar Assistant bot to your discord server: https://discord.com/api/oauth2/authorize?client_id=893178480303407135&permissions=268435456&scope=applications.commands%20bot
+You can follow this link to add the Lunar Assistant bot to your discord server: https://discord.com/api/oauth2/authorize?client_id=973603855990411325&permissions=268435456&scope=applications.commands%20bot
 
 ## Roadmap
 

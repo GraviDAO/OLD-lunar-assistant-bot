@@ -1,13 +1,18 @@
+import jwt from "jsonwebtoken";
+import { API_SECRET } from "../../config.json";
+import axios from "axios";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageAttachment } from "discord.js";
 import { LunarAssistant } from "..";
 import db from "../services/admin";
 import { GuildConfig, GuildRule } from "../shared/firestoreTypes";
+import { GetRulesResponse, ServerRule } from "../shared/apiTypes";
 import {
   guildRuleToSimpleRule,
   simpleRuleToHumanSimpleRule,
 } from "../utils/guildRuleHelpers";
 import { isValidHttpUrl } from "../utils/helper";
+import { lunarHQ_url, botName } from "../../config.json";
 
 export default {
   data: new SlashCommandBuilder()
@@ -25,6 +30,14 @@ export default {
             .setName("nft-address")
             .setDescription(
               "The contract address against which to check for nft ownership for this rule."
+            )
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("blockchain")
+            .setDescription(
+              "The blockchain name to which the nft-address belongs."
             )
             .setRequired(true)
         )
@@ -162,6 +175,7 @@ export default {
     if (interaction.options.getSubcommand() === "add-nft-rule") {
       // configure the server settings
       const nftAddress = interaction.options.getString("nft-address")?.toLowerCase();
+      const blockchainName = interaction.options.getString("blockchain");
       const role = interaction.options.getRole("role");
       const rawQuantity = interaction.options.getNumber("quantity");
       const rawTokenIds = interaction.options.getString("token-ids");
@@ -170,6 +184,14 @@ export default {
       if (!nftAddress || !role) {
         await interaction.reply({
           content: "Could not get nftAddress or role",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      if (!blockchainName) {
+        await interaction.reply({
+          content: "Could not get blockchainName parameter",
           ephemeral: true,
         });
         return;
@@ -211,7 +233,7 @@ export default {
 
       // check if the bot role is above the verified role
       const lunarAssistantRole = interaction.guild.roles.cache.find(
-        (role) => role.name == "Lunar Assistant"
+        (role) => role.name == botName
       )!;
 
       if (role.position > lunarAssistantRole.position) {
@@ -222,39 +244,26 @@ export default {
         return;
       }
 
-      const newRule: GuildRule = {
-        version: "1.0",
-        nft: {
-          [nftAddress]: {
-            // only include tokenIds if defined
-            ...(tokenIds && { tokenIds }),
-            quantity,
-          },
-        },
-        stakedNFT: {},
-        cw20: {},
-        api: {},
-        nativeToken: {},
-        roleId: role.id,
-      };
-
-      const guildConfigDoc = await db
-        .collection("guildConfigs")
-        .doc(interaction.guildId)
-        .get();
-
-      const guildConfig: GuildConfig = guildConfigDoc.exists
-        ? (guildConfigDoc.data() as GuildConfig)
-        : { rules: [] };
-
-      guildConfig.rules.push(newRule);
-
-      // update the db
-      await db
-        .collection("guildConfigs")
-        .doc(interaction.guildId)
-        .set(guildConfig);
-
+      try {
+        const response = await axios.post(lunarHQ_url + "addNftRule", {
+          nftAddress: nftAddress,
+          tokenIds:  {...(tokenIds && { tokenIds })},
+          quantity: quantity,
+          role: role.id,
+          discordServerId: interaction.guild.id,
+          blockchainName: blockchainName,
+        })
+        if(response.status == 200)
+        {
+          console.log("Successfully created new nft rule");
+        }
+        else { console.log("unexpected response from api: " + response.status); }
+    
+       
+      } catch (e) {
+        console.error(e);
+      }
+      
       // reply
       await interaction.reply({
         content: "Rule added successfully!",
@@ -311,7 +320,7 @@ export default {
 
       // check if the bot role is above the verified role
       const lunarAssistantRole = interaction.guild.roles.cache.find(
-        (role) => role.name == "Lunar Assistant"
+        (role) => role.name == botName
       )!;
 
       if (role.position > lunarAssistantRole.position) {
@@ -387,7 +396,7 @@ export default {
 
       // Check if the bot role is above the verified role
       const lunarAssistantRole = interaction.guild.roles.cache.find(
-        (role) => role.name == "Lunar Assistant"
+        (role) => role.name == botName
       )!;
 
       if (role.position > lunarAssistantRole.position) {
@@ -457,7 +466,7 @@ export default {
 
       // check if the bot role is above the verified role
       const lunarAssistantRole = interaction.guild.roles.cache.find(
-        (role) => role.name == "Lunar Assistant"
+        (role) => role.name == botName
       )!;
 
       if (role.position > lunarAssistantRole.position) {
@@ -506,45 +515,64 @@ export default {
       if (!interaction.guildId || !interaction.guild || !interaction.member)
         return;
 
-      let guild = interaction.guild;
+       let guild = interaction.guild;
 
-      const guildConfigDoc = await db
-        .collection("guildConfigs")
-        .doc(interaction.guildId)
-        .get();
+       let response;
+        try {
+          const token = jwt.sign(
+            { discordServerId: interaction.guildId, accessTypes: ["getRules"] },
+            API_SECRET,
+            { expiresIn: "15m" }
+          );
+          
+          const config = {
+            headers: {
+               Authorization: "Bearer " + token
+            }
+          }
 
-      if (!guildConfigDoc.exists) {
+          response = await axios.get(lunarHQ_url + "getRules", config);
+          if(response.status == 200)
+          {
+            console.log("Successfully retrieved nft rules: " + JSON.stringify(response.data));
+          }
+          else { console.log("unexpected response from api: " + response.status); }
+      
+         
+        } catch (e) {
+          console.error(e);
+        }
+
+      const getRulesResponse = response?.data as GetRulesResponse;
+      const serverRules = getRulesResponse.message;
+
+      if (serverRules.length == 0) {
         await interaction.reply({
           content:
-            "You haven't created any rules yet. Please run `/rule-add` and try again",
+            "You haven't created any rules yet. Please run `/lunar-configure add-nft-rule` and try again",
           ephemeral: true,
         });
         return;
       }
 
-      const guildConfigRules = (guildConfigDoc.data() as GuildConfig).rules;
-
       const res: any = {};
+      for(let index = 0; index < serverRules.length; index++)
+      {
+        let roleName = guild.roles.cache.find(
+          (role) => role.id == serverRules[index].discordRole
+        )?.name;
 
-      guildConfigRules.forEach((guildRule, index) => {
-        try {
-          const simpleRule = guildRuleToSimpleRule(guildRule);
-
-          let roleName = guild.roles.cache.find(
-            (role) => role.id == simpleRule.roleId
-          )?.name;
-
-          const humanSimpleRule = simpleRuleToHumanSimpleRule(
-            simpleRule,
-            roleName ||
-              "unknown: Role has been deleted since creating the rule."
-          );
-
-          res[`rule-${index}`] = humanSimpleRule;
-        } catch (err) {
-          res[`rule-${index}`] = guildRule;
+        const prettyRule = {
+          ruleId: serverRules[index].id,
+          nftAddress: serverRules[index].nftCollection.address,
+          apiUrl: serverRules[index].apiUrl,
+          quantity: serverRules[index].quantity,
+          role: roleName,
+          createdTimestamp: serverRules[index].createdAt,
         }
-      });
+
+        res[`rule-${serverRules[index].id}`] = prettyRule;
+      }
 
       // reply with list of configured rules
       await interaction.reply({
@@ -568,40 +596,7 @@ export default {
         return;
       }
 
-      const guildConfigDoc = await db
-        .collection("guildConfigs")
-        .doc(interaction.guildId)
-        .get();
-
-      if (!guildConfigDoc.exists) {
-        await interaction.reply({
-          content:
-            "You haven't created any rules yet. Please run `/rule-add` and try again",
-          ephemeral: true,
-        });
-        return;
-      }
-
-      // configure guild config
-      const guildConfig = guildConfigDoc.data() as GuildConfig;
-
-      if (guildConfig.rules.length <= ruleNumber) {
-        await interaction.reply({
-          content: `Rule number is out of bounds. Please enter a rule number in the range 0-${
-            guildConfig.rules.length - 1
-          }`,
-          ephemeral: true,
-        });
-        return;
-      }
-
-      guildConfig.rules.splice(ruleNumber, 1);
-
-      // update the db
-      await db
-        .collection("guildConfigs")
-        .doc(interaction.guildId)
-        .set(guildConfig);
+      let response = await axios.delete(lunarHQ_url + "deleteRule/" + ruleNumber, { params: { discordServerId: interaction.guildId }});
 
       // reply
       await interaction.reply({
